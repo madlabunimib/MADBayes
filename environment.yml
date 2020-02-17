@@ -1,0 +1,11 @@
+name: wi
+channels:
+    - conda-forge
+    - numba
+dependencies:
+    - python>=3.7,<3.8
+    - icc_rt
+    - networkx>=2.2
+    - numba>=0.47
+    - numpy
+    - tbb
