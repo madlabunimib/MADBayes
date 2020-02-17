@@ -1,22 +1,26 @@
 import numpy as np
+from numba import njit, prange
 from itertools import combinations
 from ..structure import Graph
 
 
 def moralize(graph: Graph) -> Graph:
     A = graph.get_adjacency_matrix()
-    graph.set_adjacency_matrix(_moralize(A))
+    out = np.zeros(A.shape, dtype=bool)
+    _moralize(A, out)
+    graph.set_adjacency_matrix(out)
     return graph
 
 
-def _moralize(A: np.ndarray) -> np.ndarray:
+@njit(parallel=True)
+def _moralize(A, out):
     n = A.shape[0]
-    N = np.zeros((n, n), dtype=bool)
-    for parents in A.T:
-        parents = np.nonzero(parents)[0].T
-        parents = combinations(parents, 2)
-        for (i, j) in parents:
-            N[i, j] = True
-    R = np.bitwise_or(A, N)
-    R = np.bitwise_or(R, R.T)
-    return R
+    for columns in prange(n):
+        parents = A.T[columns]
+        indexes = np.nonzero(parents)[0].T
+        for i in indexes:
+            for j in indexes:
+                if i != j:
+                    out[i, j] = True
+    np.bitwise_or(A, out, out)
+    np.bitwise_or(out, out.T, out)
