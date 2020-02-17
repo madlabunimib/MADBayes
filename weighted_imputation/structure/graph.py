@@ -29,6 +29,12 @@ class Node():
     def __repr__(self) -> str:
         return self._label
 
+    def __eq__(self, other) -> bool:     
+        return self._label == other.get_label()
+
+    def __ne__(self, other) -> bool:
+        return self._label != other.get_label()
+
 
 class Graph():
 
@@ -50,3 +56,41 @@ class Graph():
     
     def set_adjacency_matrix(self, adjacency_matrix: np.ndarray) -> None:
         self._adjacency_matrix = adjacency_matrix
+
+    def add_node(self, node: Node) -> None:
+        if node not in self._nodes:
+            n = len(self._nodes)
+            self._adjacency_matrix = np.hstack(
+                (
+                    self._adjacency_matrix,
+                    np.zeros((n,1), dtype=bool)
+                ))
+            self._adjacency_matrix = np.vstack(
+                (
+                    self._adjacency_matrix,
+                    np.zeros((1,n+1), dtype=bool)
+                ))
+            self._nodes.append(node)
+        else:
+            raise Exception("Node already in graph")
+
+    def remove_node(self, node: Node) -> None:
+        if node in self._nodes:
+            index = self._nodes.index(node)
+            self._adjacency_matrix = np.delete(self._adjacency_matrix, index, axis=0)
+            self._adjacency_matrix = np.delete(self._adjacency_matrix, index, axis=1)
+            self._nodes.remove(node)
+        else:
+            raise Exception("Node not in graph")
+
+    def add_edge(self, parent: Node, child: Node) -> None:
+        if (parent in self._nodes) and (child in self._nodes):
+            self._adjacency_matrix[self._nodes.index(parent), self._nodes.index(child)] = True
+        else:
+            raise Exception("Node not in graph")
+
+    def remove_edge(self, parent: Node, child: Node) -> None:
+        if (parent in self._nodes) and (child in self._nodes):
+            self._adjacency_matrix[self._nodes.index(parent), self._nodes.index(child)] = False
+        else:
+            raise Exception("Node not in graph")
