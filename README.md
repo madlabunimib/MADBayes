@@ -2,8 +2,12 @@
 
 ## TODO List
 
+- [ ] Data structures
+    - [ ] Class graph
+        - [ ] Add remaning getters/setters
 - [ ] Load graph and parameters
-    - [ ] Tree as Numpy binary matrix
+    - [x] Graph as Numpy binary matrix
+    - [ ] From/To Networkx istance
 - [ ] Junction Tree Algorithm
     - [ ] Moralize graph
         - [ ] Adjacency matrix operations as A or A.T or NewArcs
