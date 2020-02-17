@@ -22,6 +22,12 @@ class Node():
     
     def set_values(self, values: Dict) -> None:
         self._values = values
+    
+    def __str__(self) -> str:
+        return self._label
+    
+    def __repr__(self) -> str:
+        return self._label
 
 
 class Graph():
