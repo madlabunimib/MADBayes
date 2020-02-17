@@ -13,7 +13,7 @@ def _moralize(A: np.ndarray) -> np.ndarray:
     n = A.shape[0]
     N = np.zeros((n, n), dtype=bool)
     for parents in A.T:
-        parents = np.argwhere(parents).T[0]
+        parents = np.nonzero(parents)[0].T
         parents = combinations(parents, 2)
         for (i, j) in parents:
             N[i, j] = True
