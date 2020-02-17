@@ -9,8 +9,8 @@
     - [x] Graph as Numpy binary matrix
     - [ ] From/To Networkx istance
 - [ ] Junction Tree Algorithm
-    - [ ] Moralize graph
-        - [ ] Adjacency matrix operations as A or A.T or NewArcs
+    - [x] Moralize graph
+        - [x] Adjacency matrix operations as A or A.T or NewArcs
     - [ ] Triangulate graph
     - [ ] Identify cliques
     - [ ] Build tree
