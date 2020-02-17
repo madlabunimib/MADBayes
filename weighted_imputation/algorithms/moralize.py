@@ -12,8 +12,7 @@ def moralize(graph: Graph) -> Graph:
 def _moralize(A: np.ndarray) -> np.ndarray:
     n = A.shape[0]
     N = np.zeros((n, n), dtype=bool)
-    for column in range(n):
-        parents = A.T[column]
+    for parents in A.T:
         parents = np.argwhere(parents).T[0]
         parents = combinations(parents, 2)
         for (i, j) in parents:
