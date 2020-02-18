@@ -1,5 +1,5 @@
 import networkx as nx
-from ..structure import Graph
+from ..structure import Node, Graph
 
 
 def to_networkx(graph: Graph) -> nx.Graph:
@@ -12,4 +12,6 @@ def to_networkx(graph: Graph) -> nx.Graph:
     return G
 
 def from_networkx(G: nx.Graph) -> Graph:
-    pass
+    nodes = [Node(str(node)) for node in G.nodes]
+    adjacent_matrix = nx.to_numpy_array(G).astype(bool)
+    return Graph(nodes, adjacent_matrix)
