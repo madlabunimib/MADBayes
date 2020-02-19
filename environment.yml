@@ -5,6 +5,7 @@ channels:
 dependencies:
     - python>=3.7,<3.8
     - icc_rt
+    - matplotlib
     - networkx>=2.2
     - numba>=0.47
     - numpy
