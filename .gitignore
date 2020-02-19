@@ -1,4 +1,5 @@
 .vscode
+.spyproject
 __pycache__
 *.ipynb
 demo.py
