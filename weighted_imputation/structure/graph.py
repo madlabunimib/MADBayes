@@ -1,6 +1,8 @@
-from typing import List, Dict
+import re
 import numpy as np
 import pandas as pd
+import networkx as nx
+from typing import List, Dict
 
 
 class Graph():
@@ -108,3 +110,35 @@ class Graph():
 
     def __repr__(self):
         return str(self._adjacency_matrix)
+    
+    def to_networkx(self) -> nx.Graph:
+        mapping = {k:v for k,v in enumerate(self.get_nodes())}
+        G = nx.DiGraph(self.get_adjacency_matrix())
+        G = nx.relabel_nodes(G, mapping)
+        return G
+    
+    @classmethod
+    def from_networkx(cls, G: nx.Graph) -> "Graph":
+        nodes = [str(node) for node in G.nodes]
+        adjacent_matrix = nx.to_numpy_array(G).astype(bool)
+        return cls(nodes, adjacent_matrix)
+    
+    @classmethod
+    def from_string(cls, string: str) -> "Graph":
+        pattern = re.compile(r"\[(\w*)(?:\|(\w+[:\w+]*)){0,1}\]")
+        edges = re.findall(pattern, string)
+        edges = [
+            (parent, child)
+            for (child, parents) in edges
+            for parent in parents.split(':')
+            if len(parent) > 0
+        ]
+        nodes = set()
+        for parent, child in edges:
+            nodes.add(parent)
+            nodes.add(child)
+        nodes = list(nodes)
+        graph = cls(nodes)
+        for parent, child in edges:
+            graph.add_edge(parent, child)
+        return graph

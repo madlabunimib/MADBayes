@@ -22,7 +22,7 @@ def test_moralize():
     morals = [moral_graph(G) for G in graphs]
     morals = [nx.to_numpy_array(G).astype(bool) for G in morals]
     # Moralize graphs with test function and extract matrices
-    wi_graphs = [wi.from_networkx(G) for G in graphs]
+    wi_graphs = [wi.Graph.from_networkx(G) for G in graphs]
     wi_morals = [wi.moralize(G) for G in wi_graphs]
     wi_morals = [G.get_adjacency_matrix() for G in wi_morals]
     # Check if graphs are equals
