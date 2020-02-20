@@ -1,6 +1,6 @@
 import numpy as np
-from ..structure import Graph
-from ..utils import plot_graph
+from ..structure import Graph, Prefix_tree
+from ..utils import plot_graph, plot_prefix_tree
 from typing import List
 
 
@@ -40,6 +40,8 @@ def triangulate(graph: Graph) -> Graph:
     print(new_archs)
        
     return Graph(graph.get_nodes(), out)
+
+
 
 def _break_cycle(cycle: List) -> List:
     new_archs = []
@@ -89,6 +91,70 @@ def _find_paths(adj_matrix: np.ndarray, start_node_index: int) -> List:
         paths_0.extend(new_paths_0) #Aggiungo i cammini che ho esteso a quelli terminati 
     return paths_0
 
+
+def triangulate_tree(graph: Graph) -> Graph:
+    
+    A = graph.get_adjacency_matrix()    
+    out = np.zeros(A.shape, dtype=bool)
+    new_edges = []
+
+    print("nodes:")
+    print(graph.get_nodes())
+    _moralize(A, out, new_edges)
+
+    print("new edges: ")
+    print(new_edges)
+
+    #search for cycles with lenght >3
+    for elem in new_edges:
+        print("########################################")
+        _find_cycle_tree(A, elem[0], elem[1])
+        
+
+
+def _find_cycle_tree(adj_matrix: np.ndarray, node_0: int, node_1: int) -> list:
+
+    n = adj_matrix.shape[0]
+    prefix_tree = Prefix_tree([], np.zeros(shape=(0,0)))
+
+    prefix_tree.add_node(node_0)
+    leafs = [node_0]
+    while leafs != []:
+        new_leafs = []
+        old_leafs = set()
+        for leaf in leafs:
+            for row in range(n):
+                if adj_matrix[row, leaf] == 1:
+                    prefix_tree.add_node(row)
+                    prefix_tree.add_edge(row, leaf)
+                    new_leafs.append(row)
+            old_leafs.add(leaf)
+        leafs = [x for x in leafs if not x in old_leafs]
+        leafs.extend(new_leafs)
+
+    prefix_tree.add_node(node_1)
+    leafs = [node_1]
+    while leafs != []:
+        new_leafs = []
+        old_leafs = set()
+        for leaf in leafs:
+            for row in range(n):
+                if adj_matrix[row, leaf] == 1:
+                    if row in prefix_tree.get_nodes():
+                        print(row)
+                        pass
+                    else: 
+                        prefix_tree.add_node(row)
+                        prefix_tree.add_edge(leaf, row)
+                        new_leafs.append(row)
+            old_leafs.add(leaf)
+        leafs = [x for x in leafs if not x in old_leafs]
+        leafs.extend(new_leafs)       
+            
+    plot_prefix_tree(prefix_tree)
+
+
+    return 
 
 def _moralize(A, out,new_edges: List):
        
