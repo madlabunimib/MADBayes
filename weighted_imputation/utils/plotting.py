@@ -4,13 +4,12 @@ from ..utils import transform
 from ..structure import Graph, Prefix_tree
 
 
-def plot_graph(g: Graph) -> None:
-    g = transform.to_networkx(g)
-    nx.draw(g, with_labels = True)
+def plot_graph(graph: Graph) -> None:
+    nx.draw(graph.to_networkx(), with_labels = True)
     plt.show()
 
-def plot_networkx_graph(g: nx.Graph) -> None:
-    nx.draw(g, with_labels = True)
+def plot_networkx_graph(G: nx.Graph) -> None:
+    nx.draw(G, with_labels = True)
     plt.show()
 
 def plot_prefix_tree(g: Prefix_tree) -> None:
