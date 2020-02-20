@@ -4,7 +4,7 @@ from ..structure import Graph, Prefix_tree
 
 def to_networkx(graph: Graph) -> nx.Graph:
     mapping = {
-        k:v.get_label()
+        k:v
         for k,v in enumerate(graph.get_nodes())
     }
     G = nx.DiGraph(graph.get_adjacency_matrix())
