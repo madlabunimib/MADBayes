@@ -3,14 +3,17 @@ from numba import njit, prange
 from ..structure import Graph
 
 
-def moralize(graph: Graph, force_parallel: bool = False) -> Graph:
+def moralize(graph: Graph, force_parallel: bool = False, return_new_edges: bool = False) -> Graph:
     A = graph.get_adjacency_matrix()
-    out = np.zeros(A.shape, dtype=bool)
+    new_edges = np.zeros(A.shape, dtype=bool)
     if not force_parallel and A.shape[0] < 50:
-        _moralize(A, out)
+        _moralize(A, new_edges)
     else:
-        _moralize_parallel(A, out)
-    return Graph(graph.get_nodes(), out)
+        _moralize_parallel(A, new_edges)
+    moral_graph = Graph(graph.get_nodes(), A)
+    if return_new_edges:
+        return moral_graph, new_edges
+    return moral_graph
 
 
 @njit
@@ -21,10 +24,10 @@ def _moralize(A, out):
         indexes = np.nonzero(parents)[0].T
         for i in indexes:
             for j in indexes:
-                if i != j:
+                if i < j:
                     out[i, j] = True
-    np.bitwise_or(A, out, out)
-    np.bitwise_or(out, out.T, out)
+    np.bitwise_or(out, A, A)
+    np.bitwise_or(A, A.T, A)
 
 
 @njit(parallel=True)
@@ -35,7 +38,7 @@ def _moralize_parallel(A, out):
         indexes = np.nonzero(parents)[0].T
         for i in indexes:
             for j in indexes:
-                if i != j:
+                if i < j:
                     out[i, j] = True
-    np.bitwise_or(A, out, out)
-    np.bitwise_or(out, out.T, out)
+    np.bitwise_or(out, A, A)
+    np.bitwise_or(A, A.T, A)
