@@ -19,6 +19,8 @@ class Graph():
         return list(self._adjacency_matrix.index.values)
     
     def set_nodes(self, nodes: List[str]) -> "Graph":
+        # Sorting nodes before using them
+        nodes = sorted(nodes)
         try:
             if self._adjacency_matrix.shape[0] != len(nodes):
                 raise Exception('nodes must have the same length of adjacent_matrix.')
