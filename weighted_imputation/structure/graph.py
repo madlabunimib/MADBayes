@@ -7,12 +7,13 @@ class Graph():
 
     _adjacency_matrix: pd.DataFrame
 
-    def __init__(self, adjacency_matrix: np.ndarray) -> None:
-        self.set_adjacency_matrix(adjacency_matrix)
-
-    def __init__(self, nodes: List[str], adjacency_matrix: np.ndarray) -> None:
-        self.set_adjacency_matrix(adjacency_matrix)
-        self.set_nodes(nodes)
+    def __init__(self, nodes: List[str] = None, adjacency_matrix: np.ndarray = None) -> None:
+        if adjacency_matrix is not None:
+            self.set_adjacency_matrix(adjacency_matrix)
+            if nodes is not None:
+                self.set_nodes(nodes)
+        else:
+            self._adjacency_matrix = pd.DataFrame()
 
     def get_nodes(self) -> List[str]:
         return list(self._adjacency_matrix.index.values)
@@ -79,10 +80,17 @@ class Graph():
         self._adjacency_matrix.drop(node, axis=1, inplace=True)
         return self
 
-    def add_edge(self, parent: str, child: str) -> "Graph":
+    def add_edge(self, parent: str, child: str, undirected: bool = False) -> "Graph":
         self._adjacency_matrix.loc[parent, child] = True
+        if undirected:
+            self._adjacency_matrix.loc[child, parent] = True
         return self
 
-    def remove_edge(self, parent: str, child: str) -> "Graph":
+    def remove_edge(self, parent: str, child: str, undirected: bool = False) -> "Graph":
         self._adjacency_matrix.loc[parent, child] = False
+        if undirected:
+            self._adjacency_matrix.loc[child, parent] = False
         return self
+
+    def __repr__(self):
+        return str(self._adjacency_matrix)
