@@ -36,8 +36,6 @@ class Prefix_tree():
                     np.zeros((1,n+1), dtype=bool)
                 ))
             self._nodes.append(node)
-        else:
-            raise Exception("int already in graph")
 
     def remove_node(self, node: int) -> None:
         if node in self._nodes:
