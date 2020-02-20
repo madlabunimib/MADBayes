@@ -1,5 +1,4 @@
 import re
-import numpy as np
 from ..structure import Graph
 
 
