@@ -17,11 +17,7 @@ def parse_graph_from_string(string: str) -> Graph:
         nodes.add(parent)
         nodes.add(child)
     nodes = list(nodes)
-    nodes = sorted(nodes)
-    n = len(nodes)
-    adjacency_matrix = np.zeros((n, n), dtype=bool)
+    graph = Graph(nodes)
     for parent, child in edges:
-        i = nodes.index(parent)
-        j = nodes.index(child)
-        adjacency_matrix[i, j] = True
-    return Graph(nodes, adjacency_matrix)
+        graph.add_edge(parent, child)
+    return graph
