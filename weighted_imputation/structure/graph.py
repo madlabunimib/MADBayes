@@ -10,25 +10,35 @@ class Graph():
     def __init__(self, nodes: List[str] = None, adjacency_matrix: np.ndarray = None) -> None:
         if adjacency_matrix is not None:
             self.set_adjacency_matrix(adjacency_matrix)
-            if nodes is not None:
-                self.set_nodes(nodes)
-        else:
-            self._adjacency_matrix = pd.DataFrame()
+        if nodes is not None:
+            self.set_nodes(nodes)
+        if nodes is None and adjacency_matrix is None:
+            self._adjacency_matrix = pd.DataFrame(dtype=bool)
 
     def get_nodes(self) -> List[str]:
         return list(self._adjacency_matrix.index.values)
     
     def set_nodes(self, nodes: List[str]) -> "Graph":
-        if self._adjacency_matrix.shape[0] != len(nodes):
-            raise Exception('nodes must have the same length of adjacent_matrix.')
-        # In order to set the labels, a mapping between old labels and
-        # new labels must be created
-        labels = self.get_nodes()
-        mapping = {
-            label: nodes[i]
-            for i, label in enumerate(labels)
-        }
-        self._adjacency_matrix.rename(index=mapping, columns=mapping, inplace=True)
+        try:
+            if self._adjacency_matrix.shape[0] != len(nodes):
+                raise Exception('nodes must have the same length of adjacent_matrix.')
+            # In order to set the labels, a mapping between old labels and
+            # new labels must be created
+            labels = self.get_nodes()
+            mapping = {
+                label: nodes[i]
+                for i, label in enumerate(labels)
+            }
+            self._adjacency_matrix.rename(index=mapping, columns=mapping, inplace=True)
+        except AttributeError:
+            # If there is no adjacency_matrix, create a new empty one using
+            # the labels of the nodes
+            n = len(nodes)
+            self._adjacency_matrix = pd.DataFrame(
+                data=np.zeros((n, n), dtype=bool),
+                index=nodes,
+                columns=nodes
+            )
         return self
 
     def get_adjacency_matrix(self) -> np.ndarray:
@@ -79,12 +89,16 @@ class Graph():
         return self
 
     def add_edge(self, parent: str, child: str, undirected: bool = False) -> "Graph":
+        if parent not in self._adjacency_matrix or child not in self._adjacency_matrix:
+            raise Exception('parent and child nodes must be in adjacency_matrix before adding edge.')
         self._adjacency_matrix.loc[parent, child] = True
         if undirected:
             self._adjacency_matrix.loc[child, parent] = True
         return self
 
     def remove_edge(self, parent: str, child: str, undirected: bool = False) -> "Graph":
+        if parent not in self._adjacency_matrix or child not in self._adjacency_matrix:
+            raise Exception('parent and child nodes must be in adjacency_matrix before removing edge.')
         self._adjacency_matrix.loc[parent, child] = False
         if undirected:
             self._adjacency_matrix.loc[child, parent] = False
