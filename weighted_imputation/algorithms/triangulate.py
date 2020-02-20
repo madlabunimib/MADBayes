@@ -1,5 +1,5 @@
 import numpy as np
-from ..structure import Node, Graph
+from ..structure import Graph
 from ..utils import plot_graph
 from typing import List
 
