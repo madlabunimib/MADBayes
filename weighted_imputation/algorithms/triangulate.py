@@ -13,33 +13,20 @@ def triangulate(graph: Graph) -> Graph:
     out = np.zeros(A.shape, dtype=bool)
     new_edges = []
 
-    #plot original graph
-    #plot_graph(graph)
     print("nodes:")
     print(graph.get_nodes())
     _moralize(A, out, new_edges)
 
-    #plot moralized graph and list with add edge(s)
     print("new edges: ")
     print(new_edges)
-    #plot_graph(Graph(graph.get_nodes(), out))
 
-    cycles = []
     #search for cycles with lenght >3
-    for elem in new_edges:       
-        paths_0 = _find_paths(A, elem[0])
-        paths_1 = _find_paths(A, elem[1])    
-        cycles.append(_find_cicle(paths_0, paths_1))
-    cycles = [cycle for cycle in cycles if cycle != []]
-    
-    new_archs = []
-    for cycle in cycles:
-        new_archs.extend(_break_cycle(cycle))
-    
-    new_archs = set(new_archs)
-    print(new_archs)
-       
-    return Graph(graph.get_nodes(), out)
+    for elem in new_edges:
+        print("########################################")
+        print(_find_cycle(A, elem[0], elem[1]))
+
+
+    return
 
 
 
@@ -54,69 +41,15 @@ def _break_cycle(cycle: List) -> List:
 
     return new_archs
 
-def _find_cicle(paths_0: List, paths_1: List) -> List:
-    cycle = []
-    for path_0 in paths_0:
-        for node_0 in path_0[1:-1]:
-            for path_1 in paths_1:
-                for node_1 in path_1[1:-1]:
-                    if node_0 == node_1:
-                        cycle.extend(path_1[:path_1.index(node_1)+1])
-                        cycle.reverse()
-                        cycle.extend(path_0[:path_0.index(node_0)+1])
-                        return cycle
-                    
-    return []
-
-def _find_paths(adj_matrix: np.ndarray, start_node_index: int) -> List:
-    paths_0 = [[start_node_index]] #lista in cui al termine avrò tutti i cammini
-    n = adj_matrix.shape[0]
-    
-    #Risalgo su tutti i possibili cammini finchè tutti non sono terminati (i nodi non hanno genitori)
-    while not all(v[-1] == '$' for v in paths_0):
-        new_paths_0 = [] #lista in cui salverò i cammini estesi con i parent dell'ultimo nodo
-        remove_paths_0 = [] # lista in cui salverò tutti i cammini che verranno estesi poichè sono da rimuovere
-        for path in paths_0: #Per ogni cammino trovato finora....
-            if path[-1] != '$': #Controllo che il cammino non sia già terminato
-                base_path = path[:] #Salvo il cammino fino al punto in cui sono arrivato
-                path.append('$') #Termino il cammino, se non lo estenderò avrò terminato questo cammino altrimenti la sentinella verrà tolta poi
-                parents = [row for row in range(n) if adj_matrix[row, path[-2]] == 1] #cerco tutti i parent dell'ultimo nodo del cammino
-                if parents != []: #Se l'ultimo nodo ha almeno un parent...
-                    remove_paths_0.append(path) #Estenderò il cammino quindi lo dovrò togliere dalla lista dei cammini finale per non avere un prefisso(inutile) di un cammino completo
-                    for parent in parents: #Per ogni parent dell'ultimo nodo...
-                        base_path.append(parent) #Aggiungo il parent al cammino a cui ero arrivato finora
-                        new_paths_0.append(base_path) #Salvo il nuovo cammino nella lista temporanea dei cammini
-                        base_path = base_path[:-1] #Rimuovo l'ultimo parent inserito, se ho altri parent avrò una biforcazione del cammino
-        paths_0 = [x for x in paths_0 if not x in remove_paths_0] #Rimuovo i prefissi dei cammini che ho esteso lasciando solo quelli che sono già terminati
-        paths_0.extend(new_paths_0) #Aggiungo i cammini che ho esteso a quelli terminati 
-    return paths_0
-
-
-def triangulate_tree(graph: Graph) -> Graph:
-    
-    A = graph.get_adjacency_matrix()    
-    out = np.zeros(A.shape, dtype=bool)
-    new_edges = []
-
-    print("nodes:")
-    print(graph.get_nodes())
-    _moralize(A, out, new_edges)
-
-    print("new edges: ")
-    print(new_edges)
-
-    #search for cycles with lenght >3
-    for elem in new_edges:
-        print("########################################")
-        _find_cycle_tree(A, elem[0], elem[1])
-        
-
-
-def _find_cycle_tree(adj_matrix: np.ndarray, node_0: int, node_1: int) -> list:
+def _find_cycle(adj_matrix: np.ndarray, node_0: int, node_1: int) -> list:
 
     n = adj_matrix.shape[0]
     prefix_tree = Prefix_tree([], np.zeros(shape=(0,0)))
 
+    #prefix_tree = _build_tree(node_0, prefix_tree, False, adj_matrix)
+    #prefix_tree = _build_tree(node_1, prefix_tree, True, adj_matrix)
+
+    #Costruzione prefix tree partendo dal primo nodo
     prefix_tree.add_node(node_0)
     leafs = [node_0]
     while leafs != []:
@@ -132,6 +65,7 @@ def _find_cycle_tree(adj_matrix: np.ndarray, node_0: int, node_1: int) -> list:
         leafs = [x for x in leafs if not x in old_leafs]
         leafs.extend(new_leafs)
 
+    #Costruzione prefix tree partendo dal secondo nodo
     prefix_tree.add_node(node_1)
     leafs = [node_1]
     while leafs != []:
@@ -140,21 +74,74 @@ def _find_cycle_tree(adj_matrix: np.ndarray, node_0: int, node_1: int) -> list:
         for leaf in leafs:
             for row in range(n):
                 if adj_matrix[row, leaf] == 1:
+                    #Trovato il nodo in comune costruisco il ciclo e lo ritorno senza continuare la costruzione
                     if row in prefix_tree.get_nodes():
-                        print(row)
-                        pass
-                    else: 
                         prefix_tree.add_node(row)
-                        prefix_tree.add_edge(leaf, row)
+                        prefix_tree.add_edge(row, leaf)
+                        new_leafs.append(row)
+                        return _build_cycle_path(prefix_tree, row)
+
+                    prefix_tree.add_node(row)
+                    prefix_tree.add_edge(row, leaf)
+                    new_leafs.append(row)              
+            old_leafs.add(leaf)
+        leafs = [x for x in leafs if not x in old_leafs]
+        leafs.extend(new_leafs)
+            
+    return []
+
+
+def _build_cycle_path(prefix_tree: Prefix_tree, root: int) -> List:
+    
+    adj_matrix = prefix_tree.get_adjacency_matrix() 
+    n = adj_matrix.shape[0]
+    root = prefix_tree.get_nodes().index(root)
+
+    childs = ['','']
+    first_part = [root]
+    second_part = [root]
+
+    while first_part[-1] != '$' and second_part[-1] != '$':
+        childs[0] = '$'
+        childs[1] = '$'
+        for row in range(n):
+            if adj_matrix[first_part[-1], row] == 1:
+                childs[0] = row
+            if adj_matrix[second_part[-1], row] == 1:
+                childs[1] = row       
+        first_part.append(childs[0])
+        second_part.append(childs[1])
+
+    
+    cycles = first_part[:-1] #Metto la prima parte togliendo il terminatore $
+    second_part.reverse() 
+    cycles.extend(second_part[1:]) #Concateno la seconda parte togliendo il terminatore $
+    # Mappo dagli indici del prefix tree agli indici del grafo da triangolare
+    return [prefix_tree.get_nodes()[node] for node in cycles]  
+       
+
+def _build_tree(start_node: int, prefix_tree: Prefix_tree, early_stop: bool, adj_matrix: np.ndarray):    
+    n = adj_matrix.shape[0]
+    
+    prefix_tree.add_node(start_node)
+    leafs = [start_node]
+    while leafs != []:
+        new_leafs = []
+        old_leafs = set()
+        for leaf in leafs:
+            for row in range(n):
+                if adj_matrix[row, leaf] == 1:
+                    if early_stop and row in prefix_tree.get_nodes():
+                        print(row)
+                    else:
+                        prefix_tree.add_node(row)
+                        prefix_tree.add_edge(row, leaf)
                         new_leafs.append(row)
             old_leafs.add(leaf)
         leafs = [x for x in leafs if not x in old_leafs]
-        leafs.extend(new_leafs)       
-            
-    plot_prefix_tree(prefix_tree)
+        leafs.extend(new_leafs)
+    return prefix_tree
 
-
-    return 
 
 def _moralize(A, out,new_edges: List):
        
