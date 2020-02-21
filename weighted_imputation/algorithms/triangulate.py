@@ -28,7 +28,6 @@ def triangulate(graph: Graph, moralized_graph: Graph, new_edges: np.ndarray) -> 
                 adj_matrix_after[edge[0], edge[1]] = True
                 adj_matrix_after[edge[1], edge[0]] = True
 
-    plot_graph(Graph(graph.get_nodes(), adj_matrix_after))
     return Graph(graph.get_nodes(), adj_matrix_after)
 
 def _find_cycle(adj_matrix: np.ndarray, node_0: int, node_1: int) -> list:
