@@ -8,6 +8,7 @@ def triangulate(graph: Graph) -> Graph:
 
     #TEST STRING "[1][8][2|1:8][5|1][6|5][3|2][4|2][7|3:4:6]"
     #TEST STRING ESTESA "[1][8|9][2|1:8:10][5|1][6|5][3|2][4|2][7|3:4:6]"
+    #TEST STRING ESTESA 2 "[1][8|9][11|1][2|1:8:10][5|11][6|5][3|2][4|2][7|3:4:6]"
     
     A = graph.get_adjacency_matrix()    
     out = np.zeros(A.shape, dtype=bool)
@@ -97,22 +98,27 @@ def _build_cycle_path(prefix_tree: PrefixTree, root: int) -> List:
     n = adj_matrix.shape[0]
     root = prefix_tree.get_nodes().index(root)
 
-    childs = ['','']
-    first_part = [root]
-    second_part = [root]
+    for row in range(n):
+        if adj_matrix[root, row] == 1:
+            child = row
+            break
 
-    while first_part[-1] != '$' and second_part[-1] != '$':
+    first_part = [root, child]
+    second_part = [root]
+    childs = ['', '']
+    while not (first_part[-1] == '$' and second_part[-1] == '$'):
         childs[0] = '$'
         childs[1] = '$'
         for row in range(n):
-            if adj_matrix[first_part[-1], row] == 1:
+            if first_part[-1] != '$' and adj_matrix[first_part[-1], row] == 1:
                 childs[0] = row
-            if adj_matrix[second_part[-1], row] == 1:
+            if second_part[-1] != '$' and adj_matrix[second_part[-1], row] == 1:
                 childs[1] = row       
-        first_part.append(childs[0])
-        second_part.append(childs[1])
+        if first_part[-1] != '$':
+            first_part.append(childs[0])
+        if second_part[-1] != '$':
+            second_part.append(childs[1])
 
-    
     cycles = first_part[:-1] #Metto la prima parte togliendo il terminatore $
     second_part.reverse() 
     cycles.extend(second_part[1:]) #Concateno la seconda parte togliendo il terminatore $
