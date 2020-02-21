@@ -1,7 +1,7 @@
 import numpy as np
 from typing import List
 
-class Prefix_tree():
+class PrefixTree():
 
     _nodes: List[int]
     _adjacency_matrix: np.ndarray

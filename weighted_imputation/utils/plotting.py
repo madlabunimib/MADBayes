@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt 
 import networkx as nx 
 from ..utils import transform
-from ..structure import Graph, Prefix_tree
+from ..structure import Graph, PrefixTree
 
 
 def plot_graph(graph: Graph) -> None:
@@ -12,7 +12,7 @@ def plot_networkx_graph(G: nx.Graph) -> None:
     nx.draw(G, with_labels = True)
     plt.show()
 
-def plot_prefix_tree(g: Prefix_tree) -> None:
+def plot_prefix_tree(g: PrefixTree) -> None:
     g = transform.prefix_tree_to_networkx(g)
     nx.draw(g, with_labels = True)
     plt.show()

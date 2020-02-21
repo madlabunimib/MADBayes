@@ -1,5 +1,5 @@
 import numpy as np
-from ..structure import Graph, Prefix_tree
+from ..structure import Graph, PrefixTree
 from ..utils import plot_graph, plot_prefix_tree
 from typing import List
 
@@ -44,7 +44,7 @@ def _break_cycle(cycle: List) -> List:
 def _find_cycle(adj_matrix: np.ndarray, node_0: int, node_1: int) -> list:
 
     n = adj_matrix.shape[0]
-    prefix_tree = Prefix_tree([], np.zeros(shape=(0,0)))
+    prefix_tree = PrefixTree([], np.zeros(shape=(0,0)))
 
     #prefix_tree = _build_tree(node_0, prefix_tree, False, adj_matrix)
     #prefix_tree = _build_tree(node_1, prefix_tree, True, adj_matrix)
@@ -91,7 +91,7 @@ def _find_cycle(adj_matrix: np.ndarray, node_0: int, node_1: int) -> list:
     return []
 
 
-def _build_cycle_path(prefix_tree: Prefix_tree, root: int) -> List:
+def _build_cycle_path(prefix_tree: PrefixTree, root: int) -> List:
     
     adj_matrix = prefix_tree.get_adjacency_matrix() 
     n = adj_matrix.shape[0]
@@ -120,7 +120,7 @@ def _build_cycle_path(prefix_tree: Prefix_tree, root: int) -> List:
     return [prefix_tree.get_nodes()[node] for node in cycles]  
        
 
-def _build_tree(start_node: int, prefix_tree: Prefix_tree, early_stop: bool, adj_matrix: np.ndarray):    
+def _build_tree(start_node: int, prefix_tree: PrefixTree, early_stop: bool, adj_matrix: np.ndarray):    
     n = adj_matrix.shape[0]
     
     prefix_tree.add_node(start_node)

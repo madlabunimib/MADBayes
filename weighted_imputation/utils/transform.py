@@ -1,7 +1,7 @@
 import networkx as nx
-from ..structure import Graph, Prefix_tree
+from ..structure import Graph, PrefixTree
 
-def prefix_tree_to_networkx(graph: Prefix_tree) -> nx.Graph:
+def prefix_tree_to_networkx(graph: PrefixTree) -> nx.Graph:
     mapping = {
         k:v
         for k,v in enumerate(graph.get_nodes())
