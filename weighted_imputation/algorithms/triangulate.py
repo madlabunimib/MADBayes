@@ -4,97 +4,71 @@ from ..utils import plot_graph, plot_prefix_tree
 from typing import List
 
 
-def triangulate(graph: Graph) -> Graph:
-
-    #TEST STRING "[1][8][2|1:8][5|1][6|5][3|2][4|2][7|3:4:6]"
-    #TEST STRING ESTESA "[1][8|9][2|1:8:10][5|1][6|5][3|2][4|2][7|3:4:6]"
-    #TEST STRING ESTESA 2 "[1][8|9][11|1][2|1:8:10][5|11][6|5][3|2][4|2][7|3:4:6]"
-    
-    A = graph.get_adjacency_matrix()    
-    out = np.zeros(A.shape, dtype=bool)
-    new_edges = []
-
-    print("nodes:")
-    print(graph.get_nodes())
-    _moralize(A, out, new_edges)
-
-    print("new edges: ")
-    print(new_edges)
+def triangulate(graph: Graph, moralized_graph: Graph, new_edges: np.ndarray) -> Graph:
+    adj_matrix_before = graph.get_adjacency_matrix()
+    n = new_edges.shape[0]
+    new_edges = [
+        (i,j) 
+        for i in range(n) 
+        for j in range(n) 
+        if new_edges[i,j] == True]
 
     #search for cycles with lenght >3
+    cycles = []
     for elem in new_edges:
-        print("########################################")
-        print(_find_cycle(A, elem[0], elem[1]))
+        #We use the adj_matrix before moralization to take advantage of the oriented edges
+        cycles.append(_find_cycle(adj_matrix_before, elem[0], elem[1]))
 
+    adj_matrix_after = moralized_graph.get_adjacency_matrix()
+    #Triangolate cycles and add the new archs to the moralized adj_matrix
+    for cycle in cycles:
+        if len(cycle) > 4:
+            edges_to_add = _break_cycle(cycle)
+            for edge in edges_to_add:
+                adj_matrix_after[edge[0], edge[1]] = True
+                adj_matrix_after[edge[1], edge[0]] = True
 
-    return
-
-
-
-def _break_cycle(cycle: List) -> List:
-    new_archs = []
-    master_node = cycle[0]
-    cycle = cycle[2:-2]
-
-    for node in cycle:
-        new_archs.append((master_node, node))
-
-
-    return new_archs
+    plot_graph(Graph(graph.get_nodes(), adj_matrix_after))
+    return Graph(graph.get_nodes(), adj_matrix_after)
 
 def _find_cycle(adj_matrix: np.ndarray, node_0: int, node_1: int) -> list:
-
-    n = adj_matrix.shape[0]
+    #Create empty PrefixTree
     prefix_tree = PrefixTree([], np.zeros(shape=(0,0)))
+    #Insert first path from first node of the new edge
+    _build_tree(node_0, prefix_tree, adj_matrix)
+    #Insert second path from second node of the new edge
+    return _build_tree(node_1, prefix_tree, adj_matrix)
 
-    #prefix_tree = _build_tree(node_0, prefix_tree, False, adj_matrix)
-    #prefix_tree = _build_tree(node_1, prefix_tree, True, adj_matrix)
-
-    #Costruzione prefix tree partendo dal primo nodo
-    prefix_tree.add_node(node_0)
-    leafs = [node_0]
+def _build_tree(start_node: int, prefix_tree: PrefixTree, adj_matrix: np.ndarray) -> List:    
+    n = adj_matrix.shape[0]
+    prefix_tree.add_node(start_node)
+    leafs = [start_node]
     while leafs != []:
         new_leafs = []
         old_leafs = set()
         for leaf in leafs:
             for row in range(n):
                 if adj_matrix[row, leaf] == 1:
-                    prefix_tree.add_node(row)
-                    prefix_tree.add_edge(row, leaf)
-                    new_leafs.append(row)
-            old_leafs.add(leaf)
-        leafs = [x for x in leafs if not x in old_leafs]
-        leafs.extend(new_leafs)
-
-    #Costruzione prefix tree partendo dal secondo nodo
-    prefix_tree.add_node(node_1)
-    leafs = [node_1]
-    while leafs != []:
-        new_leafs = []
-        old_leafs = set()
-        for leaf in leafs:
-            for row in range(n):
-                if adj_matrix[row, leaf] == 1:
-                    #Trovato il nodo in comune costruisco il ciclo e lo ritorno senza continuare la costruzione
-                    if row in prefix_tree.get_nodes():
+                    #If we found a node that is already in the PrefixTree 
+                    # we have found the original fork and we can stop to search the
+                    # rest of paths 
+                    if  row in prefix_tree.get_nodes():
                         prefix_tree.add_node(row)
                         prefix_tree.add_edge(row, leaf)
                         new_leafs.append(row)
+                        #We can build the cycle starting from the fork node
                         return _build_cycle_path(prefix_tree, row)
-
-                    prefix_tree.add_node(row)
-                    prefix_tree.add_edge(row, leaf)
-                    new_leafs.append(row)              
+                    else:
+                        prefix_tree.add_node(row)
+                        prefix_tree.add_edge(row, leaf)
+                        new_leafs.append(row)
             old_leafs.add(leaf)
         leafs = [x for x in leafs if not x in old_leafs]
         leafs.extend(new_leafs)
-            
     return []
 
-
 def _build_cycle_path(prefix_tree: PrefixTree, root: int) -> List:
-    
-    adj_matrix = prefix_tree.get_adjacency_matrix() 
+    adj_matrix = prefix_tree.get_adjacency_matrix()
     n = adj_matrix.shape[0]
     root = prefix_tree.get_nodes().index(root)
 
@@ -113,53 +87,22 @@ def _build_cycle_path(prefix_tree: PrefixTree, root: int) -> List:
             if first_part[-1] != '$' and adj_matrix[first_part[-1], row] == 1:
                 childs[0] = row
             if second_part[-1] != '$' and adj_matrix[second_part[-1], row] == 1:
-                childs[1] = row       
+                childs[1] = row
         if first_part[-1] != '$':
             first_part.append(childs[0])
         if second_part[-1] != '$':
             second_part.append(childs[1])
 
     cycles = first_part[:-1] #Metto la prima parte togliendo il terminatore $
-    second_part.reverse() 
+    second_part.reverse()
     cycles.extend(second_part[1:]) #Concateno la seconda parte togliendo il terminatore $
     # Mappo dagli indici del prefix tree agli indici del grafo da triangolare
-    return [prefix_tree.get_nodes()[node] for node in cycles]  
-       
+    return [prefix_tree.get_nodes()[node] for node in cycles]
 
-def _build_tree(start_node: int, prefix_tree: PrefixTree, early_stop: bool, adj_matrix: np.ndarray):    
-    n = adj_matrix.shape[0]
-    
-    prefix_tree.add_node(start_node)
-    leafs = [start_node]
-    while leafs != []:
-        new_leafs = []
-        old_leafs = set()
-        for leaf in leafs:
-            for row in range(n):
-                if adj_matrix[row, leaf] == 1:
-                    if early_stop and row in prefix_tree.get_nodes():
-                        print(row)
-                    else:
-                        prefix_tree.add_node(row)
-                        prefix_tree.add_edge(row, leaf)
-                        new_leafs.append(row)
-            old_leafs.add(leaf)
-        leafs = [x for x in leafs if not x in old_leafs]
-        leafs.extend(new_leafs)
-    return prefix_tree
-
-
-def _moralize(A, out,new_edges: List):
-       
-    n = A.shape[0]
-    for columns in range(n):
-        parents = A.T[columns]
-        indexes = np.nonzero(parents)[0].T
-        for i in indexes:
-            for j in indexes:
-                if i != j:
-                    out[i, j] = True
-                    if i < j:
-                        new_edges.append((i,j))
-    np.bitwise_or(A, out, out)
-    np.bitwise_or(out, out.T, out)
+def _break_cycle(cycle: List) -> List:
+    new_archs = []
+    master_node = cycle[0]
+    cycle = cycle[2:-2] #Remove the master node and the adjacent nodes
+    for node in cycle:
+        new_archs.append((master_node, node))
+    return new_archs
