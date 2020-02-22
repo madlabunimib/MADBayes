@@ -116,6 +116,12 @@ class Graph():
         G = nx.DiGraph(self.get_adjacency_matrix())
         G = nx.relabel_nodes(G, mapping)
         return G
+
+    def to_networkx_undirected(self) -> nx.Graph:
+        mapping = {k:v for k,v in enumerate(self.get_nodes())}
+        G = nx.Graph(self.get_adjacency_matrix())
+        G = nx.relabel_nodes(G, mapping)
+        return G
     
     @classmethod
     def from_networkx(cls, G: nx.Graph) -> "Graph":
