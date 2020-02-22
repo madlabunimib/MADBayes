@@ -10,10 +10,10 @@ class Graph():
     _adjacency_matrix: pd.DataFrame
 
     def __init__(self, nodes: List[str] = None, adjacency_matrix: np.ndarray = None) -> None:
-        if adjacency_matrix is not None:
-            self.set_adjacency_matrix(adjacency_matrix)
         if nodes is not None:
             self.set_nodes(nodes)
+        if adjacency_matrix is not None:
+            self.set_adjacency_matrix(adjacency_matrix)
         if nodes is None and adjacency_matrix is None:
             self._adjacency_matrix = pd.DataFrame(dtype=bool)
 
