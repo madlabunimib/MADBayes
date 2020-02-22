@@ -111,6 +111,10 @@ class Graph():
     def __repr__(self):
         return str(self._adjacency_matrix)
     
+    def is_undirected(self) -> bool:
+        adjacency_matrix = self.get_adjacency_matrix()
+        return np.allclose(adjacency_matrix, adjacency_matrix.T)
+    
     def to_networkx(self) -> nx.Graph:
         mapping = {k:v for k,v in enumerate(self.get_nodes())}
         G = nx.DiGraph(self.get_adjacency_matrix())
