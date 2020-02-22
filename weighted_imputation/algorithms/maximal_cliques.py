@@ -17,7 +17,6 @@ def maximal_cliques(graph: Graph) -> List:
 def _neighbor_set(adjacency_matrix: np.ndarray, node: int) -> Set[int]:
     return set(np.argwhere(adjacency_matrix[node]).T[0])
 
-# Reference function: networkx.algorithms.clique.find_cliques
 def _bron_kerbosh(adjacency_matrix: np.ndarray, A: Set[int], B: Set[int], C: Set[int]) -> List:
     if len(B) == 0 and len(C) == 0:
         return [A]
