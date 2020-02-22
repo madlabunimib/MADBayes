@@ -21,8 +21,6 @@ class Graph():
         return list(self._adjacency_matrix.index.values)
     
     def set_nodes(self, nodes: List[str]) -> "Graph":
-        # Sorting nodes before using them
-        nodes = sorted(nodes)
         try:
             if self._adjacency_matrix.shape[0] != len(nodes):
                 raise Exception('nodes must have the same length of adjacent_matrix.')
@@ -83,8 +81,6 @@ class Graph():
     def add_node(self, node: str) -> "Graph":
         self._adjacency_matrix.loc[node, :] = False
         self._adjacency_matrix.loc[:, node] = False
-        self._adjacency_matrix.sort_index(axis=0, inplace=True)
-        self._adjacency_matrix.sort_index(axis=1, inplace=True)
         return self
 
     def remove_node(self, node: str) -> "Graph":
@@ -147,7 +143,7 @@ class Graph():
         for parent, child in edges:
             nodes.add(parent)
             nodes.add(child)
-        nodes = list(nodes)
+        nodes = sorted(nodes)
         graph = cls(nodes)
         for parent, child in edges:
             graph.add_edge(parent, child)
