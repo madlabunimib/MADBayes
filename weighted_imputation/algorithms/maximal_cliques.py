@@ -19,14 +19,17 @@ def _neighbor_set(adjacency_matrix: np.ndarray, node: int) -> Set[int]:
 
 # Reference function: networkx.algorithms.clique.find_cliques
 def _bron_kerbosh(adjacency_matrix: np.ndarray, A: Set[int], B: Set[int], C: Set[int]) -> List:
-    #   if B and C are empty:
-    #       return A
-    #   foreach node in B do:
-    #       _bron_kerbosh(
-    #           union(A, {node}),
-    #           intersect(B, _neighbor_set(adjacency_matrix, node)),
-    #           intersect(C, _neighbor_set(adjacency_matrix, node))
-    #       )
-    #       B := difference(B, {node})
-    #       C := union(C, {node})
-    pass
+    if len(B) == 0 and len(C) == 0:
+        return [A]
+    result = []
+    for node in B.copy():
+        neighbor_set = _neighbor_set(adjacency_matrix, node)
+        result += _bron_kerbosh(
+            adjacency_matrix,
+            A.union({node}),
+            B.intersection(neighbor_set),
+            C.intersection(neighbor_set)
+        )
+        B = B.difference({node})
+        C = C.union({node})
+    return result
