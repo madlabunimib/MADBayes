@@ -1,5 +1,6 @@
 .vscode
 .spyproject
+.ipynb_checkpoints
 __pycache__
-*.ipynb
 demo.py
+demo.ipynb
