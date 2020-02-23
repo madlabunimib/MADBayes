@@ -16,7 +16,7 @@ def maximal_cliques(graph: Graph) -> List:
     return maximal_cliques
 
 # Initialize jitted version of _bron_kerbosh by using empty typed sets
-@njit
+@njit(cache=True)
 def _maximal_cliques(adjacency_matrix: np.ndarray, nodes_indexes: List[int]) -> List:
     A = set([0 for _ in range(0)])
     B = set(nodes_indexes)

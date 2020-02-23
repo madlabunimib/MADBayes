@@ -16,7 +16,7 @@ def moralize(graph: Graph, force_parallel: bool = False, return_new_edges: bool 
     return moral_graph
 
 
-@njit
+@njit(cache=True)
 def _moralize(A, out):
     n = A.shape[0]
     for columns in range(n):
