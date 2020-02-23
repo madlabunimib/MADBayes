@@ -2,6 +2,7 @@ import re
 import numpy as np
 import pandas as pd
 import networkx as nx
+import matplotlib.pyplot as plt
 from typing import List, Dict
 
 
@@ -106,6 +107,11 @@ class Graph():
 
     def __repr__(self):
         return str(self._adjacency_matrix)
+    
+    def plot(self) -> None:
+        G = self.to_networkx()
+        nx.draw(G, with_labels=True)
+        plt.show()
     
     def to_networkx(self) -> nx.Graph:
         mapping = {k:v for k,v in enumerate(self.get_nodes())}
