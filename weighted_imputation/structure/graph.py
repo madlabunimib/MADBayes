@@ -52,7 +52,9 @@ class Graph():
         if adjacency_matrix.shape[0] != adjacency_matrix.shape[1]:
             raise Exception('adjacency_matrix must be a square matrix.')
         if adjacency_matrix.dtype != bool:
-            raise Exception('adjacency_matrix must be a boolean matrix.')        
+            raise Exception('adjacency_matrix must be a boolean matrix.')
+        # Remove edges directions
+        adjacency_matrix = np.bitwise_or(adjacency_matrix, adjacency_matrix.T)
         try:
             if self._adjacency_matrix.shape != adjacency_matrix.shape:
                 raise Exception('adjacency_matrix must have the same shape of current matrix.')
@@ -92,32 +94,20 @@ class Graph():
         if parent not in self._adjacency_matrix or child not in self._adjacency_matrix:
             raise Exception('parent and child nodes must be in adjacency_matrix before adding edge.')
         self._adjacency_matrix.loc[parent, child] = True
-        if undirected:
-            self._adjacency_matrix.loc[child, parent] = True
+        self._adjacency_matrix.loc[child, parent] = True
         return self
 
-    def remove_edge(self, parent: str, child: str, undirected: bool = False) -> "Graph":
+    def remove_edge(self, parent: str, child: str) -> "Graph":
         if parent not in self._adjacency_matrix or child not in self._adjacency_matrix:
             raise Exception('parent and child nodes must be in adjacency_matrix before removing edge.')
         self._adjacency_matrix.loc[parent, child] = False
-        if undirected:
-            self._adjacency_matrix.loc[child, parent] = False
+        self._adjacency_matrix.loc[child, parent] = False
         return self
 
     def __repr__(self):
         return str(self._adjacency_matrix)
     
-    def is_undirected(self) -> bool:
-        adjacency_matrix = self.get_adjacency_matrix()
-        return np.allclose(adjacency_matrix, adjacency_matrix.T)
-    
     def to_networkx(self) -> nx.Graph:
-        mapping = {k:v for k,v in enumerate(self.get_nodes())}
-        G = nx.DiGraph(self.get_adjacency_matrix())
-        G = nx.relabel_nodes(G, mapping)
-        return G
-
-    def to_networkx_undirected(self) -> nx.Graph:
         mapping = {k:v for k,v in enumerate(self.get_nodes())}
         G = nx.Graph(self.get_adjacency_matrix())
         G = nx.relabel_nodes(G, mapping)
@@ -128,9 +118,36 @@ class Graph():
         nodes = [str(node) for node in G.nodes]
         adjacent_matrix = nx.to_numpy_array(G).astype(bool)
         return cls(nodes, adjacent_matrix)
+
+
+class DirectedGraph(Graph):
+
+    def __init__(self, nodes: List[str] = None, adjacency_matrix: np.ndarray = None) -> None:
+        super().__init__(nodes, adjacency_matrix)
+    
+    def add_edge(self, parent: str, child: str, undirected: bool = False) -> "DirectedGraph":
+        if parent not in self._adjacency_matrix or child not in self._adjacency_matrix:
+            raise Exception('parent and child nodes must be in adjacency_matrix before adding edge.')
+        self._adjacency_matrix.loc[parent, child] = True
+        return self
+
+    def remove_edge(self, parent: str, child: str) -> "DirectedGraph":
+        if parent not in self._adjacency_matrix or child not in self._adjacency_matrix:
+            raise Exception('parent and child nodes must be in adjacency_matrix before removing edge.')
+        self._adjacency_matrix.loc[parent, child] = False
+        return self
+    
+    def to_undirected(self) -> "Graph":
+        return Graph(self.get_nodes(), self.get_adjacency_matrix())
+    
+    def to_networkx(self) -> nx.Graph:
+        mapping = {k:v for k,v in enumerate(self.get_nodes())}
+        G = nx.DiGraph(self.get_adjacency_matrix())
+        G = nx.relabel_nodes(G, mapping)
+        return G
     
     @classmethod
-    def from_string(cls, string: str) -> "Graph":
+    def from_string(cls, string: str) -> "DirectedGraph":
         pattern = re.compile(r"\[(\w*)(?:\|(\w+[:\w+]*)){0,1}\]")
         edges = re.findall(pattern, string)
         edges = [
