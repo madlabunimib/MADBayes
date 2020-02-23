@@ -1,10 +1,12 @@
 import numpy as np
-from numba import njit, types
+from numba import njit
 from typing import List, Set
 from ..structure import Graph
 
 
 def maximal_cliques(graph: Graph) -> List:
+    if not isinstance(graph, Graph):
+        raise Exception('graph must be istance of Graph class.')
     nodes = graph.get_nodes()
     nodes_indexes = [i for i, _ in enumerate(nodes)]
     adjacency_matrix = graph.get_adjacency_matrix()
