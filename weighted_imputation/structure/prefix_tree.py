@@ -67,6 +67,6 @@ class PrefixTree():
         return G
 
     def plot(self) -> None:
-        g = prefix_tree_to_networkx(g)
-        nx.draw(g, with_labels = True)
+        G = self.to_networkx()
+        nx.draw(G, with_labels = True)
         plt.show()
