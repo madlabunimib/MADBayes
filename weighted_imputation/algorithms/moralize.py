@@ -1,9 +1,11 @@
 import numpy as np
 from numba import njit, prange
-from ..structure import Graph
+from ..structure import Graph, DirectedGraph
 
 
-def moralize(graph: Graph, force_parallel: bool = False, return_new_edges: bool = False) -> Graph:
+def moralize(graph: DirectedGraph, force_parallel: bool = False, return_new_edges: bool = False) -> Graph:
+    if not isinstance(graph, DirectedGraph):
+        raise Exception('graph must be istance of DirectedGraph class.')
     A = graph.get_adjacency_matrix()
     new_edges = np.zeros(A.shape, dtype=bool)
     if not force_parallel and A.shape[0] < 50:

@@ -125,6 +125,38 @@ class DirectedGraph(Graph):
     def __init__(self, nodes: List[str] = None, adjacency_matrix: np.ndarray = None) -> None:
         super().__init__(nodes, adjacency_matrix)
     
+    def set_adjacency_matrix(self, adjacency_matrix: np.ndarray) -> "Graph":
+        if len(adjacency_matrix.shape) != 2:
+            raise Exception('adjacency_matrix must be a 2D matrix.')
+        if adjacency_matrix.shape[0] != adjacency_matrix.shape[1]:
+            raise Exception('adjacency_matrix must be a square matrix.')
+        if adjacency_matrix.dtype != bool:
+            raise Exception('adjacency_matrix must be a boolean matrix.')
+        try:
+            if self._adjacency_matrix.shape != adjacency_matrix.shape:
+                raise Exception('adjacency_matrix must have the same shape of current matrix.')
+            else:
+                # If the adjacency_matrix is already defined and has the same
+                # shape of the new adjacency_matrix, create a new matrix using
+                # the new data and keeping the previous node names
+                nodes = self.get_nodes()
+                self._adjacency_matrix = pd.DataFrame(
+                    data=adjacency_matrix,
+                    index=nodes,
+                    columns=nodes,
+                    dtype=bool,
+                    copy=True
+                )
+        except AttributeError:
+            # If there is no adjacency_matrix, create a new one without specify
+            # the labels of the nodes
+            self._adjacency_matrix = pd.DataFrame(
+                data=adjacency_matrix,
+                dtype=bool,
+                copy=True
+            )
+        return self
+    
     def add_edge(self, parent: str, child: str, undirected: bool = False) -> "DirectedGraph":
         if parent not in self._adjacency_matrix or child not in self._adjacency_matrix:
             raise Exception('parent and child nodes must be in adjacency_matrix before adding edge.')
