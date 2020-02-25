@@ -4,4 +4,4 @@
 __pycache__
 demo.py
 demo.ipynb
-qstriang.ipynb
+*.ipynb
