@@ -1,3 +1,3 @@
-from .algorithms import moralize, triangulate, bfs, maximal_cliques
+from .algorithms import moralize, triangulate, bfs, find_connected_component_of_set, maximal_cliques
 from .structure import Graph, PrefixTree
 from .utils import plot_graph, plot_networkx_graph, plot_prefix_tree, prefix_tree_to_networkx
