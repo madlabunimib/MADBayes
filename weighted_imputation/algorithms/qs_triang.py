@@ -1,14 +1,49 @@
 import numpy as np
 from ..structure import Graph, PrefixTree
 from ..utils import plot_graph
-from typing import List, Set
+from typing import List, Set, Dict
 from queue import Queue
 
+
+def triangulate_graph(graph: Graph) -> Graph:
+    quasi_split_graph_dict = find_quasi_split_graph(graph)
+
+    edges_to_add = []
+    for elem in quasi_split_graph_dict:
+        edges_to_add.extend(min_qs(elem))
+
+    for edge in edges_to_add:
+        graph.add_edge(edge[0], edge[1])
+
+    plot_graph(graph)
+    return graph
+
+#Return the list of edges to triangulate the quasi-split graph
+def min_qs(quasi_split_graph_dict: Dict) -> List:
+    adj_matrix = quasi_split_graph_dict["quasi_split_graph"].get_adjacency_matrix()
+    nodes = quasi_split_graph_dict["quasi_split_graph"].get_nodes()
+    Q = {nodes.index(node) for node in quasi_split_graph_dict["Q"]}
+    P = {nodes.index(node) for node in quasi_split_graph_dict["P"]}
+
+    neighborhood_in_p = []
+    for v in Q:
+        neighborhood_in_p.append((v, len(_get_neighborhood(adj_matrix, v) & P)))
+    Q = {elem[0] for elem in sorted(neighborhood_in_p, key=lambda tup: tup[1])}
+
+    D = []
+    while Q != set():
+        v = Q.pop()
+        D.extend(saturate_set(_get_neighborhood(adj_matrix, v)))
+        for row in range(adj_matrix.shape[0]):
+            adj_matrix[v, row] = False
+            adj_matrix[row, v] = False
+
+    return [(nodes[node[0]], nodes[node[1]]) for node in D] 
 
 # Q = node of the connected component 
 # P = neighborhood of Q
 # F = set of edges needed for saturation
-def find_quasi_split_graph(graph: Graph) -> List[Graph]:
+def find_quasi_split_graph(graph: Graph) -> Dict:
     quasi_split_graph_list = []
     #For each node compute the distance from a (random) source node whit BFS 
     set_at_distance_l_from_s = bfs(graph, 0) # 0 is for the first node in the set, it is a random choice
@@ -46,12 +81,16 @@ def find_quasi_split_graph(graph: Graph) -> List[Graph]:
                 adj_matrix[nodes.index(edge_0), nodes.index(edge_1)] = True
             #Create the graph and add to the quasi-split graph list
             quasi_split_graph = Graph(nodes, adj_matrix)
-            quasi_split_graph_list.append(quasi_split_graph)
+            quasi_split_graph_list.append({
+                "quasi_split_graph": quasi_split_graph,
+                "P": [graph.get_nodes()[node_index] for node_index in P],
+                "Q": [graph.get_nodes()[node_index] for node_index in Q]
+                })
 
         #Add the saturation edges at the graph
         for edge in F:
-            graph.add_edge(edge[0], edge[1])
-            graph.add_edge(edge[1], edge[0])
+            graph.add_edge(graph.get_nodes()[edge[0]], graph.get_nodes()[edge[1]])
+            graph.add_edge(graph.get_nodes()[edge[1]], graph.get_nodes()[edge[0]])
 
     return quasi_split_graph_list
 
