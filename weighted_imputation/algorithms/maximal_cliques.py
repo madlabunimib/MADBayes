@@ -1,7 +1,7 @@
 import numpy as np
 from numba import njit
 from typing import List, Set
-from ..structure import Graph
+from ..structures import Graph
 
 
 def maximal_cliques(graph: Graph) -> List:

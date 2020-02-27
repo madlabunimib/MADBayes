@@ -1,6 +1,6 @@
 import numpy as np
 from numba import njit, prange
-from ..structure import Graph, DirectedGraph
+from ..structures import Graph, DirectedGraph
 
 
 def moralize(graph: DirectedGraph, force_parallel: bool = False, return_new_edges: bool = False) -> Graph:
