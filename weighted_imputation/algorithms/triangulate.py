@@ -1,6 +1,5 @@
 import numpy as np
 from ..structure import Graph, PrefixTree
-from ..utils import plot_graph, plot_prefix_tree
 from typing import List, Dict
 
 

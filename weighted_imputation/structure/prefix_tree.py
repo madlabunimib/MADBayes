@@ -1,4 +1,6 @@
 import numpy as np
+import networkx as nx
+import matplotlib.pyplot as plt
 from typing import List
 
 class PrefixTree():
@@ -57,3 +59,14 @@ class PrefixTree():
             self._adjacency_matrix[self._nodes.index(parent), self._nodes.index(child)] = False
         else:
             raise Exception("int not in graph")
+    
+    def to_networkx(self) -> nx.Graph:
+        mapping = {k:v for k,v in enumerate(self.get_nodes())}
+        G = nx.DiGraph(self.get_adjacency_matrix())
+        G = nx.relabel_nodes(G, mapping)
+        return G
+
+    def plot(self) -> None:
+        G = self.to_networkx()
+        nx.draw(G, with_labels = True)
+        plt.show()
