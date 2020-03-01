@@ -1,5 +1,5 @@
 matplotlib
 networkx>=2.2
-numba>=0.47
+numba>=0.48
 numpy
 tbb

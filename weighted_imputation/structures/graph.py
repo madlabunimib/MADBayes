@@ -104,6 +104,9 @@ class Graph():
         self._adjacency_matrix.loc[parent, child] = False
         self._adjacency_matrix.loc[child, parent] = False
         return self
+    
+    def is_directed(self):
+        return False
 
     def __repr__(self):
         return str(self._adjacency_matrix)
@@ -174,6 +177,9 @@ class DirectedGraph(Graph):
             raise Exception('parent and child nodes must be in adjacency_matrix before removing edge.')
         self._adjacency_matrix.loc[parent, child] = False
         return self
+    
+    def is_directed(self):
+        return True
     
     def to_undirected(self) -> "Graph":
         return Graph(self.get_nodes(), self.get_adjacency_matrix())

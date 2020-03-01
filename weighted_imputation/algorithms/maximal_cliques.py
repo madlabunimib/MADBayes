@@ -1,7 +1,7 @@
 import numpy as np
 from numba import njit
 from typing import List, Set
-from ..structure import Graph
+from ..structures import Graph
 from ..utils import union, intersection, difference
 
 

@@ -1,3 +1,3 @@
 from .algorithms import moralize, triangulate, maximal_cliques
-from .structure import Graph, DirectedGraph, PrefixTree
-from .utils import union, intersection, difference
+from .structures import Graph, DirectedGraph
+from .utils import DFS, ST, RMQ, LCA, union, intersection, difference
