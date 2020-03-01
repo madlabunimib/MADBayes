@@ -123,39 +123,3 @@ def LCA(a: int, b: int, euler_tour: np.ndarray, sparse_table: np.ndarray) -> int
     if Fa > Fb:
         return RMQ(Fb, Fa, euler_tour, sparse_table)
     return RMQ(Fa, Fb, euler_tour, sparse_table)
-
-def find_cycles(graph: Graph) -> List:
-    adjacency_matrix = graph.get_adjacency_matrix()
-    dfs = DFS(graph)
-    times = dfs['times']
-    parents = dfs['parents']
-    return _find_cycles(adjacency_matrix, parents, graph.is_directed())
-
-@njit(cache=True)
-def _find_cycles(A: np.ndarray, parents: np.ndarray, is_directed: bool) -> List:
-    cycles = []
-    if not is_directed:
-        A = np.triu(A)
-    edges = np.argwhere(A)
-    n = edges.shape[0]
-    for k in range(n):
-        i, j = edges[k]
-        if i != parents[j] and j != parents[i]:
-            cycle = _find_cycle(i, j, parents)
-            cycles.append(cycle)
-    return cycles
-
-@njit
-def _find_cycle(a: int, b: int, parents: np.ndarray) -> List:
-    lca = []
-    while a != -1:
-        lca.append(a)
-        a = parents[a]
-    lca = lca[::-1]
-    cycle = []
-    while b not in lca:
-        cycle.append(b)
-        b = parents[b]
-    b = lca.index(b)
-    cycle += lca[b:] 
-    return cycle
