@@ -140,10 +140,9 @@ def _find_cycles(A: np.ndarray, parents: np.ndarray, is_directed: bool) -> List:
     n = edges.shape[0]
     for k in range(n):
         i, j = edges[k]
-        if A[i][j]:
-            if i != parents[j] and j != parents[i]:
-                cycle = _find_cycle(i, j, parents)
-                cycles.append(cycle)
+        if i != parents[j] and j != parents[i]:
+            cycle = _find_cycle(i, j, parents)
+            cycles.append(cycle)
     return cycles
 
 @njit
