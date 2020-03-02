@@ -65,8 +65,8 @@ def _ST(n: int, m: int, A: np.ndarray, out: np.ndarray) -> None:
 # Range Minimum Query
 @njit(cache=True)
 def RMQ(L: int, R: int, A: np.ndarray, sparse_table: np.ndarray) -> int:
-    j = int(log(R - L + 1)/log(2))
-    i = R - (1 << j) + 1
+    j = int(log(R - L)/log(2))
+    i = R - (1 << j)
     if A[sparse_table[L, j]] <= A[sparse_table[i, j]]:
         return A[sparse_table[L, j]]
     return A[sparse_table[i, j]]
