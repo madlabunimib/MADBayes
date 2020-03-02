@@ -4,7 +4,8 @@ import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
 from typing import List, Dict
-from ..algorithms import _parents, _family, _children, _neighbors, _boundary, _ancestors, _descendants
+from ..algorithms import _parents, _family, _children, _neighbors, _boundary
+from ..algorithms import _ancestors, _descendants, _numbering
 
 
 class Graph():
@@ -120,6 +121,12 @@ class Graph():
         boundary = _boundary(nodes, adjacency_matrix)
         boundary = [_nodes[bound] for bound in boundary]
         return boundary
+    
+    def numbering(self) -> np.ndarray:
+        nodes = self.get_nodes()
+        nodes = np.array(nodes)
+        numbering = _numbering(nodes)
+        return numbering
     
     def is_directed(self):
         return False

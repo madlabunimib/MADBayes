@@ -85,3 +85,10 @@ def _descendants_recursive(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
         )
     descendants = np.unique(descendants)
     return descendants
+
+@njit(cache=True)
+def _numbering(nodes: np.ndarray) -> np.ndarray:
+    # An array is ordered so that numbering(i) is
+    # actually the i-th nodes, using the array index
+    numbering = np.array(nodes, copy=True)
+    return numbering
