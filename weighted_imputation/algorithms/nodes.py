@@ -48,44 +48,42 @@ def _boundary(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
 
 @njit(cache=True)
 def _ancestors(node: int, A: np.ndarray) -> np.ndarray:
-    parents = np.array([node])
+    parents = _parents(node, A)
     ancestors = _ancestors_recursive(parents, A)
     return ancestors
 
 @njit(cache=True)
 def _ancestors_recursive(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
     n = len(nodes)
-    ancestors = np.array([0 for _ in range(0)])
+    ancestors = nodes
     if n == 0:
         return ancestors
-    if n == 1:
-        return _parents(nodes[0], A)
     for i in range(n):
+        parents = _parents(nodes[i], A)
         ancestors = np.append(
             ancestors,
-            _ancestors_recursive(nodes[i:i+1])
+            _ancestors_recursive(parents, A)
         )
     ancestors = np.unique(ancestors)
     return ancestors
 
 @njit(cache=True)
 def _descendants(node: int, A: np.ndarray) -> np.ndarray:
-    parents = np.array([node])
-    descendants = _descendants_recursive(parents, A)
+    children = _children(node, A)
+    descendants = _descendants_recursive(children, A)
     return descendants
 
 @njit(cache=True)
 def _descendants_recursive(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
     n = len(nodes)
-    descendants = np.array([0 for _ in range(0)])
+    descendants = nodes
     if n == 0:
         return descendants
-    if n == 1:
-        return _children(nodes[0], A)
     for i in range(n):
+        children = _children(nodes[i], A)
         descendants = np.append(
             descendants,
-            _descendants_recursive(nodes[i:i+1])
+            _descendants_recursive(children, A)
         )
     descendants = np.unique(descendants)
     return descendants
