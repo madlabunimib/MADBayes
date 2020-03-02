@@ -17,8 +17,8 @@
     - [ ] Is complete graph
     - [ ] Is connected graph
     - [ ] Is acyclic graph
-    - [ ] Numbering of a set of nodes
-    - [ ] Ancestral numbering
+    - [x] Numbering of a set of nodes
+    - [ ] Ancestral numbering (?)
     - [ ] Perfect numbering
     - [ ] Find loops in undirected graphs
     - [ ] Find cycles in directed graphs
