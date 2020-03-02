@@ -1,6 +1,5 @@
 import numpy as np
-from ..structure import Graph, PrefixTree
-from ..utils import plot_graph
+from ..structures import Graph
 from typing import List, Set, Dict
 from queue import Queue
 
@@ -15,7 +14,7 @@ def min_qs_triangulate(graph: Graph) -> Graph:
     for edge in edges_to_add:
         graph.add_edge(edge[0], edge[1])
 
-    plot_graph(graph)
+    graph.plot()
     return graph
 
 #Return the list of edges to triangulate the quasi-split graph
