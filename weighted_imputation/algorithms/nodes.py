@@ -28,6 +28,21 @@ def _neighbors(node: int, A: np.ndarray) -> np.ndarray:
     return neighbors
 
 @njit(cache=True)
+def _boundary(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
+    n = nodes.shape[0]
+    boundary = np.array([0 for _ in range(0)])
+    for i in range(n):
+        neighbors = _neighbors(nodes[i], A)
+        boundary = np.append(boundary, neighbors)
+    # Append node set to boundary
+    boundary = np.append(boundary, nodes)
+    # Remove node set from boundary selecting unique nodes
+    boundary = np.bincount(boundary)
+    boundary = np.nonzero(boundary == 1)[0]
+    boundary = boundary.T
+    return boundary
+
+@njit(cache=True)
 def _ancestors(node: int, A: np.ndarray) -> np.ndarray:
     parents = np.array([node])
     ancestors = _ancestors_recursive(parents, A)
