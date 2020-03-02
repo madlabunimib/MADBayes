@@ -3,15 +3,33 @@
 ## TODO List
 
 - [ ] Data structures
-    - [ ] Class graph
-        - [ ] Add remaning getters/setters
-- [ ] Load graph and parameters
-    - [x] Graph as Numpy binary matrix
-    - [ ] From/To Networkx istance
+    - [ ] Tree
+    - [ ] Polytree
+    - [ ] Multiply-Connected
+- [ ] Functions and algorithms
+    - [x] Parents of a node
+    - [x] Children of a node
+    - [x] Family of a node
+    - [x] Neighbors of a node
+    - [ ] Boundary of a set of nodes
+    - [ ] Ancestors of a node
+    - [ ] Descendants of a node
+    - [ ] Is complete graph
+    - [ ] Is connected graph
+    - [ ] Is acyclic graph
+    - [ ] Numbering of a set of nodes
+    - [ ] Ancestral numbering
+    - [ ] Perfect numbering
+    - [ ] Find loops in undirected graphs
+    - [ ] Find cycles in directed graphs
+    - [ ] Maximum Cardinality Search
+    - [ ] Maximum Cardinality Search Fill-In
+    - [ ] Running Intersection Property
+    - [ ] Chain of Cliques
 - [ ] Junction Tree Algorithm
     - [x] Moralize graph
-        - [x] Adjacency matrix operations as A or A.T or NewArcs
     - [ ] Triangulate graph
-    - [ ] Identify cliques
+        - [ ] Maximum Cardinality Search Fill-In
+    - [x] Maximal cliques
     - [ ] Build tree
     - [ ] Compute parameters
