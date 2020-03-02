@@ -94,6 +94,7 @@ def find_quasi_split_graph(graph: Graph) -> Dict:
 
     return quasi_split_graph_list
 
+# Every pair of edges between node set
 def saturate_set(set_nodes: Set) -> List:
     edges_to_add = []
     for node1 in set_nodes:
@@ -102,6 +103,7 @@ def saturate_set(set_nodes: Set) -> List:
                 edges_to_add.append((node1, node2))
     return edges_to_add
 
+# Connected component of node set
 def find_connected_component_of_set(graph: Graph, set_nodes: Set) -> Set:
     adj_matrix = graph.get_adjacency_matrix()
     queue = Queue(maxsize = 0) #infinity queue
@@ -123,6 +125,7 @@ def find_connected_component_of_set(graph: Graph, set_nodes: Set) -> Set:
         connected_components.append(connected_component)
     return connected_components
 
+# BFS return list of sets of nodes with same distance
 def bfs(graph: Graph, source_index: int) -> List[Set]:
     adj_matrix = graph.get_adjacency_matrix()
     graph_nodes = graph.get_nodes()
@@ -150,18 +153,13 @@ def bfs(graph: Graph, source_index: int) -> List[Set]:
 
     return distance_l_from_s
 
-def _get_neighborhood_of_set(adj_matrix: np.ndarray, set_nodes: Set) -> Set:
-    neighborhood = []
-    for node in set_nodes:
-        neighborhood.extend(_get_neighborhood(adj_matrix, node))
-    return set(neighborhood)
-
 def _get_neighborhood_of_set_in_subset(adj_matrix: np.ndarray, set_nodes: Set, subset: List) -> Set:
     neighborhood = []
     for node in set_nodes:
         neighborhood.extend(_get_neighborhood_in_subset(adj_matrix, node, subset))
     return set(neighborhood)
 
+# _neighbors
 def _get_neighborhood(adj_matrix: np.ndarray, parent_index: int) -> Set:
     neighbors = set()
     n = adj_matrix.shape[0]
