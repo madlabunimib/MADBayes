@@ -1,25 +1,25 @@
 import numpy as np
 from numba import njit
 
-@njit
+@njit(cache=True)
 def _parents(node: int, A: np.ndarray) -> np.ndarray:
     parents = A.T[node]
     parents = np.nonzero(parents)[0].T
     return parents
 
-@njit
+@njit(cache=True)
 def _family(node: int, A: np.ndarray) -> np.ndarray:
     parents = _parents(node, A)
     family = np.append(parents, [node])
     return family
 
-@njit
+@njit(cache=True)
 def _children(node: int, A: np.ndarray) -> np.ndarray:
     children = A[node]
     children = np.nonzero(children)[0].T
     return children
 
-@njit
+@njit(cache=True)
 def _neighbors(node: int, A: np.ndarray) -> np.ndarray:
     parents = _parents(node, A)
     children = _children(node, A)
@@ -27,13 +27,13 @@ def _neighbors(node: int, A: np.ndarray) -> np.ndarray:
     neighbors = np.unique(neighbors)
     return neighbors
 
-@njit
+@njit(cache=True)
 def _ancestors(node: int, A: np.ndarray) -> np.ndarray:
     parents = np.array([node])
     ancestors = _ancestors_recursive(parents, A)
     return ancestors
 
-@njit
+@njit(cache=True)
 def _ancestors_recursive(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
     n = nodes.shape[0]
     if n == 0:
@@ -49,12 +49,13 @@ def _ancestors_recursive(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
     ancestors = np.unique(ancestors)
     return ancestors
 
+@njit(cache=True)
 def _descendants(node: int, A: np.ndarray) -> np.ndarray:
     parents = np.array([node])
     descendants = _descendants_recursive(parents, A)
     return descendants
 
-@njit
+@njit(cache=True)
 def _descendants_recursive(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
     n = nodes.shape[0]
     if n == 0:
