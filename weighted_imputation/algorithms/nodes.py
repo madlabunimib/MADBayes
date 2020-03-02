@@ -26,3 +26,46 @@ def _neighbors(node: int, A: np.ndarray) -> np.ndarray:
     neighbors = np.append(parents, children)
     neighbors = np.unique(neighbors)
     return neighbors
+
+@njit
+def _ancestors(node: int, A: np.ndarray) -> np.ndarray:
+    parents = np.array([node])
+    ancestors = _ancestors_recursive(parents, A)
+    return ancestors
+
+@njit
+def _ancestors_recursive(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
+    n = nodes.shape[0]
+    if n == 0:
+        return nodes
+    if n == 1:
+        return _parents(nodes[0], A)
+    ancestors = np.array([0 for _ in range(0)])
+    for i in range(n):
+        ancestors = np.append(
+            ancestors,
+            _ancestors_recursive(nodes[i:i+1])
+        )
+    ancestors = np.unique(ancestors)
+    return ancestors
+
+def _descendants(node: int, A: np.ndarray) -> np.ndarray:
+    parents = np.array([node])
+    descendants = _descendants_recursive(parents, A)
+    return descendants
+
+@njit
+def _descendants_recursive(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
+    n = nodes.shape[0]
+    if n == 0:
+        return nodes
+    if n == 1:
+        return _children(nodes[0], A)
+    descendants = np.array([0 for _ in range(0)])
+    for i in range(n):
+        descendants = np.append(
+            descendants,
+            _descendants_recursive(nodes[i:i+1])
+        )
+    descendants = np.unique(descendants)
+    return descendants

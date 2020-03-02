@@ -12,8 +12,8 @@
     - [x] Family of a node
     - [x] Neighbors of a node
     - [ ] Boundary of a set of nodes
-    - [ ] Ancestors of a node
-    - [ ] Descendants of a node
+    - [x] Ancestors of a node
+    - [x] Descendants of a node
     - [ ] Is complete graph
     - [ ] Is connected graph
     - [ ] Is acyclic graph
