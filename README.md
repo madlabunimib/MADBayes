@@ -7,10 +7,10 @@
     - [ ] Polytree
     - [ ] Multiply-Connected
 - [ ] Functions and algorithms
-    - [ ] Parents of a node
-    - [ ] Childrens of a node
-    - [ ] Family of a node
-    - [ ] Neighbors of a node
+    - [x] Parents of a node
+    - [x] Children of a node
+    - [x] Family of a node
+    - [x] Neighbors of a node
     - [ ] Boundary of a set of nodes
     - [ ] Ancestors of a node
     - [ ] Descendants of a node

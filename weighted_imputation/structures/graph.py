@@ -4,6 +4,7 @@ import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
 from typing import List, Dict
+from ..algorithms import _parents, _family, _children, _neighbors
 
 
 class Graph():
@@ -44,8 +45,8 @@ class Graph():
             )
         return self
 
-    def get_adjacency_matrix(self) -> np.ndarray:
-        return self._adjacency_matrix.to_numpy(dtype=bool, copy=True)
+    def get_adjacency_matrix(self, copy: bool = True) -> np.ndarray:
+        return self._adjacency_matrix.to_numpy(dtype=bool, copy=copy)
     
     def set_adjacency_matrix(self, adjacency_matrix: np.ndarray) -> "Graph":
         if len(adjacency_matrix.shape) != 2:
@@ -104,6 +105,13 @@ class Graph():
         self._adjacency_matrix.loc[parent, child] = False
         self._adjacency_matrix.loc[child, parent] = False
         return self
+    
+    def neighbors(self, node: str) -> np.ndarray:
+        nodes = self.get_nodes()
+        adjacency_matrix = self.get_adjacency_matrix(copy=False)
+        neighbors = _neighbors(nodes.index(node), adjacency_matrix)
+        neighbors = [nodes[neighbor] for neighbor in neighbors]
+        return neighbors
     
     def is_directed(self):
         return False
@@ -177,6 +185,27 @@ class DirectedGraph(Graph):
             raise Exception('parent and child nodes must be in adjacency_matrix before removing edge.')
         self._adjacency_matrix.loc[parent, child] = False
         return self
+
+    def parents(self, node: str) -> np.ndarray:
+        nodes = self.get_nodes()
+        adjacency_matrix = self.get_adjacency_matrix(copy=False)
+        parents = _parents(nodes.index(node), adjacency_matrix)
+        parents = [nodes[parent] for parent in parents]
+        return parents
+
+    def family(self, node: str) -> np.ndarray:
+        nodes = self.get_nodes()
+        adjacency_matrix = self.get_adjacency_matrix(copy=False)
+        family = _family(nodes.index(node), adjacency_matrix)
+        family = [nodes[famil] for famil in family]
+        return family
+
+    def children(self, node: str) -> np.ndarray:
+        nodes = self.get_nodes()
+        adjacency_matrix = self.get_adjacency_matrix(copy=False)
+        children = _children(nodes.index(node), adjacency_matrix)
+        children = [nodes[child] for child in children]
+        return children
     
     def is_directed(self):
         return True
