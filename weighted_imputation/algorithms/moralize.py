@@ -1,5 +1,6 @@
 import numpy as np
 from numba import njit, prange
+from .nodes import _parents
 from ..structures import Graph, DirectedGraph
 
 
@@ -21,11 +22,10 @@ def moralize(graph: DirectedGraph, force_parallel: bool = False, return_new_edge
 @njit(cache=True)
 def _moralize(A, out):
     n = A.shape[0]
-    for columns in range(n):
-        parents = A.T[columns]
-        indexes = np.nonzero(parents)[0].T
-        for i in indexes:
-            for j in indexes:
+    for node in range(n):
+        parents = _parents(node, A)
+        for i in parents:
+            for j in parents:
                 if i < j:
                     out[i, j] = True
     np.bitwise_or(out, A, A)
@@ -35,11 +35,10 @@ def _moralize(A, out):
 @njit(parallel=True)
 def _moralize_parallel(A, out):
     n = A.shape[0]
-    for columns in prange(n):
-        parents = A.T[columns]
-        indexes = np.nonzero(parents)[0].T
-        for i in indexes:
-            for j in indexes:
+    for node in prange(n):
+        parents = _parents(node, A)
+        for i in parents:
+            for j in parents:
                 if i < j:
                     out[i, j] = True
     np.bitwise_or(out, A, A)
