@@ -2,7 +2,7 @@ import numpy as np
 from numba import njit
 
 
-@njit
+@njit(cache=True)
 def union(a: np.ndarray, b: np.ndarray) -> np.ndarray:
     if len(a.shape) != 1 or len(b.shape) != 1:
         raise Exception('Arrays must be 1D.')
@@ -10,7 +10,7 @@ def union(a: np.ndarray, b: np.ndarray) -> np.ndarray:
     out = np.unique(out)
     return out
 
-@njit
+@njit(cache=True)
 def intersection(a: np.ndarray, b: np.ndarray) -> np.ndarray:
     if len(a.shape) != 1 or len(b.shape) != 1:
         raise Exception('Arrays must be 1D.')
@@ -20,7 +20,7 @@ def intersection(a: np.ndarray, b: np.ndarray) -> np.ndarray:
     out = out.T
     return out
 
-@njit
+@njit(cache=True)
 def difference(a: np.ndarray, b: np.ndarray) -> np.ndarray:
     if len(a.shape) != 1 or len(b.shape) != 1:
         raise Exception('Arrays must be 1D.')
