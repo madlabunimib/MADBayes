@@ -29,12 +29,16 @@ def _neighbors(node: int, A: np.ndarray) -> np.ndarray:
 
 @njit(cache=True)
 def _boundary(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
-    n = nodes.shape[0]
+    n = len(nodes)
     boundary = np.array([0 for _ in range(0)])
+    if n == 0:
+        return boundary
     for i in range(n):
         neighbors = _neighbors(nodes[i], A)
         boundary = np.append(boundary, neighbors)
+    boundary = np.unique(boundary)
     # Append node set to boundary
+    boundary = np.append(boundary, nodes)
     boundary = np.append(boundary, nodes)
     # Remove node set from boundary selecting unique nodes
     boundary = np.bincount(boundary)
@@ -50,12 +54,12 @@ def _ancestors(node: int, A: np.ndarray) -> np.ndarray:
 
 @njit(cache=True)
 def _ancestors_recursive(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
-    n = nodes.shape[0]
+    n = len(nodes)
+    ancestors = np.array([0 for _ in range(0)])
     if n == 0:
-        return nodes
+        return ancestors
     if n == 1:
         return _parents(nodes[0], A)
-    ancestors = np.array([0 for _ in range(0)])
     for i in range(n):
         ancestors = np.append(
             ancestors,
@@ -72,12 +76,12 @@ def _descendants(node: int, A: np.ndarray) -> np.ndarray:
 
 @njit(cache=True)
 def _descendants_recursive(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
-    n = nodes.shape[0]
+    n = len(nodes)
+    descendants = np.array([0 for _ in range(0)])
     if n == 0:
-        return nodes
+        return descendants
     if n == 1:
         return _children(nodes[0], A)
-    descendants = np.array([0 for _ in range(0)])
     for i in range(n):
         descendants = np.append(
             descendants,
