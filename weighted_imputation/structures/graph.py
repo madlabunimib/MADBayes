@@ -4,7 +4,7 @@ import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
 from typing import List, Dict
-from ..algorithms import _parents, _family, _children, _neighbors
+from ..algorithms import _parents, _family, _children, _neighbors, _boundary, _ancestors, _descendants
 
 
 class Graph():
@@ -113,6 +113,14 @@ class Graph():
         neighbors = [nodes[neighbor] for neighbor in neighbors]
         return neighbors
     
+    def boundary(self, nodes: List[str]) -> np.ndarray:
+        _nodes = self.get_nodes()
+        adjacency_matrix = self.get_adjacency_matrix(copy=False)
+        nodes = [_nodes.index(node) for node in nodes]
+        boundary = _boundary(nodes, adjacency_matrix)
+        boundary = [_nodes[bound] for bound in boundary]
+        return boundary
+    
     def is_directed(self):
         return False
 
@@ -206,6 +214,20 @@ class DirectedGraph(Graph):
         children = _children(nodes.index(node), adjacency_matrix)
         children = [nodes[child] for child in children]
         return children
+    
+    def ancestors(self, node: str) -> np.ndarray:
+        nodes = self.get_nodes()
+        adjacency_matrix = self.get_adjacency_matrix(copy=False)
+        ancestors = _ancestors(nodes.index(node), adjacency_matrix)
+        ancestors = [nodes[ancestor] for ancestor in ancestors]
+        return ancestors
+    
+    def descendants(self, node: str) -> np.ndarray:
+        nodes = self.get_nodes()
+        adjacency_matrix = self.get_adjacency_matrix(copy=False)
+        descendants = _descendants(nodes.index(node), adjacency_matrix)
+        descendants = [nodes[descendant] for descendant in descendants]
+        return descendants
     
     def is_directed(self):
         return True
