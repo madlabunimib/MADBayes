@@ -5,12 +5,12 @@ from typing import List, Set, Dict
 from queue import Queue
 
 
-def triangulate_graph(graph: Graph) -> Graph:
-    quasi_split_graph_dict = find_quasi_split_graph(graph)
+def min_qs_triangulate(graph: Graph) -> Graph:
+    quasi_split_graph_dict = _find_quasi_split_graph(graph)
 
     edges_to_add = []
     for elem in quasi_split_graph_dict:
-        edges_to_add.extend(min_qs(elem))
+        edges_to_add.extend(_min_qs(elem))
 
     for edge in edges_to_add:
         graph.add_edge(edge[0], edge[1])
@@ -19,7 +19,7 @@ def triangulate_graph(graph: Graph) -> Graph:
     return graph
 
 #Return the list of edges to triangulate the quasi-split graph
-def min_qs(quasi_split_graph_dict: Dict) -> List:
+def _min_qs(quasi_split_graph_dict: Dict) -> List:
     adj_matrix = quasi_split_graph_dict["quasi_split_graph"].get_adjacency_matrix()
     nodes = quasi_split_graph_dict["quasi_split_graph"].get_nodes()
     Q = {nodes.index(node) for node in quasi_split_graph_dict["Q"]}
@@ -33,7 +33,7 @@ def min_qs(quasi_split_graph_dict: Dict) -> List:
     D = []
     while Q != set():
         v = Q.pop()
-        D.extend(saturate_set(_get_neighborhood(adj_matrix, v)))
+        D.extend(_saturate_set(_get_neighborhood(adj_matrix, v)))
         for row in range(adj_matrix.shape[0]):
             adj_matrix[v, row] = False
             adj_matrix[row, v] = False
@@ -43,7 +43,7 @@ def min_qs(quasi_split_graph_dict: Dict) -> List:
 # Q = node of the connected component 
 # P = neighborhood of Q
 # F = set of edges needed for saturation
-def find_quasi_split_graph(graph: Graph) -> Dict:
+def _find_quasi_split_graph(graph: Graph) -> Dict:
     quasi_split_graph_list = []
     #For each node compute the distance from a (random) source node whit BFS 
     set_at_distance_l_from_s = bfs(graph, 0) # 0 is for the first node in the set, it is a random choice
@@ -51,7 +51,7 @@ def find_quasi_split_graph(graph: Graph) -> Dict:
 
     for level in range(len(set_at_distance_l_from_s)-1):
         #Find the connected component for each level
-        connencted_components_level = find_connected_component_of_set(graph, set_at_distance_l_from_s[level])
+        connencted_components_level = _find_connected_component_of_set(graph, set_at_distance_l_from_s[level])
         F = []
 
         for Q in connencted_components_level:
@@ -61,7 +61,7 @@ def find_quasi_split_graph(graph: Graph) -> Dict:
                 Q,
                 set_at_distance_l_from_s[level+1])
             #Saturate the neighborhood
-            F_part = saturate_set(P)   
+            F_part = _saturate_set(P)   
             F.extend(F_part)       
             #Create the quasi-split graph
             nodes = Q | P
@@ -95,7 +95,7 @@ def find_quasi_split_graph(graph: Graph) -> Dict:
     return quasi_split_graph_list
 
 # Every pair of edges between node set
-def saturate_set(set_nodes: Set) -> List:
+def _saturate_set(set_nodes: Set) -> List:
     edges_to_add = []
     for node1 in set_nodes:
         for node2 in set_nodes:
@@ -104,7 +104,7 @@ def saturate_set(set_nodes: Set) -> List:
     return edges_to_add
 
 # Connected component of node set
-def find_connected_component_of_set(graph: Graph, set_nodes: Set) -> Set:
+def _find_connected_component_of_set(graph: Graph, set_nodes: Set) -> Set:
     adj_matrix = graph.get_adjacency_matrix()
     queue = Queue(maxsize = 0) #infinity queue
 
