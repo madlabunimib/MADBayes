@@ -22,8 +22,8 @@
     - [ ] Perfect numbering
     - [ ] Find loops in undirected graphs
     - [ ] Find cycles in directed graphs
-    - [ ] Maximum Cardinality Search
-    - [ ] Maximum Cardinality Search Fill-In
+    - [x] Maximum Cardinality Search
+    - [x] Maximum Cardinality Search Fill-In
     - [ ] Running Intersection Property
     - [ ] Chain of Cliques
 - [ ] Junction Tree Algorithm
