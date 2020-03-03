@@ -92,6 +92,30 @@ def _numbering(nodes: np.ndarray) -> np.ndarray:
 
 @njit(cache=True)
 def _is_complete(A: np.ndarray) -> bool:
-    complete = A.copy()
-    np.fill_diagonal(complete, True)
-    return complete.all()
+    out = A.copy()
+    np.fill_diagonal(out, True)
+    return out.all()
+
+@njit(cache=True)
+def _is_complete_set(nodes: np.ndarray, A: np.ndarray) -> bool:
+    out = A[nodes, :][:, nodes]
+    return _is_complete(out)
+
+@njit(cache=True)
+def _fill_in(A: np.array) -> np.ndarray:
+    out = A.copy()
+    np.fill_diagonal(out, True)
+    np.bitwise_not(out, out)
+    indexes = np.argwhere(out)
+    return indexes
+
+@njit(cache=True)
+def _fill_in_set(nodes: np.ndarray, A: np.array) -> np.ndarray:
+    out = A[nodes, :][:, nodes]
+    indexes = _fill_in(out)
+    # Convert relative indexes to absolute indexes
+    n = indexes.shape[0]
+    for i in range(n):
+        indexes[i, 0] = nodes[indexes[i, 0]]
+        indexes[i, 1] = nodes[indexes[i, 1]]
+    return indexes
