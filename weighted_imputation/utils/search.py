@@ -2,7 +2,6 @@ import numpy as np
 from numba import njit
 from typing import List
 from math import log, ceil
-from ..structures import Graph
 
 @njit(cache=True)
 def _times_parents_to_euler_tour(times: np.array, parents: np.ndarray) -> List:

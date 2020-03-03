@@ -1,5 +1,6 @@
 import numpy as np
 from numba import njit
+from ..utils import union, intersection, difference
 
 @njit(cache=True)
 def _parents(node: int, A: np.ndarray) -> np.ndarray:
@@ -37,13 +38,7 @@ def _boundary(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
         neighbors = _neighbors(nodes[i], A)
         boundary = np.append(boundary, neighbors)
     boundary = np.unique(boundary)
-    # Append node set to boundary
-    boundary = np.append(boundary, nodes)
-    boundary = np.append(boundary, nodes)
-    # Remove node set from boundary selecting unique nodes
-    boundary = np.bincount(boundary)
-    boundary = np.nonzero(boundary == 1)[0]
-    boundary = boundary.T
+    boundary = difference(boundary, nodes)
     return boundary
 
 @njit(cache=True)
