@@ -14,7 +14,7 @@
     - [x] Boundary of a set of nodes
     - [x] Ancestors of a node
     - [x] Descendants of a node
-    - [ ] Is complete graph
+    - [x] Is complete graph
     - [ ] Is connected graph
     - [ ] Is acyclic graph
     - [x] Numbering of a set of nodes

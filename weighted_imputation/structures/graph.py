@@ -5,7 +5,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 from typing import List, Dict
 from ..algorithms import _parents, _family, _children, _neighbors, _boundary
-from ..algorithms import _ancestors, _descendants, _numbering
+from ..algorithms import _ancestors, _descendants, _numbering, _is_complete
 
 
 class Graph():
@@ -128,7 +128,12 @@ class Graph():
         numbering = _numbering(nodes)
         return numbering
     
-    def is_directed(self):
+    def is_complete(self) -> bool:
+        adjacency_matrix = self.get_adjacency_matrix(copy=False)
+        is_complete = _is_complete(adjacency_matrix)
+        return is_complete
+    
+    def is_directed(self) -> bool:
         return False
 
     def __repr__(self):

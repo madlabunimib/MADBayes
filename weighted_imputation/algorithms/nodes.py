@@ -89,3 +89,9 @@ def _numbering(nodes: np.ndarray) -> np.ndarray:
     # actually the i-th nodes, using the array index
     numbering = np.array(nodes, copy=True)
     return numbering
+
+@njit(cache=True)
+def _is_complete(A: np.ndarray) -> bool:
+    complete = A.copy()
+    np.fill_diagonal(complete, True)
+    return complete.all()
