@@ -12,6 +12,6 @@ def test_rmq():
         st = wi.ST(array)
         for (i, j) in index:
             if i < j:
-                assert(wi.RMQ(i, j, array, st) == min(array[i:j+1]))
+                assert(wi.RMQ(i, j, array, st) == min(array[i:j]))
             else:
-                assert(wi.RMQ(j, i, array, st) == min(array[j:i+1]))
+                assert(wi.RMQ(j, i, array, st) == min(array[j:i]))

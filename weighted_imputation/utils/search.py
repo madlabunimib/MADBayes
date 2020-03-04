@@ -2,7 +2,6 @@ import numpy as np
 from numba import njit
 from typing import List
 from math import log, ceil
-from ..structures import Graph
 
 @njit(cache=True)
 def _times_parents_to_euler_tour(times: np.array, parents: np.ndarray) -> List:
@@ -65,8 +64,8 @@ def _ST(n: int, m: int, A: np.ndarray, out: np.ndarray) -> None:
 # Range Minimum Query
 @njit(cache=True)
 def RMQ(L: int, R: int, A: np.ndarray, sparse_table: np.ndarray) -> int:
-    j = int(log(R - L + 1)/log(2))
-    i = R - (1 << j) + 1
+    j = int(log(R - L)/log(2))
+    i = R - (1 << j)
     if A[sparse_table[L, j]] <= A[sparse_table[i, j]]:
         return A[sparse_table[L, j]]
     return A[sparse_table[i, j]]
