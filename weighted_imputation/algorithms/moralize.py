@@ -13,10 +13,10 @@ def moralize(graph: DirectedGraph, force_parallel: bool = False, return_new_edge
         _moralize(A, new_edges)
     else:
         _moralize_parallel(A, new_edges)
-    moral_graph = Graph(graph.get_nodes(), A)
+    moral = Graph(graph.get_nodes(), A)
     if return_new_edges:
-        return moral_graph, new_edges
-    return moral_graph
+        return moral, new_edges
+    return moral
 
 
 @njit(cache=True)
