@@ -1,6 +1,5 @@
 from ..structures import Graph
 from typing import List, Set, Dict
-import matplotlib.pyplot as plt
 import networkx as nx
 
 
