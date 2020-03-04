@@ -7,6 +7,8 @@ from ..utils import union, intersection, difference
 
 
 def maximum_cardinality_search(graph: Graph) -> np.ndarray:
+    if not isinstance(graph, Graph):
+        raise Exception('graph must be istance of Graph class.')
     nodes = graph.get_nodes()
     adjacency_matrix = graph.get_adjacency_matrix()
     numbering = _maximum_cardinality_search(0, adjacency_matrix)
@@ -36,6 +38,8 @@ def _maximum_cardinality_search(node: int, A: np.ndarray) -> np.ndarray:
     return numbering
 
 def maximum_cardinality_search_fill_in(graph: Graph, return_new_edges: bool = False) -> np.ndarray:
+    if not isinstance(graph, Graph):
+        raise Exception('graph must be istance of Graph class.')
     adjacency_matrix = graph.get_adjacency_matrix()
     new_edges = np.zeros(adjacency_matrix.shape, dtype=bool)
     _maximum_cardinality_search_fill_in(0, adjacency_matrix, new_edges)
