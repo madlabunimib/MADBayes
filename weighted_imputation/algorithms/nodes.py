@@ -106,16 +106,16 @@ def _fill_in(A: np.array) -> np.ndarray:
     out = A.copy()
     np.fill_diagonal(out, True)
     np.bitwise_not(out, out)
-    indexes = np.argwhere(out)
-    return indexes
+    indices = np.argwhere(out)
+    return indices
 
 @njit(cache=True)
 def _fill_in_set(nodes: np.ndarray, A: np.array) -> np.ndarray:
     out = A[nodes, :][:, nodes]
-    indexes = _fill_in(out)
-    # Convert relative indexes to absolute indexes
-    n = indexes.shape[0]
+    indices = _fill_in(out)
+    # Convert relative indices to absolute indices
+    n = indices.shape[0]
     for i in range(n):
-        indexes[i, 0] = nodes[indexes[i, 0]]
-        indexes[i, 1] = nodes[indexes[i, 1]]
-    return indexes
+        indices[i, 0] = nodes[indices[i, 0]]
+        indices[i, 1] = nodes[indices[i, 1]]
+    return indices
