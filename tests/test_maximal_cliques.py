@@ -12,7 +12,7 @@ def test_maximal_cilques():
     ]
     # Find all maximal cliques with reference function
     cliques = [nx.find_cliques(G) for G in graphs]
-    # Transform lists of node indexes in sets of node labels
+    # Transform lists of node indices in sets of node labels
     cliques = [
         set([str(node) for node in cliques])
         for clique in cliques
