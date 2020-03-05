@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
+from copy import deepcopy
 from typing import List, Dict
 from ..algorithms import _subset, _parents, _family, _children, _neighbors, _boundary
 from ..algorithms import _ancestors, _descendants, _numbering, _is_complete
@@ -145,6 +146,8 @@ class Graph():
         adjacency_matrix = self.get_adjacency_matrix(copy=False)
         subset = _subset(indices, adjacency_matrix)
         subgraph = Graph(nodes, subset)
+        for node in nodes:
+            subgraph[node] = deepcopy(self[node])
         return subgraph
     
     def neighbors(self, node: str) -> np.ndarray:
@@ -258,6 +261,8 @@ class DirectedGraph(Graph):
         adjacency_matrix = self.get_adjacency_matrix(copy=False)
         subset = _subset(indices, adjacency_matrix)
         subgraph = DirectedGraph(nodes, subset)
+        for node in nodes:
+            subgraph[node] = deepcopy(self[node])
         return subgraph
 
     def parents(self, node: str) -> np.ndarray:
