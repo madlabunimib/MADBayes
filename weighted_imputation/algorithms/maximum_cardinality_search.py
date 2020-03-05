@@ -16,7 +16,7 @@ def MCS(graph: Graph, return_new_edges: bool = False) -> np.ndarray:
         return triangulated, new_edges
     return triangulated
 
-# @njit(cache=True)
+@njit(cache=True)
 def _MCS(node: int, A: np.ndarray, out: np.ndarray) -> np.ndarray:
     i = 1
     n = A.shape[0]
@@ -24,22 +24,32 @@ def _MCS(node: int, A: np.ndarray, out: np.ndarray) -> np.ndarray:
         if i == 1:
             numbering = np.array([node])
             X = np.array([i for i in range(n)])
+            # Caching neighbors
+            neighbors = Dict()
+            for j in range(n):
+                neighbors[X[j]] = _neighbors(X[j], A)
         i += 1
         X = difference(X, numbering)
         x = X.shape[0]
         vmax = -1
         pmax = -1
         for j in range(x):
-            k = len(intersection(_neighbors(X[j], A), numbering))
+            k = len(intersection(neighbors[X[j]], numbering))
             if vmax < k:
                 vmax = k
                 pmax = j
         numbering = np.append(numbering, [X[pmax]])
-        nodes = intersection(_neighbors(X[pmax], A), numbering[:i])
-        indices = _fill_in_set(nodes, A)
-        m = indices.shape[0]
-        if m > 0:
-            for l in range(m):
-                out[indices[l, 0], indices[l, 1]] = True
-            np.bitwise_or(out, A, A)
+        nodes = intersection(neighbors[X[pmax]], numbering[:i])
+        if _add_missing_edges(nodes, A, out):
             i = 1
+
+@njit(cache=True)
+def _add_missing_edges(nodes: np.ndarray, A: np.ndarray, out: np.ndarray) -> bool:
+    indices = _fill_in_set(nodes, A)
+    n = indices.shape[0]
+    if n > 0:
+        for i in range(n):
+            out[indices[i, 0], indices[i, 1]] = True
+        np.bitwise_or(out, A, A)
+        return True
+    return False
