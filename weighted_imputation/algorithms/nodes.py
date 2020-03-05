@@ -3,6 +3,10 @@ from numba import njit
 from ..utils import union, intersection, difference
 
 @njit(cache=True)
+def _subset(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
+    return A[nodes, :][:, nodes]
+
+@njit(cache=True)
 def _parents(node: int, A: np.ndarray) -> np.ndarray:
     parents = A.T[node]
     parents = np.nonzero(parents)[0].T
@@ -98,7 +102,7 @@ def _is_complete(A: np.ndarray) -> bool:
 
 @njit(cache=True)
 def _is_complete_set(nodes: np.ndarray, A: np.ndarray) -> bool:
-    out = A[nodes, :][:, nodes]
+    out = _subset(nodes, A)
     return _is_complete(out)
 
 @njit(cache=True)
@@ -111,7 +115,7 @@ def _fill_in(A: np.array) -> np.ndarray:
 
 @njit(cache=True)
 def _fill_in_set(nodes: np.ndarray, A: np.array) -> np.ndarray:
-    out = A[nodes, :][:, nodes]
+    out = _subset(nodes, A)
     indices = _fill_in(out)
     # Convert relative indices to absolute indices
     n = indices.shape[0]
