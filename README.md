@@ -32,5 +32,5 @@
         - [ ] Maximum Cardinality Search Fill-In
     - [x] Maximal cliques
     - [x] Build tree
-        - Test build tree  
+        - [ ] Test build tree  
     - [ ] Compute parameters
