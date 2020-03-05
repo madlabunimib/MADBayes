@@ -43,10 +43,10 @@ def maximum_cardinality_search_fill_in(graph: Graph, return_new_edges: bool = Fa
     adjacency_matrix = graph.get_adjacency_matrix()
     new_edges = np.zeros(adjacency_matrix.shape, dtype=bool)
     _maximum_cardinality_search_fill_in(0, adjacency_matrix, new_edges)
-    traingulated = Graph(graph.get_nodes(), adjacency_matrix)
+    triangulated = Graph(graph.get_nodes(), adjacency_matrix)
     if return_new_edges:
-        return traingulated, new_edges
-    return traingulated
+        return triangulated, new_edges
+    return triangulated
 
 @njit(cache=True)
 def _maximum_cardinality_search_fill_in(node: int, A: np.ndarray, out: np.ndarray) -> np.ndarray:
