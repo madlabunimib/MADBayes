@@ -35,5 +35,6 @@
     - [x] Moralize graph
     - [x] Triangulate graph
     - [x] Maximal cliques
-    - [ ] Build tree
+    - [x] Build tree
+        - [ ] Test build tree  
     - [ ] Compute parameters
