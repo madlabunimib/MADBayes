@@ -23,13 +23,17 @@
     - [ ] Find loops in undirected graphs
     - [ ] Find cycles in directed graphs
     - [x] Maximum Cardinality Search
-    - [x] Maximum Cardinality Search Fill-In
+    - [x] Maximum Cardinality Search Fill-In (MCS)
     - [ ] Running Intersection Property
     - [ ] Chain of Cliques
+- [ ] Triangulation Algorithms
+    - [ ] Lex-BFS
+    - [ ] Lex-M
+    - [x] MCS
+    - [ ] MCS-M (Minimal triangulation)
 - [ ] Junction Tree Algorithm
     - [x] Moralize graph
-    - [ ] Triangulate graph
-        - [ ] Maximum Cardinality Search Fill-In
+    - [x] Triangulate graph
     - [x] Maximal cliques
     - [ ] Build tree
     - [ ] Compute parameters
