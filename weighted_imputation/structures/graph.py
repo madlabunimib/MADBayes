@@ -10,6 +10,7 @@ from ..algorithms import _ancestors, _descendants, _numbering, _is_complete
 
 class Graph():
 
+    _nodes_attributes: Dict
     _adjacency_matrix: pd.DataFrame
 
     def __init__(self, nodes: List[str] = None, adjacency_matrix: np.ndarray = None) -> None:
@@ -34,6 +35,12 @@ class Graph():
                 label: nodes[i]
                 for i, label in enumerate(labels)
             }
+            # Remapping nodes attributes
+            self._nodes_attributes = {
+                key: _nodes_attributes[value]
+                for key, value in mapping
+            }
+            # Remapping adjacency matrix
             self._adjacency_matrix.rename(index=mapping, columns=mapping, inplace=True)
         except AttributeError:
             # If there is no adjacency_matrix, create a new empty one using
@@ -89,6 +96,7 @@ class Graph():
         return self
 
     def remove_node(self, node: str) -> "Graph":
+        del(self._nodes_attributes[node])
         self._adjacency_matrix.drop(node, axis=0, inplace=True)
         self._adjacency_matrix.drop(node, axis=1, inplace=True)
         return self
