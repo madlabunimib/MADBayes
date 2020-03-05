@@ -31,5 +31,6 @@
     - [ ] Triangulate graph
         - [ ] Maximum Cardinality Search Fill-In
     - [x] Maximal cliques
-    - [ ] Build tree
+    - [x] Build tree
+        - Test build tree  
     - [ ] Compute parameters
