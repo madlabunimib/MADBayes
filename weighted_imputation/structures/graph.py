@@ -14,12 +14,34 @@ class Graph():
     _adjacency_matrix: pd.DataFrame
 
     def __init__(self, nodes: List[str] = None, adjacency_matrix: np.ndarray = None) -> None:
+        self._nodes_attributes = {}
         if nodes is not None:
             self.set_nodes(nodes)
         if adjacency_matrix is not None:
             self.set_adjacency_matrix(adjacency_matrix)
         if nodes is None and adjacency_matrix is None:
             self._adjacency_matrix = pd.DataFrame(dtype=bool)
+    
+    def __len__(self) -> int:
+        return len(self.get_nodes())
+
+    def __getitem__(self, key) -> Dict:
+        if not key in self.get_nodes():
+            raise KeyError('node not in graph.')
+        if not key in self._nodes_attributes.keys():
+            self._nodes_attributes[key] = {}
+        return self._nodes_attributes[key]
+
+    def __setitem__(self, key, value) -> None:
+        if not key in self.get_nodes():
+            raise KeyError('node not in graph.')
+        self._nodes_attributes[key] = value
+
+    def __delitem__(self, key) -> None:
+        del(self._nodes_attributes[key])
+
+    def __iter__(self):
+        return self._nodes_attributes.iteritems()
 
     def get_nodes(self) -> List[str]:
         return list(self._adjacency_matrix.index.values)
