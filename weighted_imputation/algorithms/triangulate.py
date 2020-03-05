@@ -1,5 +1,5 @@
-from .maximum_cardinality_search import maximum_cardinality_search_fill_in
+from .maximum_cardinality_search import MCS
 from ..structures import Graph
 
 def triangulate(graph: Graph):
-    return maximum_cardinality_search_fill_in(graph)
+    return MCS(graph)

@@ -8,4 +8,4 @@ from .moralize import moralize
 from .triangulate import triangulate
 from .min_qs import min_qs_triangulate
 from .maximal_cliques import maximal_cliques
-from .maximum_cardinality_search import maximum_cardinality_search, maximum_cardinality_search_fill_in
+from .maximum_cardinality_search import MCS
