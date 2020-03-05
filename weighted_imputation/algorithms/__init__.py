@@ -9,5 +9,4 @@ from .maximum_cardinality_search import MCS
 from .min_qs import min_qs_triangulate
 from .triangulate import triangulate
 from .maximal_cliques import maximal_cliques
-from .maximum_cardinality_search import maximum_cardinality_search, maximum_cardinality_search_fill_in
 from .build_junction_tree import build_junction_tree
