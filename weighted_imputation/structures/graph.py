@@ -4,7 +4,7 @@ import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
 from typing import List, Dict
-from ..algorithms import _parents, _family, _children, _neighbors, _boundary
+from ..algorithms import _subset, _parents, _family, _children, _neighbors, _boundary
 from ..algorithms import _ancestors, _descendants, _numbering, _is_complete
 
 
@@ -107,8 +107,20 @@ class Graph():
         self._adjacency_matrix.loc[child, parent] = False
         return self
     
+    def subgraph(self, nodes: List[str]) -> np.ndarray:
+        _nodes = self.get_nodes()
+        if not set(nodes).issubset(set(_nodes)):
+            raise Exception('node not in graph.')
+        indices = np.array([_nodes.index(node) for node in nodes])
+        adjacency_matrix = self.get_adjacency_matrix(copy=False)
+        subset = _subset(indices, adjacency_matrix)
+        subgraph = Graph(nodes, subset)
+        return subgraph
+    
     def neighbors(self, node: str) -> np.ndarray:
         nodes = self.get_nodes()
+        if not node in nodes:
+            raise Exception('node not in graph.')
         adjacency_matrix = self.get_adjacency_matrix(copy=False)
         neighbors = _neighbors(nodes.index(node), adjacency_matrix)
         neighbors = [nodes[neighbor] for neighbor in neighbors]
@@ -116,9 +128,11 @@ class Graph():
     
     def boundary(self, nodes: List[str]) -> np.ndarray:
         _nodes = self.get_nodes()
+        if not set(nodes).issubset(set(_nodes)):
+            raise Exception('node not in graph.')
+        indices = np.array([_nodes.index(node) for node in nodes])
         adjacency_matrix = self.get_adjacency_matrix(copy=False)
-        nodes = [_nodes.index(node) for node in nodes]
-        boundary = _boundary(nodes, adjacency_matrix)
+        boundary = _boundary(indices, adjacency_matrix)
         boundary = [_nodes[bound] for bound in boundary]
         return boundary
     
@@ -205,9 +219,21 @@ class DirectedGraph(Graph):
             raise Exception('parent and child nodes must be in adjacency_matrix before removing edge.')
         self._adjacency_matrix.loc[parent, child] = False
         return self
+    
+    def subgraph(self, nodes: List[str]) -> np.ndarray:
+        _nodes = self.get_nodes()
+        if not set(nodes).issubset(set(_nodes)):
+            raise Exception('node not in graph.')
+        indices = np.array([_nodes.index(node) for node in nodes])
+        adjacency_matrix = self.get_adjacency_matrix(copy=False)
+        subset = _subset(indices, adjacency_matrix)
+        subgraph = DirectedGraph(nodes, subset)
+        return subgraph
 
     def parents(self, node: str) -> np.ndarray:
         nodes = self.get_nodes()
+        if not node in nodes:
+            raise Exception('node not in graph.')
         adjacency_matrix = self.get_adjacency_matrix(copy=False)
         parents = _parents(nodes.index(node), adjacency_matrix)
         parents = [nodes[parent] for parent in parents]
@@ -215,6 +241,8 @@ class DirectedGraph(Graph):
 
     def family(self, node: str) -> np.ndarray:
         nodes = self.get_nodes()
+        if not node in nodes:
+            raise Exception('node not in graph.')
         adjacency_matrix = self.get_adjacency_matrix(copy=False)
         family = _family(nodes.index(node), adjacency_matrix)
         family = [nodes[famil] for famil in family]
@@ -222,6 +250,8 @@ class DirectedGraph(Graph):
 
     def children(self, node: str) -> np.ndarray:
         nodes = self.get_nodes()
+        if not node in nodes:
+            raise Exception('node not in graph.')
         adjacency_matrix = self.get_adjacency_matrix(copy=False)
         children = _children(nodes.index(node), adjacency_matrix)
         children = [nodes[child] for child in children]
@@ -229,6 +259,8 @@ class DirectedGraph(Graph):
     
     def ancestors(self, node: str) -> np.ndarray:
         nodes = self.get_nodes()
+        if not node in nodes:
+            raise Exception('node not in graph.')
         adjacency_matrix = self.get_adjacency_matrix(copy=False)
         ancestors = _ancestors(nodes.index(node), adjacency_matrix)
         ancestors = [nodes[ancestor] for ancestor in ancestors]
@@ -236,6 +268,8 @@ class DirectedGraph(Graph):
     
     def descendants(self, node: str) -> np.ndarray:
         nodes = self.get_nodes()
+        if not node in nodes:
+            raise Exception('node not in graph.')
         adjacency_matrix = self.get_adjacency_matrix(copy=False)
         descendants = _descendants(nodes.index(node), adjacency_matrix)
         descendants = [nodes[descendant] for descendant in descendants]
