@@ -58,6 +58,11 @@ class Node():
         if isinstance(other, Node):
             return self._label == other._label
         return NotImplementedError
+
+    def __ne__ (self, other):
+        if isinstance(other, Node):
+            return self._label != other._label
+        return NotImplementedError
     
     def __hash__(self):
         return hash(self._label)
