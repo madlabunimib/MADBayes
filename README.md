@@ -3,7 +3,7 @@
 ## TODO List
 
 - [ ] Data structures
-    - [ ] Tree
+    - [x] Tree
     - [ ] Polytree
     - [ ] Multiply-Connected
 - [ ] Functions and algorithms
