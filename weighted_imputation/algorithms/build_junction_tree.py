@@ -25,7 +25,7 @@ def build_junction_tree(graph: DirectedGraph, cliques: List) -> JunctionTree:
             for clique in clique_neighborhood:
                 try:
                     clique_neighborhood[clique].remove(leaf)
-                except ValueError:
+                except KeyError:
                     pass
 
     return junction_tree
@@ -43,22 +43,22 @@ def _tree_nodes_from_cliques(graph: DirectedGraph, cliques: List) -> List[Node]:
 def _build_nodes_clique_dictionary(nodes: List, tree_nodes: List[Node]) -> Dict:    
     nodes_cliques = {node: [] for node in nodes}
     for node in nodes:
-        for clique in tree_nodes:
-            if node in clique['nodes']:
-                nodes_cliques[node].append(clique)
-    return nodes_cliques, tree_nodes
+        for tree_node in tree_nodes:
+            if node in tree_node['nodes']:
+                nodes_cliques[node].append(tree_node)
+    return nodes_cliques
 
 def _build_clique_neighborhood(nodes_cliques: Dict, tree_nodes: List[Node]) -> Dict:
     clique_neighborhood = {clique: set() for clique in tree_nodes}
-    for clique in tree_nodes:
-        for node in clique:
-            for neighbor_clique in nodes_cliques[node]:
-                if neighbor_clique != clique:
-                    clique_neighborhood[clique].add(neighbor_clique)
+    for node in tree_nodes:
+        for node_in_clique in node["nodes"]:
+            for neighbor_clique in nodes_cliques[node_in_clique]:
+                if neighbor_clique != node:
+                    clique_neighborhood[node].add(neighbor_clique)
     return clique_neighborhood
 
 def _clique_neighborhood_cardinality(clique_neighborhood: Dict) -> Dict:
-    return {key : len(clique_neighborhood[key]) for key, _ in clique_neighborhood}
+    return {key : len(clique_neighborhood[key]) for key in clique_neighborhood.keys()}
 
 def _max_neighborhood_cardinality(clique_neighborhood_cardinality: Dict) -> Tuple:
     return max(clique_neighborhood_cardinality, key=clique_neighborhood_cardinality.get)
