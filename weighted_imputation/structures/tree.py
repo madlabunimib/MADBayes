@@ -5,11 +5,11 @@ from .orderedset import OrderedSet
 class Node():
 
     _label: str
-    _parent: Node
+    _parent: "Node"
     _children: OrderedSet
     _attributes: Dict
 
-    def __init__(self, label: str, parent: Node = None, children: OrderedSet[Node] = None) -> None:
+    def __init__(self, label: str, parent: "Node" = None, children: List = None) -> None:
         self._label = label
         self._parent = parent
         if children is None:
@@ -36,26 +36,26 @@ class Node():
     def get_label(self) -> str:
         return self._label
     
-    def get_parent(self) -> Node:
+    def get_parent(self) -> "Node":
         return self._parent
     
-    def set_parent(self, parent: Node) -> None:
+    def set_parent(self, parent: "Node") -> None:
         self._parent = parent
         parent._children.add(self)
 
-    def add_child(self, child: Node) -> None:
+    def add_child(self, child: "Node") -> None:
         self._children.add(child)
         child._parent = self
     
-    def get_children(self) -> OrderedSet[Node]:
+    def get_children(self) -> OrderedSet:
         return self._children
 
-    def set_children(self, children: List[Node]) -> None:
+    def set_children(self, children: List["Node"]) -> None:
         for child in children:
             self.add_child(child)
 
     def __eq__(self, other):
-        if isinstance(other, Node):
+        if isinstance(other, "Node"):
             return self._label == other._label
         return NotImplementedError
 
@@ -63,7 +63,7 @@ class Node():
 class Tree():
 
     _root: Node
-    _nodes: Dict[str]
+    _nodes: Dict
 
     def __init__(self, root: Node = None) -> None:
         self._nodes = {}

@@ -1,5 +1,6 @@
+from typing import Dict
 from .graph import DirectedGraph
-from .tree import Tree
+from .tree import Node, Tree
 
 
 class JunctionTree(Tree):
