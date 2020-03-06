@@ -1,6 +1,4 @@
-from lark import Lark, tree
-
-GRAMMAR = r"""
+DSC_GRAMMAR = r"""
 
   start: compilationunit
   %ignore " "
@@ -67,12 +65,3 @@ GRAMMAR = r"""
   property: (WORD | DECIMAL_LITERAL)
 
 """
-
-def parse_dsc(path: str, debug=False):
-  with open(path, 'r') as file:
-    text = file.read()
-  parser = Lark(GRAMMAR, parser='lalr', debug=True)
-  parsed = parser.parse(text)
-  if debug:
-    tree.pydot__tree_to_png(parsed, './debug.png')
-  return parsed

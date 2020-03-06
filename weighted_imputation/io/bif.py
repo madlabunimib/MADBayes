@@ -147,9 +147,8 @@ Property() :
 
 --------------------------------------------------------------------------------
 """
-from lark import Lark, tree
 
-GRAMMAR = r"""
+BIF_GRAMMAR = r"""
 
   start: compilationunit
   %ignore " "
@@ -219,12 +218,3 @@ GRAMMAR = r"""
   property: WORD
 
 """
-
-def parse_bif(path: str, debug=False):
-  with open(path, 'r') as file:
-    text = file.read()
-  parser = Lark(GRAMMAR, parser='lalr', debug=True)
-  parsed = parser.parse(text)
-  if debug:
-    tree.pydot__tree_to_png(parsed, './debug.png')
-  return parsed
