@@ -42,7 +42,7 @@ class Graph():
         del(self._nodes_attributes[key])
 
     def __iter__(self):
-        return self._nodes_attributes.iteritems()
+        return self._nodes_attributes.__iter__()
 
     def get_nodes(self) -> List[str]:
         return list(self._adjacency_matrix.index.values)

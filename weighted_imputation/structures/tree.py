@@ -31,7 +31,7 @@ class Node():
         del(self._attributes[key])
 
     def __iter__(self):
-        return self._attributes.iteritems()
+        return self._attributes.__iter__()
     
     def get_label(self) -> str:
         return self._label
@@ -58,6 +58,9 @@ class Node():
         if isinstance(other, "Node"):
             return self._label == other._label
         return NotImplementedError
+    
+    def __hash__(self):
+        return hash(self._label)
 
 
 class Tree():
@@ -88,7 +91,7 @@ class Tree():
         raise NotImplementedError
 
     def __iter__(self):
-        return self._nodes.iteritems()
+        return self._nodes.__iter__()
     
     def _index(self, node: Node) -> None:
         self._nodes[node.get_label()] = node
