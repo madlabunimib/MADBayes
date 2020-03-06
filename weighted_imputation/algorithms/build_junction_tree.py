@@ -64,5 +64,9 @@ def _max_neighborhood_cardinality(clique_neighborhood_cardinality: Dict) -> Tupl
     return max(clique_neighborhood_cardinality, key=clique_neighborhood_cardinality.get)
 
 def _build_separator(graph: DirectedGraph, parent: Node, child: Node) -> Node:
-    raise NotImplementedError
-    return Node('')
+    separator_nodes = set(parent["nodes"]).intersection(set(child["nodes"]))
+    separator = Node(str(separator_nodes))
+    separator['type'] = 'separator'
+    separator['nodes'] = separator_nodes
+    separator['clique'] = graph.subgraph(separator_nodes)
+    return separator
