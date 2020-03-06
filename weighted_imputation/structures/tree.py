@@ -55,7 +55,7 @@ class Node():
             self.add_child(child)
 
     def __eq__(self, other):
-        if isinstance(other, "Node"):
+        if isinstance(other, Node):
             return self._label == other._label
         return NotImplementedError
     
