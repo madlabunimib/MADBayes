@@ -147,3 +147,84 @@ Property() :
 
 --------------------------------------------------------------------------------
 """
+from lark import Lark, tree
+
+GRAMMAR = r"""
+
+  start: compilationunit
+  %ignore " "
+  %ignore "\t"
+  %ignore "\n"
+  %ignore "\r"
+  %ignore "//"
+  %ignore "/*"
+  %ignore ","
+  %ignore "|"
+
+  WORD: LETTER (LETTER | DIGIT)* 
+  LETTER: /[a-zA-Z_-]/ 
+  DIGIT:  /[0-9]/ 
+
+  DECIMAL_LITERAL: /[0-9][1-9]*/ 
+  FLOATING_POINT_LITERAL: /[0-9]+\.[0-9]*/ (EXPONENT)? 
+        | /\.[0-9]/ (EXPONENT)? 
+        | /[0-9]+/ (EXPONENT)? 
+  EXPONENT: ("e"|"E") ("+"|"-")? /[0-9]+/
+
+  NETWORK: "network" 
+  VARIABLE: "variable" 
+  PROBABILITY: "probability" 
+  PROPERTY: "property" 
+  VARIABLETYPE: "type" 
+  DISCRETE: "discrete" 
+  DEFAULTVALUE: "default" 
+  TABLEVALUES: "table" 
+
+  PROPERTYSTRING: PROPERTY /[^;]*/ ";"
+
+  compilationunit: networkdeclaration ( variabledeclaration | probabilitydeclaration )*
+
+  networkdeclaration: NETWORK WORD networkcontent
+
+  networkcontent: "{" ( property  )* "}"
+
+  variabledeclaration: VARIABLE probabilityvariablename variablecontent
+
+  variablecontent: "{" ( property | variablediscrete )* "}"
+
+  variablediscrete: VARIABLETYPE DISCRETE "[" DECIMAL_LITERAL "]" "{" variablevalueslist "}" ";"
+
+  variablevalueslist: probabilityvariablevalue ( probabilityvariablevalue )*
+
+  probabilityvariablevalue: WORD
+
+  probabilitydeclaration: PROBABILITY probabilityvariableslist probabilitycontent
+
+  probabilityvariableslist: "(" probabilityvariablename ( probabilityvariablename )* ")"
+
+  probabilityvariablename: WORD
+  
+  probabilitycontent: "{" ( property | probabilitydefaultentry | probabilityentry | probabilitytable )* "}"
+
+  probabilityentry: probabilityvalueslist floatingpointlist ";"
+
+  probabilityvalueslist: "(" probabilityvariablevalue ( probabilityvariablevalue )* ")"
+
+  probabilitydefaultentry: DEFAULTVALUE floatingpointlist ";"
+
+  probabilitytable: TABLEVALUES floatingpointlist ";"
+
+  floatingpointlist: FLOATING_POINT_LITERAL ( FLOATING_POINT_LITERAL )*
+
+  property: WORD
+
+"""
+
+def parse_bif(path: str, debug=False):
+  with open(path, 'r') as file:
+    text = file.read()
+  parser = Lark(GRAMMAR, parser='lalr', debug=True)
+  parsed = parser.parse(text)
+  if debug:
+    tree.pydot__tree_to_png(parsed, './debug.png')
+  return parsed
