@@ -14,6 +14,8 @@ def parse_network_file(path: str, debug=False) -> Dict:
     with open(path, 'r') as file:
         text = file.read()
     _, ext = splitext(path)
+    if not ext in GRAMMARS.keys():
+        raise Exception('unknown file format.')
     parser = Lark(GRAMMARS[ext], parser='lalr', debug=True)
     parsed = parser.parse(text)
     if debug:
@@ -35,8 +37,8 @@ def _extract_data(parsed: tree) -> Dict:
             data['values'][key] = value
     return data
 
-def _extract_variable(parsed: tree) -> Tuple(str, Dict):
+def _extract_variable(parsed: tree) -> Tuple:
     pass
 
-def _extract_probability(parsed: tree) -> Tuple(str, Dict):
+def _extract_probability(parsed: tree) -> Tuple:
     pass
