@@ -241,7 +241,7 @@ class DirectedGraph(Graph):
             )
         return self
     
-    def add_edge(self, parent: str, child: str, undirected: bool = False) -> "DirectedGraph":
+    def add_edge(self, parent: str, child: str) -> "DirectedGraph":
         if parent not in self._adjacency_matrix or child not in self._adjacency_matrix:
             raise Exception('parent and child nodes must be in adjacency_matrix before adding edge.')
         self._adjacency_matrix.loc[parent, child] = True
