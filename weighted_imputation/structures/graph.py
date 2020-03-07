@@ -42,7 +42,7 @@ class Graph():
         del(self._nodes_attributes[key])
 
     def __iter__(self):
-        return self._nodes_attributes.__iter__()
+        return self._nodes_attributes.items().__iter__()
 
     def get_nodes(self) -> List[str]:
         return list(self._adjacency_matrix.index.values)
@@ -195,6 +195,11 @@ class Graph():
         mapping = {k:v for k,v in enumerate(self.get_nodes())}
         G = nx.Graph(self.get_adjacency_matrix())
         G = nx.relabel_nodes(G, mapping)
+        attributes = self._nodes_attributes
+        for node in self.get_nodes():
+            if node in attributes.keys():
+                for key, value in attributes[node].items():
+                    G.nodes[node][key] = deepcopy(value)
         return G
     
     @classmethod
@@ -320,6 +325,11 @@ class DirectedGraph(Graph):
         mapping = {k:v for k,v in enumerate(self.get_nodes())}
         G = nx.DiGraph(self.get_adjacency_matrix())
         G = nx.relabel_nodes(G, mapping)
+        attributes = self._nodes_attributes
+        for node in self.get_nodes():
+            if node in attributes.keys():
+                for key, value in attributes[node].items():
+                    G.nodes[node][key] = deepcopy(value)
         return G
     
     @classmethod

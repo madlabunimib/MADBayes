@@ -96,7 +96,7 @@ class Tree():
         raise NotImplementedError
 
     def __iter__(self):
-        return self._nodes.__iter__()
+        return self._nodes.items().__iter__()
     
     def _index(self, node: Node) -> None:
         self._nodes[node.get_label()] = node

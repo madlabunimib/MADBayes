@@ -1,5 +1,5 @@
 matplotlib
-networkx>=2.2
+networkx>=2.4
 numba>=0.48
 numpy
 tbb
