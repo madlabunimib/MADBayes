@@ -7,19 +7,15 @@ def build_junction_tree(graph: DirectedGraph, cliques: List) -> JunctionTree:
     
     tree_nodes = _tree_nodes_from_cliques(graph, cliques)
     nodes_cliques = _build_nodes_clique_dictionary(nodes, tree_nodes)
-    clique_neighborhood = _build_clique_neighborhood(nodes_cliques, tree_nodes)
-    clique_neighborhood_cardinality = _clique_neighborhood_cardinality(clique_neighborhood)
-    
-    queue = [_max_neighborhood_cardinality(clique_neighborhood_cardinality)]
+    clique_neighborhood = _build_clique_neighborhood(nodes_cliques, tree_nodes)    
+    root = _select_junction_tree_root(clique_neighborhood)
+    junction_tree = JunctionTree(root, nodes_cliques)
 
-    junction_tree = JunctionTree(queue[0], nodes_cliques)
-
+    queue = [root]
     while queue != []:
         parent = queue.pop(0)
         for neighbor in clique_neighborhood[parent]:
-            separator = _build_separator(graph, parent, neighbor)
-            separator.set_parent(parent)
-            neighbor.set_parent(separator)
+            _add_separator(graph, parent, neighbor)
             queue.append(neighbor)
         for leaf in queue:
             for clique in clique_neighborhood:
@@ -51,22 +47,33 @@ def _build_nodes_clique_dictionary(nodes: List, tree_nodes: List[Node]) -> Dict:
 def _build_clique_neighborhood(nodes_cliques: Dict, tree_nodes: List[Node]) -> Dict:
     clique_neighborhood = {clique: set() for clique in tree_nodes}
     for node in tree_nodes:
-        for node_in_clique in node["nodes"]:
+        for node_in_clique in node['nodes']:
             for neighbor_clique in nodes_cliques[node_in_clique]:
                 if neighbor_clique != node:
                     clique_neighborhood[node].add(neighbor_clique)
     return clique_neighborhood
 
-def _clique_neighborhood_cardinality(clique_neighborhood: Dict) -> Dict:
+def _neighborhood_cardinality(clique_neighborhood: Dict) -> Dict:
     return {key : len(clique_neighborhood[key]) for key in clique_neighborhood.keys()}
 
 def _max_neighborhood_cardinality(clique_neighborhood_cardinality: Dict) -> Tuple:
     return max(clique_neighborhood_cardinality, key=clique_neighborhood_cardinality.get)
 
-def _build_separator(graph: DirectedGraph, parent: Node, child: Node) -> Node:
-    separator_nodes = list(set(parent["nodes"]).intersection(set(child["nodes"])))
+def _select_junction_tree_root(clique_neighborhood: Dict) -> Node:
+    neighborhood_cardinality = _neighborhood_cardinality(clique_neighborhood)
+    root = _max_neighborhood_cardinality(neighborhood_cardinality)
+    for cliques in clique_neighborhood.values():
+        try:
+            cliques.remove(root)
+        except KeyError:
+            pass
+    return root
+
+def _add_separator(graph: DirectedGraph, parent: Node, child: Node) -> Node:
+    separator_nodes = list(set(parent['nodes']).intersection(set(child['nodes'])))
     separator = Node(str(separator_nodes))
+    separator.set_parent(parent)
+    child.set_parent(separator)
     separator['type'] = 'separator'
     separator['nodes'] = separator_nodes
     separator['clique'] = graph.subgraph(separator_nodes)
-    return separator
