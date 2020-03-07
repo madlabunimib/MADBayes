@@ -56,13 +56,16 @@ class Node():
         for child in children:
             self.add_child(child)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         if isinstance(other, Node):
             return self._label == other._label
         return NotImplementedError
     
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(self._label)
+    
+    def __repr__(self) -> str:
+        return self._label
 
 
 class Tree():
