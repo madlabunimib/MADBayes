@@ -1,4 +1,6 @@
+from copy import deepcopy
 from typing import Dict, List
+from .graph import DirectedGraph
 from .orderedset import OrderedSet
 
 
@@ -100,3 +102,21 @@ class Tree():
     
     def get_root(self) -> Node:
         return self._root
+
+    def to_directed_graph(self) -> DirectedGraph:
+        graph = DirectedGraph()
+        root = self.get_root()
+        graph.add_node(root.get_label())
+        graph[root.get_label()] = deepcopy(root._attributes)
+        _to_directed_graph_recursive(graph, root)
+        return graph
+        
+    def _to_directed_graph_recursive(self, graph: DirectedGraph, parent: Node) -> None:
+        for child in parent.get_children():
+            graph.add_node(child.get_label())
+            graph.add_edge(
+                parent.get_label(),
+                child.get_label()
+            )
+            graph[child.get_label()] = deepcopy(child._attributes)
+            _to_directed_graph_recursive(graph, child)
