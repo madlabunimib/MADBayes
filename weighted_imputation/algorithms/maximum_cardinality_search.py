@@ -99,7 +99,7 @@ def _MCS_M(
                 parents[:] = -1
                 # Execute DFS on z
                 _DFS_Visit(z, 0, unnumbered_subgraph, color, times, parents)
-                # raise NotImplementedError('TODO: Check for ALL paths y-z')
+                raise NotImplementedError('TODO: Check for ALL paths y-z')
                 # Check if exists a path y-...-xi-...-z where weights[xi] < weights[y]
                 exists = True
                 parent = parents[y]
