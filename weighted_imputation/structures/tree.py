@@ -123,3 +123,7 @@ class Tree():
             )
             graph[child.get_label()] = deepcopy(child._attributes)
             self._to_directed_graph_recursive(graph, child)
+    
+    def plot(self) -> None:
+        graph = self.to_directed_graph()
+        graph.plot()
