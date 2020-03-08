@@ -14,7 +14,7 @@ def min_qs_triangulate(graph: Graph) -> Graph:
     for edge in edges_to_add:
         graph.add_edge(edge[0], edge[1])
 
-    graph.plot()
+    raise NotImplementedError('TODO: This algorithm has not been tested yes.')
     return graph
 
 #Return the list of edges to triangulate the quasi-split graph

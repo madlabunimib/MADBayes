@@ -60,7 +60,7 @@ class Graph():
             }
             # Remapping nodes attributes
             self._nodes_attributes = {
-                key: _nodes_attributes[value]
+                key: self._nodes_attributes[value]
                 for key, value in mapping
             }
             # Remapping adjacency matrix
