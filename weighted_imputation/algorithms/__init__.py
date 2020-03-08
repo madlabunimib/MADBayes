@@ -5,7 +5,7 @@ from .breadth_first_search import BFS
 from .depth_first_search import DFS
 from .bron_kerbosh import bron_kerbosh
 from .moralize import moralize
-from .maximum_cardinality_search import MCS
+from .maximum_cardinality_search import MCS, MCS_M
 from .min_qs import min_qs_triangulate
 from .triangulate import triangulate
 from .maximal_cliques import maximal_cliques

@@ -10,3 +10,4 @@ dependencies:
     - numba>=0.48
     - numpy
     - tbb
+    - lark-parser

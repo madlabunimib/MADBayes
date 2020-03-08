@@ -123,3 +123,12 @@ def _fill_in_set(nodes: np.ndarray, A: np.array) -> np.ndarray:
         indices[i, 0] = nodes[indices[i, 0]]
         indices[i, 1] = nodes[indices[i, 1]]
     return indices
+
+@njit(cache=True)
+def _filter(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
+    out = A.copy()
+    out[:] = False
+    n = len(nodes)
+    for i in range(n):
+        out[nodes[i]] = A[nodes[i]]
+    return out
