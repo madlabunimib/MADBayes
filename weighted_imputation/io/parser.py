@@ -1,3 +1,5 @@
+import numpy as np
+import pandas as pd
 from .bif import BIF_GRAMMAR
 from .dsc import DSC_GRAMMAR
 from lark import Lark, Token, tree, Tree, Transformer, Discard
@@ -108,3 +110,19 @@ class ExtractData(Transformer):
     
     def start(self, args):
         return args[0].value
+
+def build_cpt(key: str, value: Dict) -> pd.DataFrame:
+    if len(value['dependencies']) == 0:
+        cpt = pd.DataFrame(data=value['cpt'][0], index=value['levels'], columns=[key]).T
+    else:
+        tuples = [
+            tuple(row[0])
+            for row in value['cpt']
+        ]
+        index = pd.MultiIndex.from_tuples(
+            tuples,
+            names=value['dependencies']
+        )
+        data = np.array([row[1] for row in value['cpt']])
+        cpt = pd.DataFrame(data=data, index=index, columns=value['levels'])
+    return cpt

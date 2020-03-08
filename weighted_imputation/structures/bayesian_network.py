@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
-from typing import List
+from typing import Dict, List
 from .graph import DirectedGraph
-from ..io import  parse_network_file
+from ..io import  parse_network_file, build_cpt
 
 
 class BayesianNetwork(DirectedGraph):
@@ -22,4 +22,6 @@ class BayesianNetwork(DirectedGraph):
                 parent = nodes.index(dependency)
                 adjacency_matrix[parent, child] = True
         bn = cls(nodes, adjacency_matrix)
+        for key, value in parsed.items():
+            bn[key]['cpt'] = build_cpt(key, value)
         return bn

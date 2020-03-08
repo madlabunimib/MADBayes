@@ -1,1 +1,1 @@
-from .parser import parse_network_file
+from .parser import parse_network_file, build_cpt
