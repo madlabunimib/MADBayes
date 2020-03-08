@@ -31,7 +31,7 @@ class JunctionTree(Tree):
     
     def plot(self) -> None:
         G = self.to_directed_graph().to_networkx()
-        layout = nx.layout.spring_layout(G)
+        layout = nx.nx_pydot.graphviz_layout(G, prog='dot')
         types = nx.get_node_attributes(G, 'type')
         shapes = {
             'clique': 'o',      # Circle
