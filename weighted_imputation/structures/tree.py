@@ -1,4 +1,6 @@
+from copy import deepcopy
 from typing import Dict, List
+from .graph import DirectedGraph
 from .orderedset import OrderedSet
 
 
@@ -31,7 +33,7 @@ class Node():
         del(self._attributes[key])
 
     def __iter__(self):
-        return self._attributes.iteritems()
+        return self._attributes.__iter__()
     
     def get_label(self) -> str:
         return self._label
@@ -54,10 +56,16 @@ class Node():
         for child in children:
             self.add_child(child)
 
-    def __eq__(self, other):
-        if isinstance(other, "Node"):
+    def __eq__(self, other) -> bool:
+        if isinstance(other, Node):
             return self._label == other._label
         return NotImplementedError
+    
+    def __hash__(self) -> int:
+        return hash(self._label)
+    
+    def __repr__(self) -> str:
+        return self._label
 
 
 class Tree():
@@ -88,7 +96,7 @@ class Tree():
         raise NotImplementedError
 
     def __iter__(self):
-        return self._nodes.iteritems()
+        return self._nodes.items().__iter__()
     
     def _index(self, node: Node) -> None:
         self._nodes[node.get_label()] = node
@@ -97,3 +105,25 @@ class Tree():
     
     def get_root(self) -> Node:
         return self._root
+
+    def to_directed_graph(self) -> DirectedGraph:
+        graph = DirectedGraph()
+        root = self.get_root()
+        graph.add_node(root.get_label())
+        graph[root.get_label()] = deepcopy(root._attributes)
+        self._to_directed_graph_recursive(graph, root)
+        return graph
+        
+    def _to_directed_graph_recursive(self, graph: DirectedGraph, parent: Node) -> None:
+        for child in parent.get_children():
+            graph.add_node(child.get_label())
+            graph.add_edge(
+                parent.get_label(),
+                child.get_label()
+            )
+            graph[child.get_label()] = deepcopy(child._attributes)
+            self._to_directed_graph_recursive(graph, child)
+    
+    def plot(self) -> None:
+        graph = self.to_directed_graph()
+        graph.plot()
