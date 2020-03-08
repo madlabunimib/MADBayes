@@ -1,6 +1,5 @@
 from .algorithms import BFS, DFS, moralize, triangulate, maximal_cliques
 from .algorithms import MCS, min_qs_triangulate
 from .algorithms import build_junction_tree
-from .io import parse_network_file
-from .structures import Graph, DirectedGraph
+from .structures import BayesianNetwork, Graph, DirectedGraph
 from .utils import ST, RMQ, LCA, union, intersection, difference, import_dataset, get_frequencies
