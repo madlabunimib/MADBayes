@@ -97,13 +97,13 @@ class ExtractData(Transformer):
         probabilities = {
             arg.value['labels'][0]: {
                 'dependencies': arg.value['labels'][1:],
-                'table': arg.value['table']
+                'cpt': arg.value['table']
             }
             for arg in args
             if arg.type == 'probabilitydeclaration'
         }
         for key, value in probabilities.items():
-            variables[key]['probability'] = value
+            variables[key].update(value)
         return Token('parsed', variables)
     
     def start(self, args):
