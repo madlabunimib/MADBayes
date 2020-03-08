@@ -186,16 +186,16 @@ class Graph():
     def __repr__(self):
         return str(self._adjacency_matrix)
     
-    def plot(self) -> None:
-        G = self.to_networkx()
-        nx.draw(G, with_labels=True)
-        plt.show()
-    
     def to_networkx(self) -> nx.Graph:
         mapping = {k:v for k,v in enumerate(self.get_nodes())}
         G = nx.Graph(self.get_adjacency_matrix())
         G = nx.relabel_nodes(G, mapping)
         return G
+    
+    def plot(self) -> None:
+        G = self.to_networkx()
+        nx.draw(G, with_labels=True)
+        plt.show()
     
     @classmethod
     def from_networkx(cls, G: nx.Graph) -> "Graph":
@@ -321,6 +321,15 @@ class DirectedGraph(Graph):
         G = nx.DiGraph(self.get_adjacency_matrix())
         G = nx.relabel_nodes(G, mapping)
         return G
+    
+    def plot(self) -> None:
+        G = self.to_networkx()
+        nx.draw(
+            G,
+            pos = nx.nx_pydot.graphviz_layout(G, prog='dot'),
+            with_labels = True
+        )
+        plt.show()
     
     @classmethod
     def from_string(cls, string: str) -> "DirectedGraph":
