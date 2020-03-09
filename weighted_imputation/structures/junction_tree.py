@@ -30,9 +30,9 @@ class JunctionTree(Tree):
             self._index(child)
     
     def plot(self) -> None:
+        plt.figure(1, figsize=(12,12)) 
         G = self.to_directed_graph().to_networkx()
         layout = nx.nx_pydot.graphviz_layout(G, prog='dot')
-        types = nx.get_node_attributes(G, 'type')
         shapes = {
             'clique': 'o',      # Circle
             'separator': 's'    # Square
@@ -41,5 +41,7 @@ class JunctionTree(Tree):
             shape = shapes[nx.get_node_attributes(G, 'type')[node]]
             nx.draw_networkx_nodes(G, layout, nodelist=[node], node_shape=shape, node_color='red')
             nx.draw_networkx_edges(G, layout)
-        nx.draw_networkx_labels(G, layout)
+        lables = nx.draw_networkx_labels(G, layout)
+        for _, label in lables.items():
+            label.set_rotation(30)
         plt.show()

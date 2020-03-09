@@ -71,7 +71,8 @@ def _select_junction_tree_root(clique_neighborhood: Dict) -> Node:
 
 def _add_separator(graph: DirectedGraph, parent: Node, child: Node) -> Node:
     separator_nodes = list(set(parent['nodes']).intersection(set(child['nodes'])))
-    separator = Node(str(separator_nodes))
+    separator_label = parent.get_label() + '_' + str(separator_nodes) + '_' + child.get_label()
+    separator = Node(separator_label)
     separator.set_parent(parent)
     child.set_parent(separator)
     separator['type'] = 'separator'
