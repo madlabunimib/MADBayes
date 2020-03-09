@@ -36,5 +36,4 @@
     - [x] Triangulate graph
     - [x] Maximal cliques
     - [x] Build tree
-        - [ ] Test build tree  
     - [ ] Compute parameters
