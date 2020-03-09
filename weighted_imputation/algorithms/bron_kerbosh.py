@@ -27,7 +27,7 @@ def _bron_kerbosh(adjacency_matrix: np.ndarray) -> List:
     C = np.array([0 for _ in range(0)])
     return _bron_kerbosh_recursive(adjacency_matrix, A, B, C)
 
-@njit(parallel=True)
+@njit
 def _bron_kerbosh_recursive(adjacency_matrix: np.ndarray, A: np.ndarray, B: np.ndarray, C: np.ndarray) -> List:
     if len(B) == 0 and len(C) == 0:
         return [A]
