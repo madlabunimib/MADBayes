@@ -30,9 +30,13 @@ class JunctionTree(Tree):
             self._index(child)
     
     def plot(self) -> None:
-        plt.figure(1, figsize=(12,12)) 
+        plt.figure(1, figsize=(15,15)) 
         G = self.to_directed_graph().to_networkx()
-        layout = nx.nx_pydot.graphviz_layout(G, prog='dot')
+        try:
+            layout = nx.nx_pydot.graphviz_layout(G, prog='dot')
+        except IndexError:
+            # TODO: Fix large tree
+            layout = nx.spring_layout(G)
         shapes = {
             'clique': 'o',      # Circle
             'separator': 's'    # Square
