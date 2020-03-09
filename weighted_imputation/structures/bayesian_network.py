@@ -30,5 +30,5 @@ class BayesianNetwork(DirectedGraph):
             else:
                 data = np.array([row[1] for row in value['cpt']])
                 tuples = [tuple(row[0]) for row in value['cpt']]
-            bn[key]['cpt'] = CPT(key, value['dependencies'], data, value['levels'], tuples)
+            bn[key]['CPT'] = CPT(key, value['dependencies'], data, value['levels'], tuples)
         return bn
