@@ -7,18 +7,18 @@ def test_set():
     # Test union
     x = set(a).union(set(b))
     x = sorted(list(x))
-    y = wi.union(np.array(a), np.array(b))
+    y = wi.utils.set.union(np.array(a), np.array(b))
     y = sorted(list(y))
     assert(x == y)
     # Test intersection
     x = set(a).intersection(set(b))
     x = sorted(list(x))
-    y = wi.intersection(np.array(a), np.array(b))
+    y = wi.utils.set.intersection(np.array(a), np.array(b))
     y = sorted(list(y))
     assert(x == y)
     # Test difference
     x = set(a).difference(set(b))
     x = sorted(list(x))
-    y = wi.difference(np.array(a), np.array(b))
+    y = wi.utils.set.difference(np.array(a), np.array(b))
     y = sorted(list(y))
     assert(x == y)

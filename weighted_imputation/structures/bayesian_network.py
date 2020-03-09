@@ -32,3 +32,24 @@ class BayesianNetwork(DirectedGraph):
                 tuples = [tuple(row[0]) for row in value['cpt']]
             bn[key]['CPT'] = CPT(key, value['dependencies'], data, value['levels'], tuples)
         return bn
+    
+    @classmethod
+    def _load_dataset(cls, graph: DirectedGraph, dataset: str):
+        df = pd.read_csv(dataset)
+        if set(graph.get_nodes()) != set(df.columns):
+            raise Exception('structure and dataset variables are different.')
+        for node in graph.get_nodes():
+            graph[node]['RFT'] = df[node].value_counts() / df[node].size
+        return graph
+    
+    @classmethod
+    def from_file_and_dataset(cls, file: str, dataset: str):
+        graph = cls.from_file(file)
+        graph = cls._load_dataset(graph, dataset)
+        return graph
+    
+    @classmethod
+    def from_structure_and_dataset(cls, structure: str, dataset: str):
+        graph = cls.from_structure(structure)
+        graph = cls._load_dataset(graph, dataset)
+        return graph

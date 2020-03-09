@@ -342,9 +342,9 @@ class DirectedGraph(Graph):
         plt.show()
     
     @classmethod
-    def from_string(cls, string: str) -> "DirectedGraph":
+    def from_structure(cls, structure: str) -> "DirectedGraph":
         pattern = re.compile(r"\[(\w*)(?:\|(\w+[:\w+]*)){0,1}\]")
-        edges = re.findall(pattern, string)
+        edges = re.findall(pattern, structure)
         edges = [
             (parent, child)
             for (child, parents) in edges
