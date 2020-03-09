@@ -2,7 +2,8 @@ import numpy as np
 import pandas as pd
 from typing import Dict, List
 from .graph import DirectedGraph
-from ..io import  parse_network_file, build_cpt
+from .conditional_probability_table import CPT
+from ..io import  parse_network_file
 
 
 class BayesianNetwork(DirectedGraph):
@@ -23,5 +24,11 @@ class BayesianNetwork(DirectedGraph):
                 adjacency_matrix[parent, child] = True
         bn = cls(nodes, adjacency_matrix)
         for key, value in parsed.items():
-            bn[key]['cpt'] = build_cpt(key, value)
+            if len(value['dependencies']) == 0:
+                data = np.array(value['cpt'][0])
+                tuples = None
+            else:
+                data = np.array([row[1] for row in value['cpt']])
+                tuples = [tuple(row[0]) for row in value['cpt']]
+            bn[key]['cpt'] = CPT(key, value['dependencies'], data, value['levels'], tuples)
         return bn
