@@ -8,3 +8,8 @@ asia = BayesianNetwork.from_file_and_dataset(
     join(NETWORKS, 'asia.bif'),
     join(DATASETS, 'asia.csv')
 )
+
+survey = BayesianNetwork.from_file_and_dataset(
+    join(NETWORKS, 'survey.bif'),
+    join(DATASETS, 'survey.csv')
+)
