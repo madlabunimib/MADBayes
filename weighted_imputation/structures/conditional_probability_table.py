@@ -6,6 +6,8 @@ from typing import List
 class CPT():
 
     _cpt: pd.DataFrame
+    _dependant: str
+    _dependencies: List[str]
      
     def __init__(self, dependant: str, dependencies: List[str], data: np.ndarray = None, levels: List[str] = None, tuples: List = None) -> None:
         if data is None:
@@ -29,6 +31,14 @@ class CPT():
                 index=index,
                 columns=levels
             )
+        self._dependant = dependant
+        self._dependencies = dependencies[::]
+    
+    def get_dependant(self) -> str:
+        return self._dependant
+    
+    def get_dependencies(self) -> List[str]:
+        return self._dependencies
     
     def __repr__(self):
         return str(self._cpt)
