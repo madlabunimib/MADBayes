@@ -1,5 +1,6 @@
 import numpy as np
 from numba import njit
+from numba.typed import Dict
 from ..utils import union, intersection, difference
 
 @njit(cache=True)
@@ -92,6 +93,29 @@ def _numbering(nodes: np.ndarray) -> np.ndarray:
     # An array is ordered so that numbering(i) is
     # actually the i-th nodes, using the array index
     numbering = np.array(nodes, copy=True)
+    return numbering
+
+@njit(cache=True)
+def _perfect_numbering(node: int, A: np.ndarray) -> np.ndarray:
+    # Perfect numbering using the Maximum Cardinality Search
+    n = A.shape[0]
+    neighbors = Dict()
+    numbering = np.array([node])
+    X = np.array([i for i in range(n)])
+    for i in range(n):
+        # Caching neighbors sets
+        neighbors[X[i]] = _neighbors(X[i], A)
+    for i in range(1, n):
+        X = difference(X, numbering)
+        x = X.shape[0]
+        vmax = -1
+        pmax = -1
+        for j in range(x):
+            k = len(intersection(neighbors[X[j]], numbering))
+            if vmax < k:
+                vmax = k
+                pmax = j
+        numbering = np.append(numbering, [X[pmax]])
     return numbering
 
 @njit(cache=True)
