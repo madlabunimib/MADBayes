@@ -25,7 +25,7 @@
     - [x] Maximum Cardinality Search
     - [x] Maximum Cardinality Search Fill-In (MCS)
     - [ ] Running Intersection Property
-    - [ ] Chain of Cliques
+    - [x] Chain of Cliques
 - [ ] Triangulation Algorithms
     - [ ] Lex-BFS
     - [ ] Lex-M
