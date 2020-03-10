@@ -4,6 +4,7 @@ from .nodes import _is_complete, _is_complete_set, _fill_in, _fill_in_set
 from .breadth_first_search import BFS
 from .depth_first_search import DFS
 from .bron_kerbosh import bron_kerbosh
+from .chain_of_cliques import chain_of_cliques
 from .moralize import moralize
 from .maximum_cardinality_search import MCS, MCS_M
 from .min_qs import min_qs_triangulate
