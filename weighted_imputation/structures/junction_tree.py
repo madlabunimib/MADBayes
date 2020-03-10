@@ -1,8 +1,48 @@
 import networkx as nx
 import matplotlib.pyplot as plt
-from typing import Dict
-from .graph import DirectedGraph
+from typing import Dict, List, Tuple
+from .graph import Graph, DirectedGraph
 from .tree import Node, Tree
+from ..algorithms.moralize import moralize
+from ..algorithms.triangulate import triangulate
+from ..algorithms.chain_of_cliques import chain_of_cliques
+
+
+def _build_junction_tree(graph: DirectedGraph, chain: List) -> Node:
+    chain = [tuple(clique) for clique in chain]
+    nodes = {clique: _node_from_clique(graph, clique) for clique in chain}
+    # Build Junction Tree from the chain
+    n = len(chain)
+    # For each clique in the chain
+    root = nodes[chain[0]]
+    for i in range(1, n):
+        Ci = chain[i]
+        Ck = _max_common_clique(chain[:i], Ci)
+        _add_separator(graph, nodes[Ck], nodes[Ci])
+    return root
+
+def _node_from_clique(graph: DirectedGraph, clique: List) -> Node:
+    items = list(clique)
+    node = Node(str(items))
+    node['type'] = 'clique'
+    node['nodes'] = items
+    node['clique'] = graph.subgraph(items)
+    return node
+
+def _max_common_clique(chain: List, Ci: Tuple) -> List:
+    maxs = [set(Ci).intersection(set(clique)) for clique in chain]
+    maxs = [len(common) for common in maxs]
+    return chain[maxs.index(max(maxs))]
+
+def _add_separator(graph: DirectedGraph, parent: Node, child: Node) -> None:
+    separator_nodes = list(set(parent['nodes']).intersection(set(child['nodes'])))
+    separator_label = parent.get_label() + '_' + str(separator_nodes) + '_' + child.get_label()
+    separator = Node(separator_label)
+    separator.set_parent(parent)
+    child.set_parent(separator)
+    separator['type'] = 'separator'
+    separator['nodes'] = separator_nodes
+    separator['clique'] = graph.subgraph(separator_nodes)
 
 
 class JunctionTree(Tree):
@@ -49,3 +89,13 @@ class JunctionTree(Tree):
         for _, label in lables.items():
             label.set_rotation(30)
         plt.show()
+    
+    @classmethod
+    def from_graph(cls, graph: Graph) -> None:
+        moralized = graph
+        if graph.is_directed():
+            moralized = moralize(graph)            
+        triangulated = triangulate(moralized)
+        chain = chain_of_cliques(triangulated)
+        root = _build_junction_tree(graph, chain)
+        return cls(root)

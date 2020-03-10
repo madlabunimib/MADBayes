@@ -10,4 +10,3 @@ from .maximum_cardinality_search import MCS, MCS_M
 from .min_qs import min_qs_triangulate
 from .triangulate import triangulate
 from .maximal_cliques import maximal_cliques
-from .build_junction_tree import build_junction_tree
