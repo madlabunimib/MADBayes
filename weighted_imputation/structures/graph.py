@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from copy import deepcopy
 from typing import List, Dict
 from ..algorithms import _subset, _parents, _family, _children, _neighbors, _boundary
-from ..algorithms import _ancestors, _descendants, _numbering, _is_complete
+from ..algorithms import _ancestors, _descendants, _numbering, _perfect_numbering, _is_complete
 
 
 class Graph():
@@ -138,7 +138,7 @@ class Graph():
         self._adjacency_matrix.loc[child, parent] = False
         return self
     
-    def subgraph(self, nodes: List[str]) -> np.ndarray:
+    def subgraph(self, nodes: List[str]) -> "Graph":
         _nodes = self.get_nodes()
         if not set(nodes).issubset(set(_nodes)):
             raise Exception('node not in graph.')
@@ -150,7 +150,7 @@ class Graph():
             subgraph[node] = deepcopy(self[node])
         return subgraph
     
-    def neighbors(self, node: str) -> np.ndarray:
+    def neighbors(self, node: str) -> List[str]:
         nodes = self.get_nodes()
         if not node in nodes:
             raise Exception('node not in graph.')
@@ -159,7 +159,7 @@ class Graph():
         neighbors = [nodes[neighbor] for neighbor in neighbors]
         return neighbors
     
-    def boundary(self, nodes: List[str]) -> np.ndarray:
+    def boundary(self, nodes: List[str]) -> List[str]:
         _nodes = self.get_nodes()
         if not set(nodes).issubset(set(_nodes)):
             raise Exception('node not in graph.')
@@ -173,6 +173,13 @@ class Graph():
         nodes = self.get_nodes()
         nodes = np.array(nodes)
         numbering = _numbering(nodes)
+        return numbering
+    
+    def perfect_numbering(self) -> List[str]:
+        nodes = self.get_nodes()
+        adjacency_matrix = self.get_adjacency_matrix(copy=False)
+        numbering = _perfect_numbering(0, adjacency_matrix)
+        numbering = [nodes[number] for number in numbering]
         return numbering
     
     def is_complete(self) -> bool:
@@ -258,7 +265,7 @@ class DirectedGraph(Graph):
         self._adjacency_matrix.loc[parent, child] = False
         return self
     
-    def subgraph(self, nodes: List[str]) -> np.ndarray:
+    def subgraph(self, nodes: List[str]) -> "Graph":
         _nodes = self.get_nodes()
         if not set(nodes).issubset(set(_nodes)):
             raise Exception('node not in graph.')
@@ -270,7 +277,7 @@ class DirectedGraph(Graph):
             subgraph[node] = deepcopy(self[node])
         return subgraph
 
-    def parents(self, node: str) -> np.ndarray:
+    def parents(self, node: str) -> List[str]:
         nodes = self.get_nodes()
         if not node in nodes:
             raise Exception('node not in graph.')
@@ -279,7 +286,7 @@ class DirectedGraph(Graph):
         parents = [nodes[parent] for parent in parents]
         return parents
 
-    def family(self, node: str) -> np.ndarray:
+    def family(self, node: str) -> List[str]:
         nodes = self.get_nodes()
         if not node in nodes:
             raise Exception('node not in graph.')
@@ -288,7 +295,7 @@ class DirectedGraph(Graph):
         family = [nodes[famil] for famil in family]
         return family
 
-    def children(self, node: str) -> np.ndarray:
+    def children(self, node: str) -> List[str]:
         nodes = self.get_nodes()
         if not node in nodes:
             raise Exception('node not in graph.')
@@ -297,7 +304,7 @@ class DirectedGraph(Graph):
         children = [nodes[child] for child in children]
         return children
     
-    def ancestors(self, node: str) -> np.ndarray:
+    def ancestors(self, node: str) -> List[str]:
         nodes = self.get_nodes()
         if not node in nodes:
             raise Exception('node not in graph.')
@@ -306,7 +313,7 @@ class DirectedGraph(Graph):
         ancestors = [nodes[ancestor] for ancestor in ancestors]
         return ancestors
     
-    def descendants(self, node: str) -> np.ndarray:
+    def descendants(self, node: str) -> List[str]:
         nodes = self.get_nodes()
         if not node in nodes:
             raise Exception('node not in graph.')
@@ -315,7 +322,7 @@ class DirectedGraph(Graph):
         descendants = [nodes[descendant] for descendant in descendants]
         return descendants
     
-    def is_directed(self):
+    def is_directed(self) -> bool:
         return True
     
     def to_undirected(self) -> "Graph":

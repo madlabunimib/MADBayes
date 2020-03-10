@@ -1,75 +1,36 @@
+from typing import List, Tuple
 from ..structures import DirectedGraph, Node, JunctionTree
-from typing import List, Set, Dict, Tuple
 
 
-def build_junction_tree(graph: DirectedGraph, cliques: List) -> JunctionTree:
-    nodes = graph.get_nodes()
-    
-    tree_nodes = _tree_nodes_from_cliques(graph, cliques)
-    nodes_cliques = _build_nodes_clique_dictionary(nodes, tree_nodes)
-    clique_neighborhood = _build_clique_neighborhood(nodes_cliques, tree_nodes)    
-    root = _select_junction_tree_root(clique_neighborhood)
-    junction_tree = JunctionTree(root, nodes_cliques)
-
-    queue = [root]
-    while queue != []:
-        parent = queue.pop(0)
-        for neighbor in clique_neighborhood[parent]:
-            _add_separator(graph, parent, neighbor)
-            queue.append(neighbor)
-        for leaf in queue:
-            for clique in clique_neighborhood:
-                try:
-                    clique_neighborhood[clique].remove(leaf)
-                except KeyError:
-                    pass
-
+def build_junction_tree(graph: DirectedGraph, chain: List) -> JunctionTree:
+    # chain = reversed(chain)
+    chain = [tuple(clique) for clique in chain]
+    nodes = {clique: _node_from_clique(graph, clique) for clique in chain}
+    # Build Junction Tree from the chain
+    n = len(chain)
+    # For each clique in the chain
+    root = nodes[chain[0]]
+    for i in range(1, n):
+        Ci = chain[i]
+        Ck = _max_common_clique(chain[:i], Ci)
+        _add_separator(graph, nodes[Ck], nodes[Ci])
+    junction_tree = JunctionTree(root)
     return junction_tree
 
-def _tree_nodes_from_cliques(graph: DirectedGraph, cliques: List) -> List[Node]:
-    tree_nodes = []
-    for clique in cliques:
-        tree_node = Node(str(clique))
-        tree_node['type'] = 'clique'
-        tree_node['nodes'] = clique
-        tree_node['clique'] = graph.subgraph(clique)
-        tree_nodes.append(tree_node)
-    return tree_nodes
+def _node_from_clique(graph: DirectedGraph, clique: List) -> Node:
+    items = list(clique)
+    node = Node(str(items))
+    node['type'] = 'clique'
+    node['nodes'] = items
+    node['clique'] = graph.subgraph(items)
+    return node
 
-def _build_nodes_clique_dictionary(nodes: List, tree_nodes: List[Node]) -> Dict:    
-    nodes_cliques = {node: [] for node in nodes}
-    for node in nodes:
-        for tree_node in tree_nodes:
-            if node in tree_node['nodes']:
-                nodes_cliques[node].append(tree_node)
-    return nodes_cliques
+def _max_common_clique(chain: List, Ci: Tuple) -> List:
+    maxs = [set(Ci).intersection(set(clique)) for clique in chain]
+    maxs = [len(common) for common in maxs]
+    return chain[maxs.index(max(maxs))]
 
-def _build_clique_neighborhood(nodes_cliques: Dict, tree_nodes: List[Node]) -> Dict:
-    clique_neighborhood = {clique: set() for clique in tree_nodes}
-    for node in tree_nodes:
-        for node_in_clique in node['nodes']:
-            for neighbor_clique in nodes_cliques[node_in_clique]:
-                if neighbor_clique != node:
-                    clique_neighborhood[node].add(neighbor_clique)
-    return clique_neighborhood
-
-def _neighborhood_cardinality(clique_neighborhood: Dict) -> Dict:
-    return {key : len(clique_neighborhood[key]) for key in clique_neighborhood.keys()}
-
-def _max_neighborhood_cardinality(clique_neighborhood_cardinality: Dict) -> Tuple:
-    return max(clique_neighborhood_cardinality, key=clique_neighborhood_cardinality.get)
-
-def _select_junction_tree_root(clique_neighborhood: Dict) -> Node:
-    neighborhood_cardinality = _neighborhood_cardinality(clique_neighborhood)
-    root = _max_neighborhood_cardinality(neighborhood_cardinality)
-    for cliques in clique_neighborhood.values():
-        try:
-            cliques.remove(root)
-        except KeyError:
-            pass
-    return root
-
-def _add_separator(graph: DirectedGraph, parent: Node, child: Node) -> Node:
+def _add_separator(graph: DirectedGraph, parent: Node, child: Node) -> None:
     separator_nodes = list(set(parent['nodes']).intersection(set(child['nodes'])))
     separator_label = parent.get_label() + '_' + str(separator_nodes) + '_' + child.get_label()
     separator = Node(separator_label)
