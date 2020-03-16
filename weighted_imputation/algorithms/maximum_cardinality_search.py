@@ -1,8 +1,8 @@
 import numpy as np
 from numba import njit
 from numba.typed import Dict
-from .depth_first_search import _DFS_Visit
 from .nodes import _neighbors, _fill_in_set, _filter
+from .paths import _all_simple_paths
 from ..structures import Graph
 from ..utils import union, intersection, difference
 
@@ -60,23 +60,17 @@ def MCS_M(graph: Graph, return_new_edges: bool = False) -> np.ndarray:
         raise Exception('graph must be istance of Graph class.')
     adjacency_matrix = graph.get_adjacency_matrix()
     n = adjacency_matrix.shape[0]
-    color = np.ones(n, dtype=bool)
-    times = -np.ones((n, 2), dtype=int)
-    parents = -np.ones(n, dtype=int)
     weights = np.zeros(n, dtype=int)
     new_edges = np.zeros((n, n), dtype=bool)
-    _MCS_M(adjacency_matrix, color, times, parents, weights, new_edges)
+    _MCS_M(adjacency_matrix, weights, new_edges)
     triangulated = Graph(graph.get_nodes(), adjacency_matrix)
     if return_new_edges:
         return triangulated, new_edges
     return triangulated
 
-# TODO: @njit(cache=True)
+@njit(cache=True)
 def _MCS_M(
         A: np.ndarray,
-        color: np.ndarray,
-        times: np.ndarray,
-        parents: np.ndarray,
         weights: np.ndarray,
         out: np.ndarray
     ) -> np.ndarray:
@@ -87,34 +81,33 @@ def _MCS_M(
         # Select the unnumbered vertexes
         unnumbered = np.nonzero(weights > -1)[0]
         # Check all paths of unnumbered vertices between y and z
-        m = len(unnumbered)
+        m = unnumbered.shape[0]
         for j in range(m):
             y = unnumbered[j]
             if y != z:
                 # Limit the research in the subgraph of unnumbered vertices
-                unnumbered_subgraph = _filter(unnumbered, A)
-                # Initialize support variables for DFS on z
-                color[:] = False
-                times[:] = -1
-                parents[:] = -1
-                # Execute DFS on z
-                _DFS_Visit(z, 0, unnumbered_subgraph, color, times, parents)
-                raise NotImplementedError('TODO: Check for ALL paths y-z')
+                subgraph = _filter(unnumbered, A)
                 # Check if exists a path y-...-xi-...-z where weights[xi] < weights[y]
-                exists = True
-                parent = parents[y]
-                while exists and parent != z:
-                    if parent == -1 or weights[parent] >= weights[y]:
-                        exists = False
-                    else:
-                        parent = parents[parent]
+                exists = _MCS_M_check_paths(y, z, subgraph, weights)
                 if exists:
                     # Update the weights
                     weights[y] = weights[y] + 1
                     # Add the y-z edge to the minimal fill-in set
                     out[y, z] = True
-                    out[z, y] = True
         # Set z as numbered by setting its weight to -1
         weights[z] = -1
     # Add minimal fill-in to current graph
+    np.bitwise_or(out, out.T, out)
     np.bitwise_or(out, A, A)
+
+@njit(cache=True)
+def _MCS_M_check_paths(source: int, target: int, A: np.ndarray, weigths: np.ndarray) -> bool:
+    paths = _all_simple_paths(source, target, A)
+    for path in paths:
+        exists = True
+        for node in path:
+            if weigths[node] >= weigths[source] and node != target:
+                exists = False
+        if exists:
+            return True
+    return False
