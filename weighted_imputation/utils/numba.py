@@ -9,7 +9,7 @@ _sequence_int = _int[:]
 
 @njit(cache=True)
 def IntegerVector(iterable=None):
-    out = np.array([], dtype=_int)
+    out = np.array([0 for _ in range(0)], dtype=_int)
     if iterable is not None:
         out = np.array(iterable, dtype=_int)
     return out
