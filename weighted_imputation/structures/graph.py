@@ -7,6 +7,7 @@ from copy import deepcopy
 from typing import List, Dict
 from ..algorithms import _subset, _parents, _family, _children, _neighbors, _boundary
 from ..algorithms import _ancestors, _descendants, _numbering, _perfect_numbering, _is_complete
+from ..algorithms import _all_simple_paths
 
 
 class Graph():
@@ -181,6 +182,20 @@ class Graph():
         numbering = _perfect_numbering(0, adjacency_matrix)
         numbering = [nodes[number] for number in numbering]
         return numbering
+    
+    def all_simple_paths(self, source: str, target: str) -> List:
+        nodes = self.get_nodes()
+        adjacency_matrix = self.get_adjacency_matrix(copy=False)
+        simple_paths = _all_simple_paths(
+            nodes.index(source),
+            nodes.index(target),
+            adjacency_matrix
+        )
+        simple_paths = [
+            [nodes[index] for index in path]
+            for path in simple_paths
+        ]
+        return simple_paths
     
     def is_complete(self) -> bool:
         adjacency_matrix = self.get_adjacency_matrix(copy=False)
