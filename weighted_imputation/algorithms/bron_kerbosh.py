@@ -1,10 +1,10 @@
 import numpy as np
 from math import ceil
 from numba import njit
-from typing import List
+from typing import Dict, List
 from .nodes import _neighbors
 from ..structures import Graph
-from ..utils import union, intersection, difference
+from ..utils import union, intersection, difference, IntegerVectorDict
 
 
 def bron_kerbosh(graph: Graph) -> List:
@@ -26,10 +26,14 @@ def _bron_kerbosh(adjacency_matrix: np.ndarray) -> List:
     A = np.array([0 for _ in range(0)])
     B = np.array([i for i in range(n)])
     C = np.array([0 for _ in range(0)])
-    return _bron_kerbosh_recursive(adjacency_matrix, A, B, C)
+    # Caching neighbors
+    neighbors = IntegerVectorDict()
+    for i in range(n):
+        neighbors[i] = _neighbors(i, adjacency_matrix)
+    return _bron_kerbosh_recursive(neighbors, A, B, C)
 
 @njit(cache=True)
-def _bron_kerbosh_recursive(adjacency_matrix: np.ndarray, A: np.ndarray, B: np.ndarray, C: np.ndarray) -> List:
+def _bron_kerbosh_recursive(neighbors: Dict, A: np.ndarray, B: np.ndarray, C: np.ndarray) -> List:
     if len(B) == 0 and len(C) == 0:
         return [A]
     out = [np.array([0 for _ in range(0)]) for _ in range(0)]
@@ -38,29 +42,27 @@ def _bron_kerbosh_recursive(adjacency_matrix: np.ndarray, A: np.ndarray, B: np.n
     # Select a pivot vertex
     pivot = 0
     if n > 0:
-        pivot = _bron_kerbosh_pivot(adjacency_matrix, B, C)
+        pivot = _bron_kerbosh_pivot(neighbors, B, C)
     for i in range(n):
         node = np.array([X[i]])
-        neighbors = _neighbors(X[i], adjacency_matrix)
-        if len(np.argwhere(neighbors == pivot)) == 0:
+        if len(np.argwhere(neighbors[X[i]] == pivot)) == 0:
             out += _bron_kerbosh_recursive(
-                adjacency_matrix,
+                neighbors,
                 union(A, node),
-                intersection(B, neighbors),
-                intersection(C, neighbors)
+                intersection(B, neighbors[X[i]]),
+                intersection(C, neighbors[X[i]])
             )
             B = difference(B, node)
             C = union(C, node)
     return out
 
 @njit(cache=True)
-def _bron_kerbosh_pivot(adjacency_matrix: np.ndarray, B: np.ndarray, C: np.ndarray) -> int:
+def _bron_kerbosh_pivot(neighbors: Dict, B: np.ndarray, C: np.ndarray) -> int:
     # Select the pivot vertex by Cazals-Karande method
     X = union(B, C)
     n = X.shape[0]
     degrees = np.zeros(n)
     for i in range(n):
-
-        degrees[i] = len(intersection(B, _neighbors(i, adjacency_matrix)))
+        degrees[i] = len(intersection(B, neighbors[i]))
     pivot = np.argmax(degrees)
     return pivot
