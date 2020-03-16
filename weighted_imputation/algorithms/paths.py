@@ -1,16 +1,14 @@
 import numpy as np
 from numba import njit
 from numba.typed import List
-from numba.types import int64
 from .nodes import _children
-from ..utils import union, intersection, difference
+from ..utils import union, intersection, difference, IntegerVector, IntegerList
 
 
-_sequence_int = int64[:]
 @njit(cache=True)
 def _all_simple_paths(source: int, target: int, A: np.ndarray) -> List:
-    out = List.empty_list(item_type=_sequence_int)
-    visited = np.array([0 for _ in range(0)], dtype=int64)
+    out = IntegerList()
+    visited = IntegerVector()
     _all_simple_paths_recursive(source, target, A, visited, out)
     return out
     
