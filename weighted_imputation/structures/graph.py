@@ -44,6 +44,14 @@ class Graph():
     def __iter__(self):
         return self._nodes_attributes.items().__iter__()
 
+    def get_edges(self) -> List[tuple]:
+        nodes = self.get_nodes()
+        return [
+            (j, i) 
+            for i in nodes
+            for j in nodes
+            if self._adjacency_matrix[i][j] == True]
+
     def get_nodes(self) -> List[str]:
         return list(self._adjacency_matrix.index.values)
     
