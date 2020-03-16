@@ -1,6 +1,5 @@
 import numpy as np
 from numba import njit
-from numba.typed import List
 from typing import List
 from .bron_kerbosh import _bron_kerbosh
 from .nodes import _perfect_numbering
@@ -14,7 +13,7 @@ def chain_of_cliques(graph: Graph) -> List:
     chain = [[nodes[node] for node in clique] for clique in chain]
     return chain
 
-# @njit
+# TODO: @njit(cache=True)
 def _chain_of_cliques(A: np.ndarray) -> List:
     # Calculate the perfect numbering
     # starting from the first node
@@ -35,7 +34,7 @@ def _chain_of_cliques(A: np.ndarray) -> List:
                 vmax = number
         order[i] = vmax
     order = np.argsort(order)
-    chain = list()
+    chain = []
     for i in range(n):
         chain.append(cliques[order[i]])
     return chain

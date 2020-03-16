@@ -71,7 +71,7 @@ def MCS_M(graph: Graph, return_new_edges: bool = False) -> np.ndarray:
         return triangulated, new_edges
     return triangulated
 
-@njit(cache=True)
+# TODO: @njit(cache=True)
 def _MCS_M(
         A: np.ndarray,
         color: np.ndarray,

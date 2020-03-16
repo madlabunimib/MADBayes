@@ -6,14 +6,14 @@ from .nodes import _children
 from ..utils import union, intersection, difference
 
 
-# @njit(cache=True)
+# TODO: @njit(cache=True)
 def _all_simple_paths(source: int, target: int, A: np.ndarray) -> List:
     out = []
     visited = np.array([], dtype=int)
     _all_simple_paths_recursive(source, target, A, visited, out)
     return out
     
-# @njit(cache=True)
+# TODO: @njit(cache=True)
 def _all_simple_paths_recursive(source: int, target: int, A: np.ndarray, visited: np.ndarray, out: List) -> None:
     current = np.array([source])
     visited = np.append(visited, current)
