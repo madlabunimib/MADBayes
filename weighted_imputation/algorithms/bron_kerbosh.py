@@ -1,6 +1,7 @@
 import numpy as np
+from math import ceil
 from numba import njit
-from typing import List, Set
+from typing import List
 from .nodes import _neighbors
 from ..structures import Graph
 from ..utils import union, intersection, difference
@@ -33,16 +34,30 @@ def _bron_kerbosh_recursive(adjacency_matrix: np.ndarray, A: np.ndarray, B: np.n
         return [A]
     out = [np.array([0 for _ in range(0)]) for _ in range(0)]
     X = B.copy()
-    n = X.shape[0]
+    n = B.shape[0]
+    # Select a pivot vertex
+    pivot = _bron_kerbosh_pivot(adjacency_matrix, X)
     for i in range(n):
         node = np.array([X[i]])
         neighbors = _neighbors(X[i], adjacency_matrix)
-        out += _bron_kerbosh_recursive(
-            adjacency_matrix,
-            union(A, node),
-            intersection(B, neighbors),
-            intersection(C, neighbors)
-        )
-        B = difference(B, node)
-        C = union(C, node)
+        if len(np.argwhere(neighbors == pivot)) == 0:
+            out += _bron_kerbosh_recursive(
+                adjacency_matrix,
+                union(A, node),
+                intersection(B, neighbors),
+                intersection(C, neighbors)
+            )
+            B = difference(B, node)
+            C = union(C, node)
     return out
+
+@njit(cache=True)
+def _bron_kerbosh_pivot(adjacency_matrix: np.ndarray, X: np.ndarray) -> int:
+    n = X.shape[0]
+    # Calculate degrees of nodes
+    degrees = np.zeros(n)
+    for i in range(n):
+        degrees[i] = len(_neighbors(i, adjacency_matrix))
+    # Select the pivot vertex by maximum degree
+    pivot = np.argmax(degrees)
+    return pivot
