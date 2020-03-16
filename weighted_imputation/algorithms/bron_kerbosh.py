@@ -38,7 +38,7 @@ def _bron_kerbosh_recursive(adjacency_matrix: np.ndarray, A: np.ndarray, B: np.n
     # Select a pivot vertex
     pivot = 0
     if n > 0:
-        pivot = _bron_kerbosh_pivot(adjacency_matrix, X)
+        pivot = _bron_kerbosh_pivot(adjacency_matrix, B, C)
     for i in range(n):
         node = np.array([X[i]])
         neighbors = _neighbors(X[i], adjacency_matrix)
@@ -54,12 +54,13 @@ def _bron_kerbosh_recursive(adjacency_matrix: np.ndarray, A: np.ndarray, B: np.n
     return out
 
 @njit(cache=True)
-def _bron_kerbosh_pivot(adjacency_matrix: np.ndarray, X: np.ndarray) -> int:
+def _bron_kerbosh_pivot(adjacency_matrix: np.ndarray, B: np.ndarray, C: np.ndarray) -> int:
+    # Select the pivot vertex by Cazals-Karande method
+    X = union(B, C)
     n = X.shape[0]
-    # Calculate degrees of nodes
     degrees = np.zeros(n)
     for i in range(n):
-        degrees[i] = len(_neighbors(i, adjacency_matrix))
-    # Select the pivot vertex by maximum degree
+
+        degrees[i] = len(intersection(B, _neighbors(i, adjacency_matrix)))
     pivot = np.argmax(degrees)
     return pivot
