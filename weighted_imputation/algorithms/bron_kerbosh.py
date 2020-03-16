@@ -36,7 +36,9 @@ def _bron_kerbosh_recursive(adjacency_matrix: np.ndarray, A: np.ndarray, B: np.n
     X = B.copy()
     n = B.shape[0]
     # Select a pivot vertex
-    pivot = _bron_kerbosh_pivot(adjacency_matrix, X)
+    pivot = 0
+    if n > 0:
+        pivot = _bron_kerbosh_pivot(adjacency_matrix, X)
     for i in range(n):
         node = np.array([X[i]])
         neighbors = _neighbors(X[i], adjacency_matrix)
