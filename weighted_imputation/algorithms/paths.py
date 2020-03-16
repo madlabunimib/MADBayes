@@ -6,10 +6,11 @@ from .nodes import _children
 from ..utils import union, intersection, difference
 
 
-# TODO: @njit(cache=True)
+_sequence_int = int64[:]
+@njit(cache=True)
 def _all_simple_paths(source: int, target: int, A: np.ndarray) -> List:
-    out = List.empty_list(item_type=int64[:])
-    visited = np.array([], dtype=int)
+    out = List.empty_list(item_type=_sequence_int)
+    visited = np.array([0 for _ in range(0)], dtype=int64)
     _all_simple_paths_recursive(source, target, A, visited, out)
     return out
     
