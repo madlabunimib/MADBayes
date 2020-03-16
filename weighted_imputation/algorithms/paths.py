@@ -8,12 +8,12 @@ from ..utils import union, intersection, difference
 
 # TODO: @njit(cache=True)
 def _all_simple_paths(source: int, target: int, A: np.ndarray) -> List:
-    out = []
+    out = List.empty_list(item_type=int64[:])
     visited = np.array([], dtype=int)
     _all_simple_paths_recursive(source, target, A, visited, out)
     return out
     
-# TODO: @njit(cache=True)
+@njit(cache=True)
 def _all_simple_paths_recursive(source: int, target: int, A: np.ndarray, visited: np.ndarray, out: List) -> None:
     current = np.array([source])
     visited = np.append(visited, current)
