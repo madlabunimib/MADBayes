@@ -1,7 +1,7 @@
 from functools import wraps
+from importlib import import_module
 from os.path import dirname
 from pkgutil import iter_modules
-from importlib import import_module
 
 BACKENDS = {
     module: import_module('.' + module, package='weighted_imputation.backends')
@@ -21,7 +21,7 @@ def alternative_backend(backend=None):
                 raise NotImplementedError('"' + function.__name__ + '" not implemented in "' + backend + '" backend.')
             if backend is None:
                 modules = [
-                    funct for funct, module in BACKENDS.items()
+                    back for back, module in BACKENDS.items()
                     if hasattr(module, function.__name__)
                 ]
                 if len(modules) > 0:
@@ -32,3 +32,6 @@ def alternative_backend(backend=None):
         return inner_wrapper
     
     return backend_wrapper
+
+def disable_alternative_backend():
+    BACKENDS = []
