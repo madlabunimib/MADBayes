@@ -1,11 +1,16 @@
 import networkx as nx
 import matplotlib.pyplot as plt
+import xarray as xa
+import numpy as np
+import itertools
 from typing import Dict, List, Tuple
+from queue import Queue
 from .graph import Graph, DirectedGraph
 from .tree import Node, Tree
 from ..algorithms.moralize import moralize
 from ..algorithms.triangulate import triangulate
 from ..algorithms.chain_of_cliques import chain_of_cliques
+from ..utils import get_cpts, compute_margin_table
 
 
 def _build_junction_tree(graph: DirectedGraph, chain: List) -> Node:
@@ -99,3 +104,93 @@ class JunctionTree(Tree):
         chain = chain_of_cliques(triangulated)
         root = _build_junction_tree(graph, chain)
         return cls(root)
+
+
+def compute_potentials(jt: JunctionTree, cpts_file: Dict):
+
+    cpts_dict = get_cpts(cpts_file)
+    margin_cache = {}
+
+    jt_root = jt.get_root()
+    queue = Queue()
+    queue.put(jt_root)
+    while not queue.empty():
+        node = queue.get()
+        for child in node.get_children():
+            queue.put(child)
+
+        if node["type"] == "clique":
+
+            nodes_in_clique = node["nodes"]
+            edge_in_clique = node["clique"].get_edges()
+
+            #Compute dimensions
+            dimensions = nodes_in_clique
+
+            #Compute coordinates
+            coordinates = []
+            for node in nodes_in_clique:
+                coordinates.append(cpts_file[node]["levels"])
+            
+            #Compute size of n-d-matrix
+            levels = []
+            for dim in dimensions:
+                levels.append(len(cpts_file[dim]["levels"]))
+
+
+            data = xa.DataArray(np.ones(shape=levels), dims=dimensions, coords = coordinates)
+            computed_nodes = []
+            for edge in edge_in_clique:
+                
+                
+                #Compute for dependencies variables -> parent in edge -> edge[0]
+                if edge[0] not in computed_nodes:
+                    if edge[0] not in margin_cache:
+                        margin_table, margin_cache = compute_margin_table(edge[0], cpts_dict, margin_cache)
+                    else:
+                        margin_table = margin_cache[edge[0]]
+
+
+                    dimensions = [edge[0]]
+                    dimensions.extend([x for x in nodes_in_clique if x not in dimensions])
+
+                    coordinates = [cpts_file[edge[0]]["levels"]]
+                    for node in nodes_in_clique:
+                        if node != edge[0]:
+                            coordinates.append(cpts_file[node]["levels"])
+
+                    data = data.transpose(*dimensions)
+                    for combination in list(itertools.product(*coordinates)): 
+                        data.loc[combination] = data.loc[combination] * \
+                            margin_table.loc[combination[0]]
+
+                    computed_nodes.append(edge[0])
+
+
+
+                #Compute for dependant variables -> child in edge -> edge[1]
+                if edge[1] not in computed_nodes:
+                    dim = [x for x in dimensions if x in cpts_dict[edge[1]].coords]
+                    tmp_cpt = cpts_dict[edge[1]].transpose(*dim)
+                    coordinates = [cpts_file[node]["levels"] for node in dim]
+                    dim.extend([x for x in dimensions if x not in dim])
+                    data = data.transpose(*dim)
+    
+                    for combination in list(itertools.product(*coordinates)): 
+                        data.loc[combination] = data.loc[combination] * \
+                            tmp_cpt.loc[combination]
+                    
+                    computed_nodes.append(edge[1])
+
+        else:
+            pass
+            #TODO COMPUTE SEPARATORS MARGIN TABLE
+
+
+    return 
+
+def compute_separator_margin_table():
+
+    return
+
+            
