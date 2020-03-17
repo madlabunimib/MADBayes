@@ -11,6 +11,20 @@ if TYPE_CHECKING:
     from typing import List
 
 
+def all_simple_paths(graph: Graph, source: str, target: str) -> List:
+    nodes = graph.get_nodes()
+    adjacency_matrix = graph.get_adjacency_matrix(copy=False)
+    simple_paths = _all_simple_paths(
+        nodes.index(source),
+        nodes.index(target),
+        adjacency_matrix
+    )
+    simple_paths = [
+        [nodes[index] for index in path]
+        for path in simple_paths
+    ]
+    return simple_paths
+
 @alternative_backend()
 def _all_simple_paths(source: int, target: int, A: np.ndarray) -> List:
     visited = [source]

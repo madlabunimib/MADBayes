@@ -6,6 +6,7 @@ from .nodes import _fill_in_set, _filter, _neighbors
 from .paths import _all_simple_paths
 
 
+@alternative_backend()
 def MCS(graph: Graph) -> Graph:
     adjacency_matrix = graph.get_adjacency_matrix()
     out = np.zeros(adjacency_matrix.shape, dtype=bool)
@@ -13,7 +14,6 @@ def MCS(graph: Graph) -> Graph:
     triangulated = Graph(graph.get_nodes(), adjacency_matrix)
     return triangulated
 
-@alternative_backend()
 def _MCS(node: int, A: np.ndarray, out: np.ndarray) -> np.ndarray:
     i = 1
     n = A.shape[0]

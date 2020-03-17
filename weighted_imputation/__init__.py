@@ -1,7 +1,9 @@
-from .algorithms import BFS, DFS, moralize, triangulate, maximal_cliques
-from .algorithms import MCS, chain_of_cliques
-from .backends import disable_alternative_backend, set_alternative_backend
-from .structures import BayesianNetwork, Graph, DirectedGraph, Node, Tree, JunctionTree
-from .utils import get_cpts, compute_margin_table
-
 from . import data
+from .algorithms import (BFS, DFS, MCS, ancestors, boundary, chain_of_cliques,
+                         children, descendants, family, is_complete,
+                         maximal_cliques, moralize, neighbors, numbering,
+                         parents, perfect_numbering, triangulate)
+from .backends import disable_alternative_backend, set_alternative_backend
+from .structures import (BayesianNetwork, DirectedGraph, Graph, JunctionTree,
+                         Node, Tree)
+from .utils import compute_margin_table, get_cpts

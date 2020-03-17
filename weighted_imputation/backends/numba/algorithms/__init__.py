@@ -7,5 +7,5 @@ from .paths import _all_simple_paths
 from .bron_kerbosh import bron_kerbosh
 from .chain_of_cliques import chain_of_cliques
 from .depth_first_search import DFS
-from .maximum_cardinality_search import _MCS
-from .moralize import _moralize
+from .maximum_cardinality_search import MCS
+from .moralize import moralize
