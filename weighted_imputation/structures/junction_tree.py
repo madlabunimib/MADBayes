@@ -1,13 +1,15 @@
-from typing import Dict, List, Tuple
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 import matplotlib.pyplot as plt
 import networkx as nx
 
-from ..algorithms.chain_of_cliques import chain_of_cliques
-from ..algorithms.moralize import moralize
-from ..algorithms.triangulate import triangulate
-from .graph import DirectedGraph, Graph
 from .tree import Node, Tree
+
+if TYPE_CHECKING:
+    from typing import Dict, List, Tuple
+    from .graph import DirectedGraph, Graph
 
 
 def _build_junction_tree(graph: DirectedGraph, chain: List) -> Node:
@@ -93,11 +95,6 @@ class JunctionTree(Tree):
         plt.show()
     
     @classmethod
-    def from_graph(cls, graph: Graph) -> None:
-        moralized = graph
-        if graph.is_directed():
-            moralized = moralize(graph)            
-        triangulated = triangulate(moralized)
-        chain = chain_of_cliques(triangulated)
+    def from_graph_and_chain(cls, graph: Graph, chain: List) -> None:
         root = _build_junction_tree(graph, chain)
         return cls(root)

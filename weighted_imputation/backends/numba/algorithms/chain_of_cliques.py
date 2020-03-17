@@ -1,11 +1,16 @@
-from typing import List
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 import numpy as np
 from numba import njit, prange
 
-from ....structures import Graph
 from .bron_kerbosh import _bron_kerbosh
 from .nodes import _perfect_numbering
+
+if TYPE_CHECKING:
+    from typing import List
+    from ....structures import Graph
 
 
 def chain_of_cliques(graph: Graph) -> List:

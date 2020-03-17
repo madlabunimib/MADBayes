@@ -1,7 +1,12 @@
-from typing import List
+from __future__ import annotations
 
-from ..structures import Graph
+from typing import TYPE_CHECKING
+
 from .bron_kerbosh import bron_kerbosh
+
+if TYPE_CHECKING:
+    from typing import List
+    from ..structures import Graph
 
 
 def maximal_cliques(graph: Graph) -> List:

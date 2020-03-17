@@ -1,12 +1,18 @@
-from typing import List
+from __future__ import annotations
 
-import numpy as np
+from typing import TYPE_CHECKING
 
-from ..structures import Graph
+from ..backends import alternative_backend
 from .bron_kerbosh import _bron_kerbosh
 from .nodes import _perfect_numbering
 
+if TYPE_CHECKING:
+    import numpy as np
+    from typing import List
+    from ..structures import Graph
 
+
+@alternative_backend()
 def chain_of_cliques(graph: Graph) -> List:
     nodes = graph.get_nodes()
     adjacency_matrix = graph.get_adjacency_matrix()

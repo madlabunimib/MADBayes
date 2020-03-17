@@ -1,12 +1,19 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import numpy as np
 
-from ..structures import DirectedGraph, Graph
+from ..backends import alternative_backend
+from ..structures import Graph
 from .nodes import _parents
 
+if TYPE_CHECKING:
+    from ..structures import DirectedGraph
 
+
+@alternative_backend()
 def moralize(graph: DirectedGraph) -> Graph:
-    if not isinstance(graph, DirectedGraph):
-        raise Exception('graph must be istance of DirectedGraph class.')
     A = graph.get_adjacency_matrix()
     new_edges = np.zeros(A.shape, dtype=bool)
     _moralize(A, new_edges)

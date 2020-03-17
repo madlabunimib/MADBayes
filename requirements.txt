@@ -2,5 +2,7 @@ matplotlib
 networkx>=2.4
 numba>=0.48
 numpy
+pandas
+xarray
 tbb
 lark-parser

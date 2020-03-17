@@ -1,10 +1,17 @@
-from typing import Dict
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 import numpy as np
 
-from ..structures import Graph
+from ..backends import alternative_backend
+
+if TYPE_CHECKING:
+    from typing import Dict
+    from ..structures import Graph
 
 
+@alternative_backend()
 def DFS(graph: Graph) -> Dict:
     A = graph.get_adjacency_matrix()
     n = A.shape[0]

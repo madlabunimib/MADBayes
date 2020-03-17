@@ -1,22 +1,22 @@
 import numpy as np
 
+from ..backends import alternative_backend
 from ..structures import Graph
 from .nodes import _fill_in_set, _filter, _neighbors
 from .paths import _all_simple_paths
 
 
-def MCS(graph: Graph) -> np.ndarray:
-    if not isinstance(graph, Graph):
-        raise Exception('graph must be istance of Graph class.')
+def MCS(graph: Graph) -> Graph:
     adjacency_matrix = graph.get_adjacency_matrix()
-    _MCS(0, adjacency_matrix)
+    out = np.zeros(adjacency_matrix.shape, dtype=bool)
+    _MCS(0, adjacency_matrix, out)
     triangulated = Graph(graph.get_nodes(), adjacency_matrix)
     return triangulated
 
-def _MCS(node: int, A: np.ndarray) -> np.ndarray:
+@alternative_backend()
+def _MCS(node: int, A: np.ndarray, out: np.ndarray) -> np.ndarray:
     i = 1
     n = A.shape[0]
-    out = np.zeros(A.shape, dtype=bool)
     while i < n:
         if i == 1:
             X = set(range(n))

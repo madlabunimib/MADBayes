@@ -14,18 +14,20 @@ def alternative_backend(backend=None):
 
         @wraps(function)
         def inner_wrapper(*args, **kwargs):
-            if backend is not None and backend not in BACKENDS:
+            if backend is not None:
+                if backend in BACKENDS:
+                    funct = getattr(BACKENDS[backend], function.__name__)
+                    return funct(*args, **kwargs)
                 raise NotImplementedError('"' + function.__name__ + '" not implemented in "' + backend + '" backend.')
             if backend is None:
-                exists = [
-                    back for back, module in BACKENDS.items()
+                modules = [
+                    funct for funct, module in BACKENDS.items()
                     if hasattr(module, function.__name__)
                 ]
-                if len(exists) > 0:
-                    back = getattr(BACKENDS[exists[0]], function.__name__)
-                    return back(*args, **kwargs)
-            if backend is None:
-                return function(*args, **kwargs)
+                if len(modules) > 0:
+                    funct = getattr(BACKENDS[modules[0]], function.__name__)
+                    return funct(*args, **kwargs)
+            return function(*args, **kwargs)
 
         return inner_wrapper
     

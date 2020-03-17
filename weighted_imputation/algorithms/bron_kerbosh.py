@@ -1,14 +1,18 @@
-from typing import Dict, List, Set
+from __future__ import annotations
 
-import numpy as np
+from typing import TYPE_CHECKING
 
-from ..structures import Graph
+from ..backends import alternative_backend
 from .nodes import _neighbors
 
+if TYPE_CHECKING:
+    import numpy as np
+    from typing import Dict, List, Set
+    from ..structures import Graph
 
+
+@alternative_backend()
 def bron_kerbosh(graph: Graph) -> List:
-    if not isinstance(graph, Graph):
-        raise Exception('graph must be istance of Graph class.')
     nodes = graph.get_nodes()
     adjacency_matrix = graph.get_adjacency_matrix()
     maximal_cliques = _bron_kerbosh(adjacency_matrix)

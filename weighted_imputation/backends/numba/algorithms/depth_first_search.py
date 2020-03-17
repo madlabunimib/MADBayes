@@ -1,9 +1,13 @@
-from typing import Dict
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 import numpy as np
 from numba import njit
 
-from ....structures import Graph
+if TYPE_CHECKING:
+    from typing import Dict
+    from ....structures import Graph
 
 
 def DFS(graph: Graph) -> Dict:
