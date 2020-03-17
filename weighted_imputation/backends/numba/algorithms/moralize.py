@@ -1,6 +1,7 @@
 import numpy as np
+from numba import njit, prange
 
-from ..structures import DirectedGraph, Graph
+from ....structures import DirectedGraph, Graph
 from .nodes import _parents
 
 
@@ -13,9 +14,10 @@ def moralize(graph: DirectedGraph) -> Graph:
     moral = Graph(graph.get_nodes(), A)
     return moral
 
+@njit(cache=True, parallel=True)
 def _moralize(A: np.ndarray, out: np.ndarray):
     n = A.shape[0]
-    for node in range(n):
+    for node in prange(n):
         parents = _parents(node, A)
         for i in parents:
             for j in parents:

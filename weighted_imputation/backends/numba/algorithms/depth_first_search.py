@@ -1,8 +1,9 @@
 from typing import Dict
 
 import numpy as np
+from numba import njit
 
-from ..structures import Graph
+from ....structures import Graph
 
 
 def DFS(graph: Graph) -> Dict:
@@ -14,6 +15,7 @@ def DFS(graph: Graph) -> Dict:
     _DFS(A, color, times, parents)
     return {'parents': parents, 'times': times}
 
+@njit(cache=True)
 def _DFS(
         A: np.ndarray,
         color: np.ndarray,
@@ -26,6 +28,7 @@ def _DFS(
         if color[i]:
             time = _DFS_Visit(i, time, A, color, times, parents)
 
+@njit
 def _DFS_Visit(
         node: int,
         time: int,

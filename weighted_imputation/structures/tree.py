@@ -1,5 +1,6 @@
 from copy import deepcopy
 from typing import Dict, List
+
 from .graph import DirectedGraph
 from .orderedset import OrderedSet
 

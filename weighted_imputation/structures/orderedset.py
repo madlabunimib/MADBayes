@@ -1,5 +1,6 @@
 from collections import MutableSet
 
+
 class OrderedSet(MutableSet):
 
     def __init__(self, iterable=None):

@@ -1,9 +1,11 @@
+from typing import Dict, List
+
 import numpy as np
 import pandas as pd
-from typing import Dict, List
-from .graph import DirectedGraph
+
+from ..io import parse_network_file
 from .conditional_probability_table import CPT
-from ..io import  parse_network_file
+from .graph import DirectedGraph
 
 
 class BayesianNetwork(DirectedGraph):

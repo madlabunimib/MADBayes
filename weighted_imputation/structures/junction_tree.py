@@ -1,11 +1,13 @@
-import networkx as nx
-import matplotlib.pyplot as plt
 from typing import Dict, List, Tuple
-from .graph import Graph, DirectedGraph
-from .tree import Node, Tree
+
+import matplotlib.pyplot as plt
+import networkx as nx
+
+from ..algorithms.chain_of_cliques import chain_of_cliques
 from ..algorithms.moralize import moralize
 from ..algorithms.triangulate import triangulate
-from ..algorithms.chain_of_cliques import chain_of_cliques
+from .graph import DirectedGraph, Graph
+from .tree import Node, Tree
 
 
 def _build_junction_tree(graph: DirectedGraph, chain: List) -> Node:

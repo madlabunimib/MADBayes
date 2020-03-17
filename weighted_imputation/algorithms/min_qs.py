@@ -1,7 +1,9 @@
-import numpy as np
-from ..structures import Graph
-from typing import List, Set, Dict
 from queue import Queue
+from typing import Dict, List, Set
+
+import numpy as np
+
+from ..structures import Graph
 
 
 def min_qs_triangulate(graph: Graph) -> Graph:
@@ -169,4 +171,3 @@ def _get_neighborhood(adj_matrix: np.ndarray, parent_index: int) -> Set:
 
 def _get_neighborhood_in_subset(adj_matrix: np.ndarray, parent_index: int, subset: List) -> Set:
     return [node for node in _get_neighborhood(adj_matrix, parent_index) if node in subset]
-    

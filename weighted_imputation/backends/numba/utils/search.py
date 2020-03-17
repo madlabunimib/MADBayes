@@ -1,7 +1,11 @@
-import numpy as np
+from math import ceil, log
 from typing import List
-from math import log, ceil
 
+import numpy as np
+from numba import njit
+
+
+@njit(cache=True)
 def _times_parents_to_euler_tour(times: np.array, parents: np.ndarray) -> List:
     euler_tour = []
     # Check if the graph is connected,
@@ -42,6 +46,7 @@ def ST(A: np.ndarray) -> np.ndarray:
     _ST(n, m, A, out)
     return out
     
+@njit(cache=True)
 def _ST(n: int, m: int, A: np.ndarray, out: np.ndarray) -> None:
     for i in range(n):
         out[i, 0] = i
@@ -59,6 +64,7 @@ def _ST(n: int, m: int, A: np.ndarray, out: np.ndarray) -> None:
         j += 1
 
 # Range Minimum Query
+@njit(cache=True)
 def RMQ(L: int, R: int, A: np.ndarray, sparse_table: np.ndarray) -> int:
     j = int(log(R - L)/log(2))
     i = R - (1 << j)
@@ -67,6 +73,7 @@ def RMQ(L: int, R: int, A: np.ndarray, sparse_table: np.ndarray) -> int:
     return A[sparse_table[i, j]]
 
 # Lowest Common Ancestor with RMQ of Euler Tour
+@njit(cache=True)
 def LCA(a: int, b: int, euler_tour: np.ndarray, sparse_table: np.ndarray) -> int:
     Fa = np.where(euler_tour == a)[0][0]
     Fb = np.where(euler_tour == b)[0][0]

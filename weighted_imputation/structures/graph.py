@@ -1,13 +1,15 @@
 import re
+from copy import deepcopy
+from typing import Dict, List
+
+import matplotlib.pyplot as plt
+import networkx as nx
 import numpy as np
 import pandas as pd
-import networkx as nx
-import matplotlib.pyplot as plt
-from copy import deepcopy
-from typing import List, Dict
-from ..algorithms import _subset, _parents, _family, _children, _neighbors, _boundary
-from ..algorithms import _ancestors, _descendants, _numbering, _perfect_numbering, _is_complete
-from ..algorithms import _all_simple_paths
+
+from ..algorithms import (_all_simple_paths, _ancestors, _boundary, _children,
+                          _descendants, _family, _is_complete, _neighbors,
+                          _numbering, _parents, _perfect_numbering, _subset)
 
 
 class Graph():
