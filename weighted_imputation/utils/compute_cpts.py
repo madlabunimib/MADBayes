@@ -36,7 +36,11 @@ def get_cpts(parsed_file: Dict) -> Dict:
             for i, value in enumerate(cpt["levels"]):
                 data.loc[value] = cpt["cpt"][0][i]
         
-        dictionary.update({key : data})
+        dict_key = key + "|"
+        for dependencie in cpt["dependencies"]:
+            dict_key += dependencie + ":"   
+
+        dictionary.update({dict_key[:-1] : data})
     return dictionary
 
 def compute_margin_table(node: str, cpts_dict: Dict, margin_cache: Dict) -> Dict:
