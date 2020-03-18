@@ -36,14 +36,3 @@ def alternative_backend(backend=None):
         return inner_wrapper
     
     return backend_wrapper
-
-def disable_alternative_backend():
-    BACKENDS = []
-
-def set_alternative_backend(backend: str):
-    BACKENDS = initialize_backend()
-    BACKENDS = {
-        key: value
-        for key, value in BACKENDS.items()
-        if key == backend
-    }
