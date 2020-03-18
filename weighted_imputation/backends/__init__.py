@@ -17,13 +17,15 @@ def alternative_backend(backend=None):
     def backend_wrapper(function):
 
         @wraps(function)
-        def inner_wrapper(*args, **kwargs):
-            if backend is not None:
-                if backend in BACKENDS:
-                    funct = getattr(BACKENDS[backend], function.__name__)
+        def wrapped(*args, **kwargs):
+            if wrapped.backend is not None:
+                if wrapped.backend == 'python':
+                    return function(*args, **kwargs)
+                if wrapped.backend in BACKENDS:
+                    funct = getattr(BACKENDS[wrapped.backend], function.__name__)
                     return funct(*args, **kwargs)
-                raise NotImplementedError('"' + function.__name__ + '" not implemented in "' + backend + '" backend.')
-            if backend is None:
+                raise NotImplementedError('"' + function.__name__ + '" not implemented in "' + wrapped.backend + '" backend.')
+            if wrapped.backend is None:
                 modules = [
                     back for back, module in BACKENDS.items()
                     if hasattr(module, function.__name__)
@@ -32,7 +34,9 @@ def alternative_backend(backend=None):
                     funct = getattr(BACKENDS[modules[0]], function.__name__)
                     return funct(*args, **kwargs)
             return function(*args, **kwargs)
+        
+        wrapped.backend = backend
 
-        return inner_wrapper
+        return wrapped
     
     return backend_wrapper
