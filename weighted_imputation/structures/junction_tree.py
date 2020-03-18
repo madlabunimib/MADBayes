@@ -10,7 +10,10 @@ from .tree import Node, Tree
 from ..algorithms.moralize import moralize
 from ..algorithms.triangulate import triangulate
 from ..algorithms.chain_of_cliques import chain_of_cliques
-from ..utils import get_cpts, compute_margin_table
+from ..utils import get_cpts
+from copy import deepcopy, copy
+
+import pprint as pp
 
 
 def _build_junction_tree(graph: DirectedGraph, chain: List) -> Node:
@@ -109,7 +112,7 @@ class JunctionTree(Tree):
 def compute_potentials(jt: JunctionTree, cpts_file: Dict):
 
     cpts_dict = get_cpts(cpts_file)
-    margin_cache = {}
+    margin_table_cache = build_margin_table_cache(cpts_file, cpts_dict)
 
     jt_root = jt.get_root()
     queue = Queue()
@@ -118,79 +121,121 @@ def compute_potentials(jt: JunctionTree, cpts_file: Dict):
         node = queue.get()
         for child in node.get_children():
             queue.put(child)
-
-        if node["type"] == "clique":
-
-            nodes_in_clique = node["nodes"]
-            edge_in_clique = node["clique"].get_edges()
-
-            #Compute dimensions
-            dimensions = nodes_in_clique
-
-            #Compute coordinates
-            coordinates = []
-            for node in nodes_in_clique:
-                coordinates.append(cpts_file[node]["levels"])
-            
-            #Compute size of n-d-matrix
-            levels = []
-            for dim in dimensions:
-                levels.append(len(cpts_file[dim]["levels"]))
-
-
-            data = xa.DataArray(np.ones(shape=levels), dims=dimensions, coords = coordinates)
-            computed_nodes = []
-            for edge in edge_in_clique:
-                
-                
-                #Compute for dependencies variables -> parent in edge -> edge[0]
-                if edge[0] not in computed_nodes:
-                    if edge[0] not in margin_cache:
-                        margin_table, margin_cache = compute_margin_table(edge[0], cpts_dict, margin_cache)
-                    else:
-                        margin_table = margin_cache[edge[0]]
-
-
-                    dimensions = [edge[0]]
-                    dimensions.extend([x for x in nodes_in_clique if x not in dimensions])
-
-                    coordinates = [cpts_file[edge[0]]["levels"]]
-                    for node in nodes_in_clique:
-                        if node != edge[0]:
-                            coordinates.append(cpts_file[node]["levels"])
-
-                    data = data.transpose(*dimensions)
-                    for combination in list(itertools.product(*coordinates)): 
-                        data.loc[combination] = data.loc[combination] * \
-                            margin_table.loc[combination[0]]
-
-                    computed_nodes.append(edge[0])
-
-
-
-                #Compute for dependant variables -> child in edge -> edge[1]
-                if edge[1] not in computed_nodes:
-                    dim = [x for x in dimensions if x in cpts_dict[edge[1]].coords]
-                    tmp_cpt = cpts_dict[edge[1]].transpose(*dim)
-                    coordinates = [cpts_file[node]["levels"] for node in dim]
-                    dim.extend([x for x in dimensions if x not in dim])
-                    data = data.transpose(*dim)
+        
+        potential = compute_clique_potential(node, cpts_file, cpts_dict, margin_table_cache)
+        node["potential"] = potential
     
-                    for combination in list(itertools.product(*coordinates)): 
-                        data.loc[combination] = data.loc[combination] * \
-                            tmp_cpt.loc[combination]
-                    
-                    computed_nodes.append(edge[1])
-
-        else:
-            pass
-            #TODO COMPUTE SEPARATORS MARGIN TABLE
-
-
-    return 
-
-def compute_separator_margin_table():
-
     return
 
-            
+def compute_clique_potential(clique: Node, cpts_file: Dict, cpts_dict: Dict, margin_table_cache: Dict):
+
+    #Compute dimensions
+    dimensions = clique["nodes"]
+    #Compute coordinates
+    coordinates = [cpts_file[node]["levels"] for node in clique["nodes"]]
+    #Compute size of n-d-matrix
+    levels = [len(cpts_file[dimension]["levels"]) for dimension in dimensions]
+
+    data = xa.DataArray(np.ones(shape=levels), dims=dimensions, coords=coordinates)
+
+    nodes_in_clique = copy(clique["nodes"])
+    while nodes_in_clique != []:
+
+        node = nodes_in_clique.pop()
+        parents = clique["clique"].parents(node)
+        node_dict_key = key_dict(node, parents)
+
+        if node_dict_key not in margin_table_cache:
+            margin_table = compute_margin_table(node, parents, cpts_dict, margin_table_cache)
+        else:
+            margin_table = margin_table_cache[node_dict_key]
+
+        dims_order = list(margin_table.dims)
+        margin_values = {
+            margin : [value for value in margin_table[margin].coords[margin].values]
+            for margin in dims_order
+            }
+
+        dims_order.extend([x for x in clique["nodes"] if x not in dims_order])
+        data = data.transpose(*dims_order)
+        for combination in list(_my_product(margin_values)):
+            label = [x for x in combination.values()]
+            data.loc[tuple(label)] = data.loc[tuple(label)] * \
+                margin_table.loc[tuple(label)]
+    
+    return data
+
+def compute_margin_table(node: str, parents: List[str], cpts_dict: Dict, margin_table_cache: Dict) -> Dict:
+    
+    node_cpt = deepcopy(cpts_dict[node])
+
+    node_values = []
+    for key in node_cpt.coords[node].values:
+        node_values.append(key)
+
+    node_dependencies = [x for x in node_cpt.coords if x != node]
+    dependencies_values = {
+        dependencie : [value for value in cpts_dict[dependencie].coords[dependencie].values]
+        for dependencie in node_dependencies
+        }
+
+    if not dependencies_values == {}:
+        for node_value in node_values:
+            for combination in list(_my_product(dependencies_values)):
+                label = [x for x in combination.values()]
+                label.insert(0, node_value)
+                for item in combination:
+                    if not item in margin_table_cache:
+                        compute_margin_table(item, [], cpts_dict, margin_table_cache)
+                    node_cpt.loc[tuple(label)] = node_cpt.loc[tuple(label)] * \
+                        margin_table_cache[item].loc[combination[item]]
+
+        #Compute dimensions of the margin table (node + parents)
+        dims_order = [node]
+        dims_order.extend(parents)
+        #Compute coordinates of the margin table 
+        coordinates = [node_values]
+        if parents != []:
+            coordinates.extend([dependencies_values[x] for x in dependencies_values if x in parents])
+        #Compute size of the margin table
+        levels = [len(dim) for dim in coordinates]
+
+        margin_table = xa.DataArray(np.zeros(shape=levels), dims=dims_order, coords=coordinates)
+        
+        dims_order.extend([x for x in node_cpt.coords if x not in dims_order])
+        node_cpt = node_cpt.transpose(*dims_order)
+
+        node_and_parents = [node]
+        node_and_parents.extend(parents)
+        
+        parents_values_dict = {
+            parent : [value for value in cpts_dict[parent].coords[parent].values]
+            for parent in node_and_parents
+            }
+        for combination in _my_product(parents_values_dict):
+            label = [x for x in combination.values()]
+            margin_table.loc[tuple(label)] = node_cpt.loc[tuple(label)].sum()
+    
+    else:
+        margin_table = node_cpt
+    
+    margin_table_cache.update({key_dict(node, parents) : margin_table}) 
+    return margin_table
+
+
+def build_margin_table_cache(cpts_file: Dict, cpts_dict: Dict) -> Dict:
+    margin_table_cache = {}
+    for node in cpts_dict:
+        parents = cpts_file[node]["dependencies"]
+        margin_table_cache.update({key_dict(node, parents) : cpts_dict[node]})
+    return margin_table_cache
+
+def _my_product(input: Dict):
+    return (dict(zip(input.keys(), values)) for values in itertools.product(*input.values()))
+
+def key_dict(node: str, parents: List[str]) -> str:
+    node_dict_key = node + "|"
+    for parent in parents:
+        node_dict_key += parent + ":"
+    return node_dict_key[:-1]
+ 
