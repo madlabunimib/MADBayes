@@ -114,65 +114,54 @@ def compute_potentials(jt: JunctionTree, cpts_file: Dict):
     cpts_dict = get_cpts(cpts_file)
     margin_table_cache = build_margin_table_cache(cpts_file, cpts_dict)
 
-    jt_root = jt.get_root()
     queue = Queue()
-    queue.put(jt_root)
+    queue.put(jt.get_root())
     while not queue.empty():
         node = queue.get()
         for child in node.get_children():
             queue.put(child)
-        
-        potential = compute_clique_potential(node, cpts_file, cpts_dict, margin_table_cache)
-        node["potential"] = potential
-    
-    return
+        node["potential"] = compute_clique_potential(node, cpts_dict, margin_table_cache)
 
-def compute_clique_potential(clique: Node, cpts_file: Dict, cpts_dict: Dict, margin_table_cache: Dict):
+def compute_clique_potential(clique: Node, cpts_dict: Dict, margin_table_cache: Dict):
 
     #Compute dimensions
     dimensions = clique["nodes"]
     #Compute coordinates
-    coordinates = [cpts_file[node]["levels"] for node in clique["nodes"]]
+    coordinates = [cpts_dict[node].coords[node].values for node in clique["nodes"]]
     #Compute size of n-d-matrix
-    levels = [len(cpts_file[dimension]["levels"]) for dimension in dimensions]
+    levels = [len(cpts_dict[dim].coords[dim].values) for dim in dimensions]
 
-    data = xa.DataArray(np.ones(shape=levels), dims=dimensions, coords=coordinates)
+    potential = xa.DataArray(np.ones(shape=levels), dims=dimensions, coords=coordinates)
 
     nodes_in_clique = copy(clique["nodes"])
     while nodes_in_clique != []:
-
         node = nodes_in_clique.pop()
         parents = clique["clique"].parents(node)
+        
         node_dict_key = key_dict(node, parents)
-
         if node_dict_key not in margin_table_cache:
             margin_table = compute_margin_table(node, parents, cpts_dict, margin_table_cache)
         else:
             margin_table = margin_table_cache[node_dict_key]
 
         dims_order = list(margin_table.dims)
-        margin_values = {
-            margin : [value for value in margin_table[margin].coords[margin].values]
-            for margin in dims_order
-            }
+        margin_values = []
+        for dim in dims_order:
+            margin_values.append([value for value in margin_table[dim].coords[dim].values])
 
         dims_order.extend([x for x in clique["nodes"] if x not in dims_order])
-        data = data.transpose(*dims_order)
-        for combination in list(_my_product(margin_values)):
-            label = [x for x in combination.values()]
-            data.loc[tuple(label)] = data.loc[tuple(label)] * \
-                margin_table.loc[tuple(label)]
+        potential = potential.transpose(*dims_order)
+        for combination in list(itertools.product(*margin_values)):
+            potential.loc[tuple(combination)] = potential.loc[tuple(combination)] * \
+                margin_table.loc[tuple(combination)]
     
-    return data
+    return potential
 
 def compute_margin_table(node: str, parents: List[str], cpts_dict: Dict, margin_table_cache: Dict) -> Dict:
     
     node_cpt = deepcopy(cpts_dict[node])
 
-    node_values = []
-    for key in node_cpt.coords[node].values:
-        node_values.append(key)
-
+    node_values = [key for key in node_cpt.coords[node].values]
     node_dependencies = [x for x in node_cpt.coords if x != node]
     dependencies_values = {
         dependencie : [value for value in cpts_dict[dependencie].coords[dependencie].values]
