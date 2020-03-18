@@ -3,6 +3,22 @@ from importlib import import_module
 from os.path import dirname
 from pkgutil import iter_modules
 
+
+def disable_alternative_backends():
+    global BACKENDS
+    BACKENDS.clear()
+
+def force_alternative_backends(backend: str):
+    global BACKENDS
+    if backend not in BACKENDS.keys():
+        raise NotImplementedError('"' + backend + '" backend not implemented yet.')
+    BACKENDS = {
+        key: value
+        for key, value in BACKENDS.items()
+        if key == backend
+    }
+
+
 BACKENDS = {
     module: import_module('.' + module, package='weighted_imputation.backends')
     for (_, module, _) in iter_modules([dirname(__file__)])    
@@ -24,7 +40,7 @@ class AlternativeBackend():
                 if self.backend in BACKENDS:
                     funct = getattr(BACKENDS[self.backend], self.function.__name__)
                     return funct(*args, **kwargs)
-                raise NotImplementedError('"' + self.function.__name__ + '" not implemented in "' + self.backend + '" backend.')
+                raise NotImplementedError('"' + self.function.__name__ + '" not implemented in "' + self.backend + '" backend yet.')
             if self.backend is None:
                 modules = [
                     back for back, module in BACKENDS.items()
