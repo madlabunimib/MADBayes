@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from ..structures import DirectedGraph
 
 
-@AlternativeBackend
+@AlternativeBackend()
 def moralize(graph: DirectedGraph) -> Graph:
     A = graph.get_adjacency_matrix()
     new_edges = np.zeros(A.shape, dtype=bool)

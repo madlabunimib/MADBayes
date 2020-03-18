@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from ..structures import Graph
 
 
-@AlternativeBackend
+@AlternativeBackend()
 def bron_kerbosh(graph: Graph) -> List:
     nodes = graph.get_nodes()
     adjacency_matrix = graph.get_adjacency_matrix()

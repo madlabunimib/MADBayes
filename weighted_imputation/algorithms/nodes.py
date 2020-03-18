@@ -22,7 +22,7 @@ def subgraph(graph: Graph, nodes: List[str]) -> Graph:
         subgraph[node] = deepcopy(graph[node])
     return subgraph
 
-@AlternativeBackend
+@AlternativeBackend()
 def _subset(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
     return A[nodes, :][:, nodes]
 
@@ -35,7 +35,7 @@ def parents(graph, node: str) -> List[str]:
     parents = [nodes[parent] for parent in parents]
     return parents
 
-@AlternativeBackend
+@AlternativeBackend()
 def _parents(node: int, A: np.ndarray) -> np.ndarray:
     parents = A.T[node]
     parents = np.nonzero(parents)[0].T
@@ -50,7 +50,7 @@ def family(graph, node: str) -> List[str]:
     family = [nodes[famil] for famil in family]
     return family
 
-@AlternativeBackend
+@AlternativeBackend()
 def _family(node: int, A: np.ndarray) -> np.ndarray:
     parents = _parents(node, A)
     family = np.append(parents, [node])
@@ -65,7 +65,7 @@ def children(graph, node: str) -> List[str]:
     children = [nodes[child] for child in children]
     return children
 
-@AlternativeBackend
+@AlternativeBackend()
 def _children(node: int, A: np.ndarray) -> np.ndarray:
     children = A[node]
     children = np.nonzero(children)[0].T
@@ -80,7 +80,7 @@ def neighbors(graph: Graph, node: str) -> List[str]:
     neighbors = [nodes[neighbor] for neighbor in neighbors]
     return neighbors
 
-@AlternativeBackend
+@AlternativeBackend()
 def _neighbors(node: int, A: np.ndarray) -> np.ndarray:
     parents = _parents(node, A)
     children = _children(node, A)
@@ -98,7 +98,7 @@ def boundary(graph: Graph, nodes: List[str]) -> List[str]:
     boundary = [_nodes[bound] for bound in boundary]
     return boundary
 
-@AlternativeBackend
+@AlternativeBackend()
 def _boundary(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
     boundary = []
     for node in nodes:
@@ -117,7 +117,7 @@ def ancestors(graph, node: str) -> List[str]:
     ancestors = [nodes[ancestor] for ancestor in ancestors]
     return ancestors
 
-@AlternativeBackend
+@AlternativeBackend()
 def _ancestors(node: int, A: np.ndarray) -> np.ndarray:
     parents = _parents(node, A)
     ancestors = _ancestors_recursive(parents, A)
@@ -142,7 +142,7 @@ def descendants(graph, node: str) -> List[str]:
     descendants = [nodes[descendant] for descendant in descendants]
     return descendants
 
-@AlternativeBackend
+@AlternativeBackend()
 def _descendants(node: int, A: np.ndarray) -> np.ndarray:
     children = _children(node, A)
     descendants = _descendants_recursive(children, A)
@@ -164,7 +164,7 @@ def numbering(graph: Graph) -> np.ndarray:
     numbering = _numbering(nodes)
     return numbering
 
-@AlternativeBackend
+@AlternativeBackend()
 def _numbering(nodes: np.ndarray) -> np.ndarray:
     numbering = np.array(nodes, copy=True)
     return numbering
@@ -176,7 +176,7 @@ def perfect_numbering(graph: Graph) -> List[str]:
     numbering = [nodes[number] for number in numbering]
     return numbering
 
-@AlternativeBackend
+@AlternativeBackend()
 def _perfect_numbering(node: int, A: np.ndarray) -> np.ndarray:
     n = A.shape[0]
     X = set(range(n))
@@ -197,18 +197,18 @@ def is_complete(graph) -> bool:
     is_complete = _is_complete(adjacency_matrix)
     return is_complete
 
-@AlternativeBackend
+@AlternativeBackend()
 def _is_complete(A: np.ndarray) -> bool:
     out = A.copy()
     np.fill_diagonal(out, True)
     return out.all()
 
-@AlternativeBackend
+@AlternativeBackend()
 def _is_complete_set(nodes: np.ndarray, A: np.ndarray) -> bool:
     out = _subset(nodes, A)
     return _is_complete(out)
 
-@AlternativeBackend
+@AlternativeBackend()
 def _fill_in(A: np.array) -> np.ndarray:
     out = A.copy()
     np.fill_diagonal(out, True)
@@ -216,7 +216,7 @@ def _fill_in(A: np.array) -> np.ndarray:
     indices = np.argwhere(out)
     return indices
 
-@AlternativeBackend
+@AlternativeBackend()
 def _fill_in_set(nodes: np.ndarray, A: np.array) -> np.ndarray:
     out = _subset(nodes, A)
     indices = _fill_in(out)
@@ -227,7 +227,7 @@ def _fill_in_set(nodes: np.ndarray, A: np.array) -> np.ndarray:
         indices[i, 1] = nodes[indices[i, 1]]
     return indices
 
-@AlternativeBackend
+@AlternativeBackend()
 def _filter(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
     out = A.copy()
     out[:] = False

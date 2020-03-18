@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from ..structures import Graph
 
 
-@AlternativeBackend
+@AlternativeBackend()
 def chain_of_cliques(graph: Graph) -> List:
     nodes = graph.get_nodes()
     adjacency_matrix = graph.get_adjacency_matrix()

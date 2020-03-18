@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from ..structures import Graph
 
 
-@AlternativeBackend
+@AlternativeBackend()
 def DFS(graph: Graph) -> Dict:
     A = graph.get_adjacency_matrix()
     n = A.shape[0]
