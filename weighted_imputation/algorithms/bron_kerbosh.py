@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from ..backends import alternative_backend
+from ..backends import AlternativeBackend
 from .nodes import _neighbors
 
 if TYPE_CHECKING:
@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from ..structures import Graph
 
 
-@alternative_backend()
+@AlternativeBackend
 def bron_kerbosh(graph: Graph) -> List:
     nodes = graph.get_nodes()
     adjacency_matrix = graph.get_adjacency_matrix()

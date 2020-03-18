@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from ..backends import alternative_backend
+from ..backends import AlternativeBackend
 from .bron_kerbosh import _bron_kerbosh
 from .nodes import _perfect_numbering
 
@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from ..structures import Graph
 
 
-@alternative_backend()
+@AlternativeBackend
 def chain_of_cliques(graph: Graph) -> List:
     nodes = graph.get_nodes()
     adjacency_matrix = graph.get_adjacency_matrix()

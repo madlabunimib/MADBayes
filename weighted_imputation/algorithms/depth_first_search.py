@@ -4,14 +4,14 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
-from ..backends import alternative_backend
+from ..backends import AlternativeBackend
 
 if TYPE_CHECKING:
     from typing import Dict
     from ..structures import Graph
 
 
-@alternative_backend()
+@AlternativeBackend
 def DFS(graph: Graph) -> Dict:
     A = graph.get_adjacency_matrix()
     n = A.shape[0]
