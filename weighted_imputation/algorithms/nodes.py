@@ -26,7 +26,7 @@ def subgraph(graph: Graph, nodes: List[str]) -> Graph:
 def _subset(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
     return A[nodes, :][:, nodes]
 
-def parents(graph, node: str) -> List[str]:
+def parents(graph: Graph, node: str) -> List[str]:
     nodes = graph.get_nodes()
     if not node in nodes:
         raise Exception('node not in graph.')
@@ -41,7 +41,7 @@ def _parents(node: int, A: np.ndarray) -> np.ndarray:
     parents = np.nonzero(parents)[0].T
     return parents
 
-def family(graph, node: str) -> List[str]:
+def family(graph: Graph, node: str) -> List[str]:
     nodes = graph.get_nodes()
     if not node in nodes:
         raise Exception('node not in graph.')
@@ -56,7 +56,7 @@ def _family(node: int, A: np.ndarray) -> np.ndarray:
     family = np.append(parents, [node])
     return family
 
-def children(graph, node: str) -> List[str]:
+def children(graph: Graph, node: str) -> List[str]:
     nodes = graph.get_nodes()
     if not node in nodes:
         raise Exception('node not in graph.')
@@ -192,7 +192,7 @@ def _perfect_numbering(node: int, A: np.ndarray) -> np.ndarray:
         numbering.add(xmax)
     return numbering
 
-def is_complete(graph) -> bool:
+def is_complete(graph: Graph) -> bool:
     adjacency_matrix = graph.get_adjacency_matrix(copy=False)
     is_complete = _is_complete(adjacency_matrix)
     return is_complete
