@@ -3,7 +3,7 @@ channels:
     - conda-forge
     - numba
 dependencies:
-    - python>=3.7,<3.8
+    - python>=3.7
     - icc_rt
     - pydot
     - matplotlib
