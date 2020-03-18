@@ -3,10 +3,14 @@ from importlib import import_module
 from os.path import dirname
 from pkgutil import iter_modules
 
-BACKENDS = {
-    module: import_module('.' + module, package='weighted_imputation.backends')
-    for (_, module, _) in iter_modules([dirname(__file__)])    
-}
+
+def initialize_backend():
+    return {
+        module: import_module('.' + module, package='weighted_imputation.backends')
+        for (_, module, _) in iter_modules([dirname(__file__)])    
+    }
+
+BACKENDS = initialize_backend()
 
 def alternative_backend(backend=None):
 
@@ -37,6 +41,7 @@ def disable_alternative_backend():
     BACKENDS = []
 
 def set_alternative_backend(backend: str):
+    BACKENDS = initialize_backend()
     BACKENDS = {
         key: value
         for key, value in BACKENDS.items()
