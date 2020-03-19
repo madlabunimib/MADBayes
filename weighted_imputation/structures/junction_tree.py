@@ -120,7 +120,11 @@ def compute_potentials(jt: JunctionTree, cpts_file: Dict):
         node = queue.get()
         for child in node.get_children():
             queue.put(child)
-        node["potential"] = compute_clique_potential(node, cpts_dict, margin_table_cache)
+        
+        if node["type"] == "clique":
+            node["potential"] = compute_clique_potential(node, cpts_dict, margin_table_cache)
+        else:
+            node["potential"] = compute_separator(node, node.get_parent(), cpts_dict)
 
 def compute_clique_potential(clique: Node, cpts_dict: Dict, margin_table_cache: Dict):
 
@@ -187,7 +191,7 @@ def compute_margin_table(node: str, parents: List[str], cpts_dict: Dict, margin_
         if parents != []:
             coordinates.extend([dependencies_values[x] for x in dependencies_values if x in parents])
         #Compute size of the margin table
-        levels = [len(dim) for dim in coordinates]
+        levels = [len(coord) for coord in coordinates]
 
         margin_table = xa.DataArray(np.zeros(shape=levels), dims=dims_order, coords=coordinates)
         
@@ -209,6 +213,27 @@ def compute_margin_table(node: str, parents: List[str], cpts_dict: Dict, margin_
         margin_table = node_cpt
     
     margin_table_cache.update({key_dict(node, parents) : margin_table}) 
+    return margin_table
+
+def compute_separator(node: Node, parent: Node, cpts_dict: Dict) -> Dict:
+
+    parent_cpt = deepcopy(parent["potential"])
+    
+    #Compute dimensions of the margin table
+    dimensions = node["nodes"]
+    #Compute coordinates of the margin table 
+    coordinates = [cpts_dict[dim].coords[dim].values for dim in dimensions]
+    #Compute size of the margin table
+    levels = [len(coord) for coord in coordinates]
+
+    margin_table = xa.DataArray(np.zeros(shape=levels), dims=dimensions, coords=coordinates)
+
+    dimensions.extend([dim for dim in parent["nodes"] if dim not in dimensions])
+    parent_cpt = parent_cpt.transpose(*dimensions)
+
+    for combination in itertools.product(*coordinates):
+        margin_table.loc[tuple(combination)] = parent_cpt.loc[tuple(combination)].sum()
+
     return margin_table
 
 
