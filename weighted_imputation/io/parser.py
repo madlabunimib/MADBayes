@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 from .bif import BIF_GRAMMAR
 from .dsc import DSC_GRAMMAR
 from lark import Lark, Token, tree, Tree, Transformer, Discard
