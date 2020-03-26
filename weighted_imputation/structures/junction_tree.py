@@ -108,7 +108,7 @@ class JunctionTree(Tree):
         root = _build_junction_tree(graph, chain)
         return cls(root)
 
-
+"""
 def compute_potentials(jt: JunctionTree, cpts_file: Dict):
 
     cpts_dict = get_cpts(cpts_file)
@@ -160,32 +160,48 @@ def compute_clique_potential(clique: Node, cpts_dict: Dict, margin_table_cache: 
                 margin_table.loc[tuple(combination)]
     
     return potential
+"""
 
 def compute_margin_table(node: str, parents: List[str], cpts_dict: Dict, margin_table_cache: Dict) -> Dict:
     
     node_cpt = deepcopy(cpts_dict[node])
 
+    # Levels of dependant
     node_values = [key for key in node_cpt.coords[node].values]
+    # Dependencies
     node_dependencies = [x for x in node_cpt.coords if x != node]
+    # Levels of dependencies
     dependencies_values = {
         dependencie : [value for value in cpts_dict[dependencie].coords[dependencie].values]
         for dependencie in node_dependencies
         }
 
+    # If dependencies not empy
     if not dependencies_values == {}:
+        # For each level of dependant
         for node_value in node_values:
+            # For each combination of dependencies levels
             for combination in list(_my_product(dependencies_values)):
+                # Partial dimensional access vector
                 label = [x for x in combination.values()]
+                # Complete dimensioal access vector
                 label.insert(0, node_value)
+                # For node in dependencies
                 for item in combination:
+                    # If not cache compute margin table
                     if not item in margin_table_cache:
+                        # Recursive call
                         compute_margin_table(item, [], cpts_dict, margin_table_cache)
+                    # JPT'[A] = JPT'[A] * TODO
                     node_cpt.loc[tuple(label)] = node_cpt.loc[tuple(label)] * \
                         margin_table_cache[item].loc[combination[item]]
 
+        # MARGINALIZE
         #Compute dimensions of the margin table (node + parents)
         dims_order = [node]
         dims_order.extend(parents)
+
+        # Init Margine Table
         #Compute coordinates of the margin table 
         coordinates = [node_values]
         if parents != []:
@@ -195,9 +211,11 @@ def compute_margin_table(node: str, parents: List[str], cpts_dict: Dict, margin_
 
         margin_table = xa.DataArray(np.zeros(shape=levels), dims=dims_order, coords=coordinates)
         
+        # Reorder JPD using new dimension order
         dims_order.extend([x for x in node_cpt.coords if x not in dims_order])
         node_cpt = node_cpt.transpose(*dims_order)
 
+        # MT dimensions
         node_and_parents = [node]
         node_and_parents.extend(parents)
         
@@ -207,6 +225,7 @@ def compute_margin_table(node: str, parents: List[str], cpts_dict: Dict, margin_
             }
         for combination in _my_product(parents_values_dict):
             label = [x for x in combination.values()]
+            # Marginalize
             margin_table.loc[tuple(label)] = node_cpt.loc[tuple(label)].sum()
     
     else:
@@ -236,7 +255,7 @@ def compute_separator(node: Node, parent: Node, cpts_dict: Dict) -> Dict:
 
     return margin_table
 
-
+"""
 def build_margin_table_cache(cpts_file: Dict, cpts_dict: Dict) -> Dict:
     margin_table_cache = {}
     for node in cpts_dict:
@@ -252,4 +271,5 @@ def key_dict(node: str, parents: List[str]) -> str:
     for parent in parents:
         node_dict_key += parent + ":"
     return node_dict_key[:-1]
+"""
  
