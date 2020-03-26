@@ -35,42 +35,6 @@ def get_cpts(parsed_file: Dict) -> Dict:
         else:
             for i, value in enumerate(cpt["levels"]):
                 data.loc[value] = cpt["cpt"][0][i]
-        
+         
         dictionary.update({key : data})
     return dictionary
-
-def compute_margin_table(node: str, cpts_dict: Dict, margin_cache: Dict) -> Dict:
-    node_cpt = cpts_dict[node]
-
-    #Compute coordinates
-    coordinates = []
-    for key in node_cpt.coords[node].values:
-        coordinates.append(key)
-    
-    node_dependencies = [x for x in node_cpt.coords if x != node]
-    dependencies_dict = {}
-    for dependencie in node_dependencies:
-        dependencies_dict.update({dependencie : []})
-        for value in cpts_dict[dependencie].coords[dependencie].values:
-            dependencies_dict[dependencie].append(value)
-
-    if not dependencies_dict == {}:
-        for coordinate in coordinates:
-            for combination in list(_my_product(dependencies_dict)):
-                label = [x for x in combination.values()]
-                label.insert(0, coordinate)
-                for item in combination:
-                    if not item in margin_cache:
-                        _, margin_cache = compute_margin_table(item, cpts_dict, margin_cache)
-                    node_cpt.loc[tuple(label)] = node_cpt.loc[tuple(label)] * \
-                        margin_cache[item].loc[combination[item]]
-
-    margin_table = xa.DataArray(np.zeros(shape=len(coordinates)), dims=node, coords=[coordinates])
-    for coordinate in coordinates:
-        margin_table.loc[coordinate] = node_cpt.loc[coordinate].sum()
-    
-    margin_cache.update({node : margin_table})
-    return margin_table, margin_cache
-
-def _my_product(input: Dict):
-    return (dict(zip(input.keys(), values)) for values in itertools.product(*input.values()))

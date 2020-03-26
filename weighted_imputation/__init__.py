@@ -6,4 +6,4 @@ from .algorithms import (BFS, DFS, MCS, ancestors, boundary, chain_of_cliques,
 from .backends import disable_alternative_backends, force_alternative_backends
 from .structures import (BayesianNetwork, DirectedGraph, Graph, JunctionTree,
                          Node, Tree)
-from .utils import compute_margin_table, get_cpts
+from .utils import get_cpts
