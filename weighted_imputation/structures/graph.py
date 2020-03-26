@@ -5,13 +5,13 @@ from typing import Dict, List
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
-import pandas as pd
+import xarray as xa
 
 
 class Graph():
 
     _nodes_attributes: Dict
-    _adjacency_matrix: pd.DataFrame
+    _adjacency_matrix: xa.DataArray
 
     def __init__(self, nodes: List[str] = None, adjacency_matrix: np.ndarray = None) -> None:
         self._nodes_attributes = {}
@@ -20,7 +20,7 @@ class Graph():
         if adjacency_matrix is not None:
             self.set_adjacency_matrix(adjacency_matrix)
         if nodes is None and adjacency_matrix is None:
-            self._adjacency_matrix = pd.DataFrame(dtype=bool)
+            self._adjacency_matrix = xa.DataArray()
     
     def __len__(self) -> int:
         return len(self.get_nodes())
@@ -52,7 +52,7 @@ class Graph():
             if self._adjacency_matrix[i][j] == True]
 
     def get_nodes(self) -> List[str]:
-        return list(self._adjacency_matrix.index.values)
+        return list(self._adjacency_matrix.coords['from'].values)
     
     def set_nodes(self, nodes: List[str]) -> "Graph":
         try:
@@ -76,15 +76,18 @@ class Graph():
             # If there is no adjacency_matrix, create a new empty one using
             # the labels of the nodes
             n = len(nodes)
-            self._adjacency_matrix = pd.DataFrame(
+            self._adjacency_matrix = xa.DataArray(
                 data=np.zeros((n, n), dtype=bool),
-                index=nodes,
-                columns=nodes
+                dims=['from','to'],
+                coords=[nodes, nodes]
             )
         return self
 
     def get_adjacency_matrix(self, copy: bool = True) -> np.ndarray:
-        return self._adjacency_matrix.to_numpy(dtype=bool, copy=copy)
+        values = self._adjacency_matrix.values
+        if not copy:
+            return values
+        return np.copy(values)
     
     def set_adjacency_matrix(self, adjacency_matrix: np.ndarray) -> "Graph":
         if len(adjacency_matrix.shape) != 2:
@@ -103,20 +106,18 @@ class Graph():
                 # shape of the new adjacency_matrix, create a new matrix using
                 # the new data and keeping the previous node names
                 nodes = self.get_nodes()
-                self._adjacency_matrix = pd.DataFrame(
-                    data=adjacency_matrix,
-                    index=nodes,
-                    columns=nodes,
-                    dtype=bool,
-                    copy=True
+                values = np.copy(adjacency_matrix.astype(bool))
+                self._adjacency_matrix = xa.DataArray(
+                    data=values,
+                    dims=['from', 'to'],
+                    coords=[nodes, nodes]
                 )
         except AttributeError:
             # If there is no adjacency_matrix, create a new one without specify
             # the labels of the nodes
-            self._adjacency_matrix = pd.DataFrame(
-                data=adjacency_matrix,
-                dtype=bool,
-                copy=True
+            values = np.copy(adjacency_matrix.astype(bool))
+            self._adjacency_matrix = xa.DataArray(
+                data=adjacency_matrix
             )
         return self
 
@@ -194,20 +195,18 @@ class DirectedGraph(Graph):
                 # shape of the new adjacency_matrix, create a new matrix using
                 # the new data and keeping the previous node names
                 nodes = self.get_nodes()
-                self._adjacency_matrix = pd.DataFrame(
-                    data=adjacency_matrix,
-                    index=nodes,
-                    columns=nodes,
-                    dtype=bool,
-                    copy=True
+                values = np.copy(adjacency_matrix.astype(bool))
+                self._adjacency_matrix = xa.DataArray(
+                    data=values,
+                    dims=['from', 'to'],
+                    coords=[nodes, nodes]
                 )
         except AttributeError:
             # If there is no adjacency_matrix, create a new one without specify
             # the labels of the nodes
-            self._adjacency_matrix = pd.DataFrame(
-                data=adjacency_matrix,
-                dtype=bool,
-                copy=True
+            values = np.copy(adjacency_matrix.astype(bool))
+            self._adjacency_matrix = xa.DataArray(
+                data=values
             )
         return self
     

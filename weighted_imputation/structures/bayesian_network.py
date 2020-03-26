@@ -2,6 +2,7 @@ from typing import Dict, List
 
 import numpy as np
 import pandas as pd
+import xarray as xa
 
 from ..io import parse_network_file
 from .conditional_probability_table import CPT
@@ -26,13 +27,22 @@ class BayesianNetwork(DirectedGraph):
                 adjacency_matrix[parent, child] = True
         bn = cls(nodes, adjacency_matrix)
         for key, value in parsed.items():
+            variables = [key]
+            levels = [value['levels']]
             if len(value['dependencies']) == 0:
-                data = np.array(value['cpt'][0])
-                tuples = None
+                data = [([value['levels'][i]], v) for i, v in enumerate(value['cpt'][0])]
             else:
-                data = np.array([row[1] for row in value['cpt']])
-                tuples = [tuple(row[0]) for row in value['cpt']]
-            bn[key]['CPT'] = CPT(key, value['dependencies'], data, value['levels'], tuples)
+                variables += value['dependencies']
+                levels += [parsed[dependency]['levels'] for dependency in value['dependencies']]
+                data = [
+                    ([value['levels'][i]] + row[0], v)
+                    for row in value['cpt']
+                    for i, v in enumerate(row[1])
+                ]
+            array = xa.DataArray(dims=variables, coords=levels)
+            for (location, value) in data:
+                array.loc[location] = value
+            bn[key]['CPT'] = CPT(array)
         return bn
     
     @classmethod
@@ -42,12 +52,6 @@ class BayesianNetwork(DirectedGraph):
             raise Exception('structure and dataset variables are different.')
         for node in graph.get_nodes():
             graph[node]['RFT'] = df[node].value_counts() / df[node].size
-        return graph
-    
-    @classmethod
-    def from_file_and_dataset(cls, file: str, dataset: str):
-        graph = cls.from_file(file)
-        graph = cls._load_dataset(graph, dataset)
         return graph
     
     @classmethod
