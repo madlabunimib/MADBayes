@@ -7,6 +7,8 @@ from .probability_table import ProbabilityTable
 
 
 class ConditionalProbabilityTable(ProbabilityTable):
+
+    __slots__ = []
     
     def dependant(self) -> str:
         return self.variables()[0]

@@ -7,4 +7,5 @@ from .probability_table import ProbabilityTable
 
 
 class JointProbabilityTable(ProbabilityTable):
-    pass
+    
+    __slots__ = []
