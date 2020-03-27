@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 import numpy as np
 import pandas as pd
@@ -11,12 +11,17 @@ from .graph import DirectedGraph
 
 class BayesianNetwork(DirectedGraph):
 
-    def __init__(self, nodes: List[str] = None, adjacency_matrix: np.ndarray = None) -> None:
+    def __init__(self, nodes: List[str] = None, adjacency_matrix: np.ndarray = None, cpts: Dict = None) -> None:
         super().__init__(nodes, adjacency_matrix)
+        if cpts is not None:
+            self.set_cpts(cpts)
+    
+    def set_cpts(self, cpts: Dict) -> None:
+        for node, cpt in cpts.items():
+            self[node]['CPT'] = cpt
     
     @classmethod
-    def from_file(cls, path: str) -> None:
-        parsed = parse_network_file(path)
+    def _structure_from_file_parsed(cls, parsed: Dict) -> Tuple:
         n = len(parsed.keys())
         nodes = list(parsed.keys())
         adjacency_matrix = np.zeros((n, n), dtype=bool)
@@ -25,7 +30,11 @@ class BayesianNetwork(DirectedGraph):
             for dependency in value['dependencies']:
                 parent = nodes.index(dependency)
                 adjacency_matrix[parent, child] = True
-        bn = cls(nodes, adjacency_matrix)
+        return nodes, adjacency_matrix
+    
+    @classmethod
+    def _cpts_from_file_parsed(cls, parsed: Dict) -> Dict:
+        cpts = {}
         for key, value in parsed.items():
             nodes = [key] + value['dependencies']
             levels = [parsed[node]['levels'] for node in nodes]
@@ -36,7 +45,8 @@ class BayesianNetwork(DirectedGraph):
                 ]
             else:
                 data = [
-                    ([i] + [levels[j+1].index(w) for j, w in enumerate(row[0])], v)
+                    ([i] + [levels[j+1].index(w)
+                            for j, w in enumerate(row[0])], v)
                     for row in value['cpt']
                     for i, v in enumerate(row[1])
                 ]
@@ -44,20 +54,12 @@ class BayesianNetwork(DirectedGraph):
             cpt = np.zeros([len(l) for l in levels])
             for (location, item) in data:
                 cpt[location] = item
-            bn[key]['CPT'] = ConditionalProbabilityTable(cpt, nodes, levels)
-        return bn
-    
+            cpts[key] = ConditionalProbabilityTable(cpt, nodes, levels)
+        return cpts
+
     @classmethod
-    def _load_dataset(cls, graph: DirectedGraph, dataset: str):
-        df = pd.read_csv(dataset)
-        if set(graph.nodes()) != set(df.columns):
-            raise Exception('structure and dataset variables are different.')
-        for node in graph.nodes():
-            graph[node]['RFT'] = df[node].value_counts() / df[node].size
-        return graph
-    
-    @classmethod
-    def from_structure_and_dataset(cls, structure: str, dataset: str):
-        graph = cls.from_structure(structure)
-        graph = cls._load_dataset(graph, dataset)
-        return graph
+    def from_file(cls, path: str) -> None:
+        parsed = parse_network_file(path)
+        nodes , adjacency_matrix = cls._structure_from_file_parsed(parsed)
+        cpts = cls._cpts_from_file_parsed(parsed)
+        return cls(nodes, adjacency_matrix, cpts)
