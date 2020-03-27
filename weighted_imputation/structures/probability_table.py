@@ -23,6 +23,11 @@ class ProbabilityTable():
         ])
         return self._table.loc[location]
     
+    def __getattr__(self, name):
+        if hasattr(self._table, name):
+            return getattr(self._table, name)
+        return self.__getattribute__(name)
+    
     def get_variables(self) -> List[str]:
         return list(self._variables)
     
