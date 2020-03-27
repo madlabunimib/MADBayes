@@ -23,6 +23,9 @@ class CPT():
         ])
         return self._cpt.loc[location]
     
+    def get_variables(self) -> List[str]:
+        return list(self._variables)
+    
     def get_dependant(self) -> str:
         return self._variables[0]
     
