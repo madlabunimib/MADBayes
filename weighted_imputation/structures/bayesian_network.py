@@ -5,7 +5,7 @@ import pandas as pd
 import xarray as xa
 
 from ..io import parse_network_file
-from .conditional_probability_table import CPT
+from .conditional_probability_table import ConditionalProbabilityTable
 from .graph import DirectedGraph
 
 
@@ -44,7 +44,7 @@ class BayesianNetwork(DirectedGraph):
             cpt = np.zeros([len(l) for l in levels])
             for (location, item) in data:
                 cpt[location] = item
-            bn[key]['CPT'] = CPT(cpt, nodes, levels)
+            bn[key]['CPT'] = ConditionalProbabilityTable(cpt, nodes, levels)
         return bn
     
     @classmethod
