@@ -35,8 +35,8 @@ class BayesianNetwork(DirectedGraph):
     @classmethod
     def _cpts_from_file_parsed(cls, parsed: Dict) -> Dict:
         cpts = {}
-        for key, value in parsed.items():
-            nodes = [key] + value['dependencies']
+        for node, value in parsed.items():
+            nodes = [node] + value['dependencies']
             levels = [parsed[node]['levels'] for node in nodes]
             if len(value['dependencies']) == 0:
                 data = [
@@ -54,7 +54,7 @@ class BayesianNetwork(DirectedGraph):
             cpt = np.zeros([len(l) for l in levels])
             for (location, item) in data:
                 cpt[location] = item
-            cpts[key] = ConditionalProbabilityTable(cpt, nodes, levels)
+            cpts[node] = ConditionalProbabilityTable(cpt, nodes, levels)
         return cpts
 
     @classmethod
