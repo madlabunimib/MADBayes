@@ -9,7 +9,7 @@ class ProbabilityTable():
     _table: xa.DataArray
     _variables: List[str]
      
-    def __init__(self, data: np.ndarray, variables: List[str], levels: List[List[str]]) -> None:
+    def __init__(self, data: np.ndarray = None, variables: List[str] = None, levels: List[List[str]] = None) -> None:
         self._table = xa.DataArray(data=data, dims=variables, coords=levels)
         self._variables = tuple(variables)
     
