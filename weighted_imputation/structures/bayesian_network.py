@@ -7,6 +7,8 @@ import xarray as xa
 from ..io import parse_network_file
 from .conditional_probability_table import ConditionalProbabilityTable
 from .graph import DirectedGraph
+from .joint_probability_table import JointProbabilityTable
+from .probability_table import ProbabilityTable
 
 
 class BayesianNetwork(DirectedGraph):
@@ -17,8 +19,38 @@ class BayesianNetwork(DirectedGraph):
             self.set_cpts(cpts)
     
     def set_cpts(self, cpts: Dict) -> None:
+        if set(self.nodes()) != set(cpts.keys()):
+            raise Exception('cpts must contain all and only nodes CPTS.')
         for node, cpt in cpts.items():
             self[node]['CPT'] = cpt
+        self._compute_margin_tables()
+    
+    def _compute_margin_tables(self) -> None:
+        for node in self.nodes():
+            self._compute_pt(node)
+    
+    def _compute_pt(self, node: str) -> None:
+        attributes = self[node]
+        if 'PT' not in attributes:
+            self._compute_jpt(node)
+            attributes['PT'] = attributes['JPT'].marginalize([node])
+    
+    def _compute_jpt(self, node: str) -> None:
+        attributes = self[node]
+        if 'JPT' not in attributes:
+            cpt = attributes['CPT']
+            jpt = JointProbabilityTable.from_probability_table(cpt)
+            parents = cpt.dependencies()
+            if len(parents) > 0:
+                for parent in parents:
+                    self._compute_pt(parent)
+                for location in cpt.locations():
+                    for parent in parents:
+                        pt = self[parent]['PT']
+                        # TODO: Find a way to remove the medium pointer
+                        pointer = tuple([*location.values()])
+                        jpt.loc[pointer] = jpt(**location) * pt(**location)
+            attributes['JPT'] = jpt
     
     @classmethod
     def _structure_from_file_parsed(cls, parsed: Dict) -> Tuple:
