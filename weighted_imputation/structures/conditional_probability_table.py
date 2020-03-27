@@ -7,12 +7,9 @@ from .probability_table import ProbabilityTable
 
 
 class ConditionalProbabilityTable(ProbabilityTable):
-     
-    def __init__(self, data: np.ndarray = None, variables: List[str] = None, levels: List[List[str]] = None) -> None:
-        super().__init__(data, variables, levels)
     
     def dependant(self) -> str:
-        return self._variables[0]
+        return self.variables()[0]
     
     def dependencies(self) -> List[str]:
-        return self._variables[1::]
+        return self.variables()[1::]
