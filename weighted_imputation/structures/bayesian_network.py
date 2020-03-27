@@ -27,22 +27,24 @@ class BayesianNetwork(DirectedGraph):
                 adjacency_matrix[parent, child] = True
         bn = cls(nodes, adjacency_matrix)
         for key, value in parsed.items():
-            variables = [key]
-            levels = [value['levels']]
+            nodes = [key] + value['dependencies']
+            levels = [parsed[node]['levels'] for node in nodes]
             if len(value['dependencies']) == 0:
-                data = [([value['levels'][i]], v) for i, v in enumerate(value['cpt'][0])]
-            else:
-                variables += value['dependencies']
-                levels += [parsed[dependency]['levels'] for dependency in value['dependencies']]
                 data = [
-                    ([value['levels'][i]] + row[0], v)
+                    ([i], v)
+                    for i, v in enumerate(value['cpt'][0])
+                ]
+            else:
+                data = [
+                    ([i] + [levels[j+1].index(w) for j, w in enumerate(row[0])], v)
                     for row in value['cpt']
                     for i, v in enumerate(row[1])
                 ]
-            array = xa.DataArray(dims=variables, coords=levels)
-            for (location, value) in data:
-                array.loc[location] = value
-            bn[key]['CPT'] = CPT(array)
+            data = [(tuple(location), item) for location, item in data]
+            cpt = np.zeros([len(l) for l in levels])
+            for (location, item) in data:
+                cpt[location] = item
+            bn[key]['CPT'] = CPT(cpt, nodes, levels)
         return bn
     
     @classmethod
