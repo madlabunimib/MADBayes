@@ -33,3 +33,10 @@ class ProbabilityTable():
     
     def __repr__(self):
         return str(self._table)
+    
+    @classmethod
+    def from_xarray(cls, data: xa.DataArray):
+        pt = cls()
+        pt._table = data
+        pt._variables = tuple(data.coords)
+        return pt
