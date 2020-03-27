@@ -14,10 +14,10 @@ if TYPE_CHECKING:
 
 @AlternativeBackend()
 def moralize(graph: DirectedGraph) -> Graph:
-    A = graph.get_adjacency_matrix()
+    A = graph.adjacency_matrix()
     new_edges = np.zeros(A.shape, dtype=bool)
     _moralize(A, new_edges)
-    moral = Graph(graph.get_nodes(), A)
+    moral = Graph(graph.nodes(), A)
     return moral
 
 def _moralize(A: np.ndarray, out: np.ndarray):

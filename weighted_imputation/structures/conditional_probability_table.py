@@ -11,8 +11,8 @@ class ConditionalProbabilityTable(ProbabilityTable):
     def __init__(self, data: np.ndarray, variables: List[str], levels: List[List[str]]) -> None:
         super().__init__(data, variables, levels)
     
-    def get_dependant(self) -> str:
+    def dependant(self) -> str:
         return self._variables[0]
     
-    def get_dependencies(self) -> List[str]:
+    def dependencies(self) -> List[str]:
         return self._variables[1::]

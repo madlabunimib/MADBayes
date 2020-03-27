@@ -14,8 +14,8 @@ if TYPE_CHECKING:
 
 @AlternativeBackend()
 def chain_of_cliques(graph: Graph) -> List:
-    nodes = graph.get_nodes()
-    adjacency_matrix = graph.get_adjacency_matrix()
+    nodes = graph.nodes()
+    adjacency_matrix = graph.adjacency_matrix()
     chain = _chain_of_cliques(adjacency_matrix)
     chain = [[nodes[node] for node in clique] for clique in chain]
     return chain

@@ -9,10 +9,10 @@ from .paths import _all_simple_paths
 
 
 def MCS(graph: Graph) -> Graph:
-    adjacency_matrix = graph.get_adjacency_matrix()
+    adjacency_matrix = graph.adjacency_matrix()
     out = np.zeros(adjacency_matrix.shape, dtype=bool)
     _MCS(0, adjacency_matrix, out)
-    triangulated = Graph(graph.get_nodes(), adjacency_matrix)
+    triangulated = Graph(graph.nodes(), adjacency_matrix)
     return triangulated
 
 @njit(cache=True)

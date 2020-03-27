@@ -7,11 +7,11 @@ from ..backends import AlternativeBackend
 from ..structures import Graph, DirectedGraph
 
 def subgraph(graph: Graph, nodes: List[str]) -> Graph:
-    _nodes = graph.get_nodes()
+    _nodes = graph.nodes()
     if not set(nodes).issubset(set(_nodes)):
         raise Exception('node not in graph.')
     indices = np.array([_nodes.index(node) for node in nodes])
-    adjacency_matrix = graph.get_adjacency_matrix(copy=False)
+    adjacency_matrix = graph.adjacency_matrix(copy=False)
     subset = _subset(indices, adjacency_matrix)
     subgraph = Graph(nodes, subset)
     if graph.is_directed():
@@ -27,10 +27,10 @@ def _subset(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
     return A[nodes, :][:, nodes]
 
 def parents(graph: Graph, node: str) -> List[str]:
-    nodes = graph.get_nodes()
+    nodes = graph.nodes()
     if not node in nodes:
         raise Exception('node not in graph.')
-    adjacency_matrix = graph.get_adjacency_matrix(copy=False)
+    adjacency_matrix = graph.adjacency_matrix(copy=False)
     parents = _parents(nodes.index(node), adjacency_matrix)
     parents = [nodes[parent] for parent in parents]
     return parents
@@ -42,10 +42,10 @@ def _parents(node: int, A: np.ndarray) -> np.ndarray:
     return parents
 
 def family(graph: Graph, node: str) -> List[str]:
-    nodes = graph.get_nodes()
+    nodes = graph.nodes()
     if not node in nodes:
         raise Exception('node not in graph.')
-    adjacency_matrix = graph.get_adjacency_matrix(copy=False)
+    adjacency_matrix = graph.adjacency_matrix(copy=False)
     family = _family(nodes.index(node), adjacency_matrix)
     family = [nodes[famil] for famil in family]
     return family
@@ -57,10 +57,10 @@ def _family(node: int, A: np.ndarray) -> np.ndarray:
     return family
 
 def children(graph: Graph, node: str) -> List[str]:
-    nodes = graph.get_nodes()
+    nodes = graph.nodes()
     if not node in nodes:
         raise Exception('node not in graph.')
-    adjacency_matrix = graph.get_adjacency_matrix(copy=False)
+    adjacency_matrix = graph.adjacency_matrix(copy=False)
     children = _children(nodes.index(node), adjacency_matrix)
     children = [nodes[child] for child in children]
     return children
@@ -72,10 +72,10 @@ def _children(node: int, A: np.ndarray) -> np.ndarray:
     return children
 
 def neighbors(graph: Graph, node: str) -> List[str]:
-    nodes = graph.get_nodes()
+    nodes = graph.nodes()
     if not node in nodes:
         raise Exception('node not in graph.')
-    adjacency_matrix = graph.get_adjacency_matrix(copy=False)
+    adjacency_matrix = graph.adjacency_matrix(copy=False)
     neighbors = _neighbors(nodes.index(node), adjacency_matrix)
     neighbors = [nodes[neighbor] for neighbor in neighbors]
     return neighbors
@@ -89,11 +89,11 @@ def _neighbors(node: int, A: np.ndarray) -> np.ndarray:
     return neighbors
 
 def boundary(graph: Graph, nodes: List[str]) -> List[str]:
-    _nodes = graph.get_nodes()
+    _nodes = graph.nodes()
     if not set(nodes).issubset(set(_nodes)):
         raise Exception('node not in graph.')
     indices = np.array([_nodes.index(node) for node in nodes])
-    adjacency_matrix = graph.get_adjacency_matrix(copy=False)
+    adjacency_matrix = graph.adjacency_matrix(copy=False)
     boundary = _boundary(indices, adjacency_matrix)
     boundary = [_nodes[bound] for bound in boundary]
     return boundary
@@ -109,10 +109,10 @@ def _boundary(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
     return boundary
 
 def ancestors(graph, node: str) -> List[str]:
-    nodes = graph.get_nodes()
+    nodes = graph.nodes()
     if not node in nodes:
         raise Exception('node not in graph.')
-    adjacency_matrix = graph.get_adjacency_matrix(copy=False)
+    adjacency_matrix = graph.adjacency_matrix(copy=False)
     ancestors = _ancestors(nodes.index(node), adjacency_matrix)
     ancestors = [nodes[ancestor] for ancestor in ancestors]
     return ancestors
@@ -134,10 +134,10 @@ def _ancestors_recursive(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
     return ancestors
 
 def descendants(graph, node: str) -> List[str]:
-    nodes = graph.get_nodes()
+    nodes = graph.nodes()
     if not node in nodes:
         raise Exception('node not in graph.')
-    adjacency_matrix = graph.get_adjacency_matrix(copy=False)
+    adjacency_matrix = graph.adjacency_matrix(copy=False)
     descendants = _descendants(nodes.index(node), adjacency_matrix)
     descendants = [nodes[descendant] for descendant in descendants]
     return descendants
@@ -159,7 +159,7 @@ def _descendants_recursive(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
     return descendants
 
 def numbering(graph: Graph) -> np.ndarray:
-    nodes = graph.get_nodes()
+    nodes = graph.nodes()
     nodes = np.array(nodes)
     numbering = _numbering(nodes)
     return numbering
@@ -170,8 +170,8 @@ def _numbering(nodes: np.ndarray) -> np.ndarray:
     return numbering
 
 def perfect_numbering(graph: Graph) -> List[str]:
-    nodes = graph.get_nodes()
-    adjacency_matrix = graph.get_adjacency_matrix(copy=False)
+    nodes = graph.nodes()
+    adjacency_matrix = graph.adjacency_matrix(copy=False)
     numbering = _perfect_numbering(0, adjacency_matrix)
     numbering = [nodes[number] for number in numbering]
     return numbering
@@ -193,7 +193,7 @@ def _perfect_numbering(node: int, A: np.ndarray) -> np.ndarray:
     return numbering
 
 def is_complete(graph: Graph) -> bool:
-    adjacency_matrix = graph.get_adjacency_matrix(copy=False)
+    adjacency_matrix = graph.adjacency_matrix(copy=False)
     is_complete = _is_complete(adjacency_matrix)
     return is_complete
 

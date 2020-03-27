@@ -12,8 +12,8 @@ if TYPE_CHECKING:
 
 
 def all_simple_paths(graph: Graph, source: str, target: str) -> List:
-    nodes = graph.get_nodes()
-    adjacency_matrix = graph.get_adjacency_matrix(copy=False)
+    nodes = graph.nodes()
+    adjacency_matrix = graph.adjacency_matrix(copy=False)
     simple_paths = _all_simple_paths(
         nodes.index(source),
         nodes.index(target),

@@ -23,17 +23,17 @@ class Graph():
             self._adjacency_matrix = xa.DataArray()
     
     def __len__(self) -> int:
-        return len(self.get_nodes())
+        return len(self.nodes())
 
     def __getitem__(self, key) -> Dict:
-        if not key in self.get_nodes():
+        if not key in self.nodes():
             raise KeyError('node not in graph.')
         if not key in self._nodes_attributes.keys():
             self._nodes_attributes[key] = {}
         return self._nodes_attributes[key]
 
     def __setitem__(self, key, value) -> None:
-        if not key in self.get_nodes():
+        if not key in self.nodes():
             raise KeyError('node not in graph.')
         self._nodes_attributes[key] = value
 
@@ -43,15 +43,7 @@ class Graph():
     def __iter__(self):
         return self._nodes_attributes.items().__iter__()
 
-    def get_edges(self) -> List[tuple]:
-        nodes = self.get_nodes()
-        return [
-            (j, i) 
-            for i in nodes
-            for j in nodes
-            if self._adjacency_matrix[i][j] == True]
-
-    def get_nodes(self) -> List[str]:
+    def nodes(self) -> List[str]:
         return list(self._adjacency_matrix.coords['from'].values)
     
     def set_nodes(self, nodes: List[str]) -> "Graph":
@@ -60,7 +52,7 @@ class Graph():
                 raise Exception('nodes must have the same length of adjacent_matrix.')
             # In order to set the labels, a mapping between old labels and
             # new labels must be created
-            labels = self.get_nodes()
+            labels = self.nodes()
             mapping = {
                 label: nodes[i]
                 for i, label in enumerate(labels)
@@ -83,7 +75,7 @@ class Graph():
             )
         return self
 
-    def get_adjacency_matrix(self, copy: bool = True) -> np.ndarray:
+    def adjacency_matrix(self, copy: bool = True) -> np.ndarray:
         values = self._adjacency_matrix.values
         if not copy:
             return values
@@ -105,7 +97,7 @@ class Graph():
                 # If the adjacency_matrix is already defined and has the same
                 # shape of the new adjacency_matrix, create a new matrix using
                 # the new data and keeping the previous node names
-                nodes = self.get_nodes()
+                nodes = self.nodes()
                 values = np.copy(adjacency_matrix.astype(bool))
                 self._adjacency_matrix = xa.DataArray(
                     data=values,
@@ -153,11 +145,11 @@ class Graph():
         return str(self._adjacency_matrix)
     
     def to_networkx(self) -> nx.Graph:
-        mapping = {k:v for k,v in enumerate(self.get_nodes())}
-        G = nx.Graph(self.get_adjacency_matrix())
+        mapping = {k:v for k,v in enumerate(self.nodes())}
+        G = nx.Graph(self.adjacency_matrix())
         G = nx.relabel_nodes(G, mapping)
         attributes = self._nodes_attributes
-        for node in self.get_nodes():
+        for node in self.nodes():
             if node in attributes.keys():
                 for key, value in attributes[node].items():
                     G.nodes[node][key] = deepcopy(value)
@@ -194,7 +186,7 @@ class DirectedGraph(Graph):
                 # If the adjacency_matrix is already defined and has the same
                 # shape of the new adjacency_matrix, create a new matrix using
                 # the new data and keeping the previous node names
-                nodes = self.get_nodes()
+                nodes = self.nodes()
                 values = np.copy(adjacency_matrix.astype(bool))
                 self._adjacency_matrix = xa.DataArray(
                     data=values,
@@ -226,14 +218,14 @@ class DirectedGraph(Graph):
         return True
     
     def to_undirected(self) -> "Graph":
-        return Graph(self.get_nodes(), self.get_adjacency_matrix())
+        return Graph(self.nodes(), self.adjacency_matrix())
     
     def to_networkx(self) -> nx.Graph:
-        mapping = {k:v for k,v in enumerate(self.get_nodes())}
-        G = nx.DiGraph(self.get_adjacency_matrix())
+        mapping = {k:v for k,v in enumerate(self.nodes())}
+        G = nx.DiGraph(self.adjacency_matrix())
         G = nx.relabel_nodes(G, mapping)
         attributes = self._nodes_attributes
-        for node in self.get_nodes():
+        for node in self.nodes():
             if node in attributes.keys():
                 for key, value in attributes[node].items():
                     G.nodes[node][key] = deepcopy(value)

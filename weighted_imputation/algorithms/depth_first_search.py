@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 @AlternativeBackend()
 def DFS(graph: Graph) -> Dict:
-    A = graph.get_adjacency_matrix()
+    A = graph.adjacency_matrix()
     n = A.shape[0]
     color = np.ones(n, dtype=bool)
     times = -np.ones((n, 2), dtype=int)

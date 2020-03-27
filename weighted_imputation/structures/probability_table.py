@@ -28,7 +28,7 @@ class ProbabilityTable():
             return getattr(self._table, name)
         return self.__getattribute__(name)
     
-    def get_variables(self) -> List[str]:
+    def variables(self) -> List[str]:
         return list(self._variables)
     
     def __repr__(self):

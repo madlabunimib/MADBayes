@@ -51,7 +51,7 @@ def _max_common_clique(chain: List, Ci: Tuple) -> List:
 
 def _add_separator(graph: DirectedGraph, parent: Node, child: Node) -> None:
     separator_nodes = list(set(parent['nodes']).intersection(set(child['nodes'])))
-    separator_label = parent.get_label() + '_' + str(separator_nodes) + '_' + child.get_label()
+    separator_label = parent.label() + '_' + str(separator_nodes) + '_' + child.label()
     separator = Node(separator_label)
     separator.set_parent(parent)
     child.set_parent(separator)

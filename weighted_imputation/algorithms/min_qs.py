@@ -21,8 +21,8 @@ def min_qs_triangulate(graph: Graph) -> Graph:
 
 #Return the list of edges to triangulate the quasi-split graph
 def _min_qs(quasi_split_graph_dict: Dict) -> List:
-    adj_matrix = quasi_split_graph_dict["quasi_split_graph"].get_adjacency_matrix()
-    nodes = quasi_split_graph_dict["quasi_split_graph"].get_nodes()
+    adj_matrix = quasi_split_graph_dict["quasi_split_graph"].adjacency_matrix()
+    nodes = quasi_split_graph_dict["quasi_split_graph"].nodes()
     Q = {nodes.index(node) for node in quasi_split_graph_dict["Q"]}
     P = {nodes.index(node) for node in quasi_split_graph_dict["P"]}
 
@@ -58,7 +58,7 @@ def _find_quasi_split_graph(graph: Graph) -> Dict:
         for Q in connencted_components_level:
             #Find the neighborhood of the connected component
             P = _get_neighborhood_of_set_in_subset(
-                graph.get_adjacency_matrix(),
+                graph.adjacency_matrix(),
                 Q,
                 set_at_distance_l_from_s[level+1])
             #Saturate the neighborhood
@@ -66,32 +66,32 @@ def _find_quasi_split_graph(graph: Graph) -> Dict:
             F.extend(F_part)       
             #Create the quasi-split graph
             nodes = Q | P
-            nodes = [graph.get_nodes()[node_index] for node_index in nodes]
+            nodes = [graph.nodes()[node_index] for node_index in nodes]
             adj_matrix = np.zeros(shape=(len(nodes), len(nodes)), dtype=bool)
             #Add to the quasi-split graph the edges already in the graph
             for i in range(len(adj_matrix)):
                 for j in range(len(adj_matrix)):
                     node_i = nodes[i]
                     node_j = nodes[j]
-                    if graph.get_adjacency_matrix()[graph.get_nodes().index(node_i),graph.get_nodes().index(node_j)] == True:
+                    if graph.adjacency_matrix()[graph.nodes().index(node_i),graph.nodes().index(node_j)] == True:
                         adj_matrix[i,j] = True        
             #Add to the quasi-split graph the edges add for the saturation
             for edge in F_part:
-                edge_0 = graph.get_nodes()[edge[0]]
-                edge_1 = graph.get_nodes()[edge[1]]
+                edge_0 = graph.nodes()[edge[0]]
+                edge_1 = graph.nodes()[edge[1]]
                 adj_matrix[nodes.index(edge_0), nodes.index(edge_1)] = True
             #Create the graph and add to the quasi-split graph list
             quasi_split_graph = Graph(nodes, adj_matrix)
             quasi_split_graph_list.append({
                 "quasi_split_graph": quasi_split_graph,
-                "P": [graph.get_nodes()[node_index] for node_index in P],
-                "Q": [graph.get_nodes()[node_index] for node_index in Q]
+                "P": [graph.nodes()[node_index] for node_index in P],
+                "Q": [graph.nodes()[node_index] for node_index in Q]
                 })
 
         #Add the saturation edges at the graph
         for edge in F:
-            graph.add_edge(graph.get_nodes()[edge[0]], graph.get_nodes()[edge[1]])
-            graph.add_edge(graph.get_nodes()[edge[1]], graph.get_nodes()[edge[0]])
+            graph.add_edge(graph.nodes()[edge[0]], graph.nodes()[edge[1]])
+            graph.add_edge(graph.nodes()[edge[1]], graph.nodes()[edge[0]])
 
     return quasi_split_graph_list
 
@@ -106,7 +106,7 @@ def _saturate_set(set_nodes: Set) -> List:
 
 # Connected component of node set
 def _find_connected_component_of_set(graph: Graph, set_nodes: Set) -> Set:
-    adj_matrix = graph.get_adjacency_matrix()
+    adj_matrix = graph.adjacency_matrix()
     queue = Queue(maxsize = 0) #infinity queue
 
     node_to_be_visited = [node for node in set_nodes]
@@ -128,8 +128,8 @@ def _find_connected_component_of_set(graph: Graph, set_nodes: Set) -> Set:
 
 # BFS return list of sets of nodes with same distance
 def bfs(graph: Graph, source_index: int) -> List[Set]:
-    adj_matrix = graph.get_adjacency_matrix()
-    graph_nodes = graph.get_nodes()
+    adj_matrix = graph.adjacency_matrix()
+    graph_nodes = graph.nodes()
     visited = np.zeros(len(graph_nodes), dtype=bool)
     distances = np.zeros(len(graph_nodes), dtype=int)
     queue = Queue(maxsize = 0) #infinity queue

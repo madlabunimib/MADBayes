@@ -15,8 +15,8 @@ if TYPE_CHECKING:
 
 
 def bron_kerbosh(graph: Graph) -> List:
-    nodes = graph.get_nodes()
-    adjacency_matrix = graph.get_adjacency_matrix()
+    nodes = graph.nodes()
+    adjacency_matrix = graph.adjacency_matrix()
     maximal_cliques = _bron_kerbosh(adjacency_matrix)
     maximal_cliques = [
         [nodes[node] for node in maximal_clique]
