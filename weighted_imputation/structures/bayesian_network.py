@@ -33,7 +33,7 @@ class BayesianNetwork(DirectedGraph):
         attributes = self[node]
         if 'PT' not in attributes:
             self._compute_jpt(node)
-            attributes['PT'] = attributes['JPT'].marings([node])
+            attributes['PT'] = attributes['JPT'].margins([node])
     
     def _compute_jpt(self, node: str) -> None:
         attributes = self[node]
