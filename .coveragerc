@@ -1,3 +1,0 @@
-[report]
-omit =
-    weighted_imputation/backends/numba/*
