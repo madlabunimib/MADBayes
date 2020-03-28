@@ -44,12 +44,7 @@ class BayesianNetwork(DirectedGraph):
             if len(parents) > 0:
                 for parent in parents:
                     self._compute_pt(parent)
-                for location in cpt.locations():
-                    for parent in parents:
-                        pt = self[parent]['PT']
-                        # TODO: Find a way to remove the medium pointer
-                        pointer = tuple([*location.values()])
-                        jpt.loc[pointer] = jpt(**location) * pt(**location)
+                    jpt = jpt * self[parent]['PT']
             attributes['JPT'] = jpt
     
     @classmethod
