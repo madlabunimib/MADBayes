@@ -1,4 +1,4 @@
-from . import data
+from . import data, generators
 from .algorithms import (BFS, DFS, MCS, ancestors, boundary, chain_of_cliques,
                          children, descendants, family, is_complete,
                          maximal_cliques, moralize, neighbors, numbering,
