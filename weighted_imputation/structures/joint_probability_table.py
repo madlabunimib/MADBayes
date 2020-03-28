@@ -10,7 +10,7 @@ class JointProbabilityTable(ProbabilityTable):
     
     __slots__ = []
 
-    def marginalize(self, variables: List[str]) -> ProbabilityTable:
+    def marings(self, variables: List[str]) -> ProbabilityTable:
         levels = [list(self.levels(v)) for v in variables]
         pt = ProbabilityTable(dims=variables, coords=levels)
 
