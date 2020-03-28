@@ -29,3 +29,7 @@ def test_graph_nodes():
     # Test adding a node
     graph.add_node('A')
     assert(graph.nodes() == nodes + ['A'])
+
+    # Test removing a node
+    graph.remove_node('D')
+    assert(graph.nodes() == ['E', 'F', 'A'])
