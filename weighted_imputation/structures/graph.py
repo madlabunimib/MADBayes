@@ -117,7 +117,7 @@ class Graph():
         return self
 
     def remove_node(self, node: str) -> "Graph":
-        del(self._nodes_attributes[node])
+        del(self[node])
         self._adjacency_matrix.drop(node, axis=0, inplace=True)
         self._adjacency_matrix.drop(node, axis=1, inplace=True)
         return self
