@@ -6,7 +6,7 @@ import numpy as np
 from ..backends import AlternativeBackend
 from ..structures import Graph, DirectedGraph
 
-def subgraph(graph: Graph, nodes: List[str]) -> Graph:
+def subgraph(graph: Graph, nodes: List[str], attributes: bool = True) -> Graph:
     _nodes = graph.nodes()
     if not set(nodes).issubset(set(_nodes)):
         raise Exception('node not in graph.')
@@ -18,8 +18,9 @@ def subgraph(graph: Graph, nodes: List[str]) -> Graph:
         subgraph = DirectedGraph(nodes, subset)
     else:
         subgraph = Graph(nodes, subset)
-    for node in nodes:
-        subgraph[node] = deepcopy(graph[node])
+    if attributes:
+        for node in nodes:
+            subgraph[node] = deepcopy(graph[node])
     return subgraph
 
 @AlternativeBackend()
