@@ -185,7 +185,7 @@ def _perfect_numbering(node: int, A: np.ndarray) -> np.ndarray:
         xmax = {key: neighbors[key] for key in X}
         xmax = {key: value.difference(numbering) for key, value in xmax.items()}
         xmax = {key: len(value) for key, value in xmax.items()}
-        xmax = max(xmax, key=max.get)
+        xmax = max(xmax, key=xmax.get)
         numbering.add(xmax)
     return numbering
 

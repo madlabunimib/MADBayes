@@ -2,12 +2,13 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+import numpy as np
+
 from ..backends import AlternativeBackend
 from .bron_kerbosh import _bron_kerbosh
 from .nodes import _perfect_numbering
 
 if TYPE_CHECKING:
-    import numpy as np
     from typing import List
     from ..structures import Graph
 
