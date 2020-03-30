@@ -8,6 +8,6 @@ from .min_qs import min_qs_triangulate
 from .moralize import moralize
 from .nodes import (ancestors, boundary, children, descendants, family,
                     is_complete, neighbors, numbering, parents,
-                    perfect_numbering)
+                    perfect_numbering, subgraph)
 from .paths import _all_simple_paths
 from .triangulate import triangulate
