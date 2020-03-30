@@ -23,6 +23,7 @@ def chain_of_cliques(graph: Graph) -> List:
 
 # TODO: Refactor this function
 def _chain_of_cliques(A: np.ndarray) -> List:
+    raise NotImplementedError('This function MUST be refactored.')
     # Calculate the perfect numbering
     # starting from the first node
     numbering = _perfect_numbering(0, A)

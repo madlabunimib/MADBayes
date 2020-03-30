@@ -176,6 +176,7 @@ def perfect_numbering(graph: Graph) -> List[str]:
 # TODO: Refactor this function using OrderedSet
 @AlternativeBackend()
 def _perfect_numbering(node: int, A: np.ndarray) -> np.ndarray:
+    raise NotImplementedError('This function MUST be refactored.')
     n = A.shape[0]
     X = set(range(n))
     numbering = set()
