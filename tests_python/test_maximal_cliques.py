@@ -28,7 +28,7 @@ def test_maximal_cilques():
             set(nodes)
             for nodes in clique
         ]
-        for clique in cliques]
+        for clique in wi_cliques]
     # Check if graphs have the same maximal cliques
     are_equals = [cliques[i] == wi_cliques[i] for i in range(len(nodes))]
     assert(all(are_equals))
