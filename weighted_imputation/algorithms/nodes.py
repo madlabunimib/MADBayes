@@ -13,11 +13,7 @@ def subgraph(graph: Graph, nodes: List[str], attributes: bool = True) -> Graph:
     indices = np.array([_nodes.index(node) for node in nodes])
     adjacency_matrix = graph.adjacency_matrix(copy=False)
     subset = _subset(indices, adjacency_matrix)
-    subgraph = Graph(nodes, subset)
-    if graph.is_directed():
-        subgraph = DirectedGraph(nodes, subset)
-    else:
-        subgraph = Graph(nodes, subset)
+    subgraph = type(graph)(nodes, subset)
     if attributes:
         for node in nodes:
             subgraph[node] = deepcopy(graph[node])
