@@ -173,6 +173,7 @@ def perfect_numbering(graph: Graph) -> List[str]:
     numbering = [nodes[number] for number in numbering]
     return numbering
 
+# TODO: Refactor this function using OrderedSet
 @AlternativeBackend()
 def _perfect_numbering(node: int, A: np.ndarray) -> np.ndarray:
     n = A.shape[0]
