@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 from .bif import BIF_GRAMMAR
 from .dsc import DSC_GRAMMAR
 from lark import Lark, Token, tree, Tree, Transformer, Discard
@@ -12,7 +11,7 @@ GRAMMARS = {
     '.dsc': DSC_GRAMMAR
 }
 
-def parse_network_file(path: str, debug=False) -> Dict:
+def parse_network_file(path: str) -> Dict:
     with open(path, 'r') as file:
         text = file.read()
     _, ext = splitext(path)
@@ -20,11 +19,7 @@ def parse_network_file(path: str, debug=False) -> Dict:
         raise Exception('unknown file format.')
     parser = Lark(GRAMMARS[ext], parser='lalr', debug=True)
     parsed = parser.parse(text)
-    if debug:
-        tree.pydot__tree_to_png(parsed, './debug_0.png')
     parsed = ExtractData(visit_tokens=True).transform(parsed)
-    if debug and isinstance(parsed, Tree):
-        tree.pydot__tree_to_png(parsed, './debug_1.png')
     return parsed
 
 

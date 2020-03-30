@@ -3,11 +3,15 @@ channels:
     - conda-forge
     - numba
 dependencies:
-    - python>=3.7,<3.8
+    - python>=3.7
     - icc_rt
+    - pydot
     - matplotlib
     - networkx>=2.4
     - numba>=0.48
     - numpy
+    - scipy
+    - pandas
+    - xarray
     - tbb
     - lark-parser

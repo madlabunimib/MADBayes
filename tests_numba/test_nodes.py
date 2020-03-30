@@ -11,8 +11,8 @@ def test_undirected_graph():
     neighbors = [[sorted(G.neighbors(node)) for node in G.nodes] for G in graphs]
     boundaries = [sorted(nx.algorithms.node_boundary(G, list(G.nodes)[:5])) for G in graphs]
     wi_graphs = [wi.Graph.from_networkx(G) for G in graphs]
-    wi_neighbors = [[[int(n) for n in graph.neighbors(node)] for node in graph.get_nodes()] for graph in wi_graphs]
-    wi_boundaries = [[int(n) for n in graph.boundary(np.array(graph.get_nodes()[:5]))] for graph in wi_graphs]
+    wi_neighbors = [[[int(n) for n in wi.neighbors(graph, node)] for node in graph.nodes()] for graph in wi_graphs]
+    wi_boundaries = [[int(n) for n in wi.boundary(graph, np.array(graph.nodes()[:5]))] for graph in wi_graphs]
     assert(neighbors == wi_neighbors)
     assert(boundaries == wi_boundaries)
 
@@ -36,10 +36,10 @@ def test_directed_graph():
     ancestors = [[sorted(nx.ancestors(G, node)) for node in list(G.nodes)[:5]] for G in graphs]
     descendants = [[sorted(nx.descendants(G, node)) for node in list(G.nodes)[:5]] for G in graphs[:3]]
     wi_graphs = [wi.DirectedGraph.from_networkx(G) for G in graphs]
-    wi_parents = [[sorted([int(n) for n in graph.parents(node)]) for node in graph.get_nodes()] for graph in wi_graphs]
-    wi_children = [[sorted([int(n) for n in graph.children(node)]) for node in graph.get_nodes()] for graph in wi_graphs]
-    wi_ancestors = [[sorted([int(n) for n in graph.ancestors(node)]) for node in graph.get_nodes()[:5]] for graph in wi_graphs]
-    wi_descendants = [[sorted([int(n) for n in graph.descendants(node)]) for node in graph.get_nodes()[:5]] for graph in wi_graphs[:3]]
+    wi_parents = [[sorted([int(n) for n in wi.parents(graph, node)]) for node in graph.nodes()] for graph in wi_graphs]
+    wi_children = [[sorted([int(n) for n in wi.children(graph, node)]) for node in graph.nodes()] for graph in wi_graphs]
+    wi_ancestors = [[sorted([int(n) for n in wi.ancestors(graph, node)]) for node in graph.nodes()[:5]] for graph in wi_graphs]
+    wi_descendants = [[sorted([int(n) for n in wi.descendants(graph, node)]) for node in graph.nodes()[:5]] for graph in wi_graphs[:3]]
     assert(parents == wi_parents)
     assert(children == wi_children)
     assert(ancestors == wi_ancestors)

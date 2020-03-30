@@ -1,11 +1,19 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import numpy as np
-from numba import njit
-from typing import Dict
-from ..structures import Graph
+
+from ..backends import AlternativeBackend
+
+if TYPE_CHECKING:
+    from typing import Dict
+    from ..structures import Graph
 
 
+@AlternativeBackend()
 def DFS(graph: Graph) -> Dict:
-    A = graph.get_adjacency_matrix()
+    A = graph.adjacency_matrix()
     n = A.shape[0]
     color = np.ones(n, dtype=bool)
     times = -np.ones((n, 2), dtype=int)
@@ -13,7 +21,6 @@ def DFS(graph: Graph) -> Dict:
     _DFS(A, color, times, parents)
     return {'parents': parents, 'times': times}
 
-@njit(cache=True)
 def _DFS(
         A: np.ndarray,
         color: np.ndarray,
@@ -26,7 +33,6 @@ def _DFS(
         if color[i]:
             time = _DFS_Visit(i, time, A, color, times, parents)
 
-@njit
 def _DFS_Visit(
         node: int,
         time: int,

@@ -24,7 +24,7 @@ def test_moralize():
     # Moralize graphs with test function and extract matrices
     wi_graphs = [wi.DirectedGraph.from_networkx(G) for G in graphs]
     wi_morals = [wi.moralize(G) for G in wi_graphs]
-    wi_morals = [G.get_adjacency_matrix() for G in wi_morals]
+    wi_morals = [G.adjacency_matrix() for G in wi_morals]
     # Check if graphs are equals
     are_equals = [np.array_equal(morals[i], wi_morals[i]) for i in range(len(nodes))]
     assert(all(are_equals))

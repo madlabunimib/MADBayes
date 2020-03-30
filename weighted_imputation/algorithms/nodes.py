@@ -1,31 +1,86 @@
-import numpy as np
-from numba import njit
-from numba.typed import Dict
-from ..utils import union, intersection, difference
+from typing import List
+from copy import deepcopy
 
-@njit(cache=True)
+import numpy as np
+
+from ..backends import AlternativeBackend
+from ..structures import Graph, DirectedGraph
+
+def subgraph(graph: Graph, nodes: List[str]) -> Graph:
+    _nodes = graph.nodes()
+    if not set(nodes).issubset(set(_nodes)):
+        raise Exception('node not in graph.')
+    indices = np.array([_nodes.index(node) for node in nodes])
+    adjacency_matrix = graph.adjacency_matrix(copy=False)
+    subset = _subset(indices, adjacency_matrix)
+    subgraph = Graph(nodes, subset)
+    if graph.is_directed():
+        subgraph = DirectedGraph(nodes, subset)
+    else:
+        subgraph = Graph(nodes, subset)
+    for node in nodes:
+        subgraph[node] = deepcopy(graph[node])
+    return subgraph
+
+@AlternativeBackend()
 def _subset(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
     return A[nodes, :][:, nodes]
 
-@njit(cache=True)
+def parents(graph: Graph, node: str) -> List[str]:
+    nodes = graph.nodes()
+    if not node in nodes:
+        raise Exception('node not in graph.')
+    adjacency_matrix = graph.adjacency_matrix(copy=False)
+    parents = _parents(nodes.index(node), adjacency_matrix)
+    parents = [nodes[parent] for parent in parents]
+    return parents
+
+@AlternativeBackend()
 def _parents(node: int, A: np.ndarray) -> np.ndarray:
     parents = A.T[node]
     parents = np.nonzero(parents)[0].T
     return parents
 
-@njit(cache=True)
+def family(graph: Graph, node: str) -> List[str]:
+    nodes = graph.nodes()
+    if not node in nodes:
+        raise Exception('node not in graph.')
+    adjacency_matrix = graph.adjacency_matrix(copy=False)
+    family = _family(nodes.index(node), adjacency_matrix)
+    family = [nodes[famil] for famil in family]
+    return family
+
+@AlternativeBackend()
 def _family(node: int, A: np.ndarray) -> np.ndarray:
     parents = _parents(node, A)
     family = np.append(parents, [node])
     return family
 
-@njit(cache=True)
+def children(graph: Graph, node: str) -> List[str]:
+    nodes = graph.nodes()
+    if not node in nodes:
+        raise Exception('node not in graph.')
+    adjacency_matrix = graph.adjacency_matrix(copy=False)
+    children = _children(nodes.index(node), adjacency_matrix)
+    children = [nodes[child] for child in children]
+    return children
+
+@AlternativeBackend()
 def _children(node: int, A: np.ndarray) -> np.ndarray:
     children = A[node]
     children = np.nonzero(children)[0].T
     return children
 
-@njit(cache=True)
+def neighbors(graph: Graph, node: str) -> List[str]:
+    nodes = graph.nodes()
+    if not node in nodes:
+        raise Exception('node not in graph.')
+    adjacency_matrix = graph.adjacency_matrix(copy=False)
+    neighbors = _neighbors(nodes.index(node), adjacency_matrix)
+    neighbors = [nodes[neighbor] for neighbor in neighbors]
+    return neighbors
+
+@AlternativeBackend()
 def _neighbors(node: int, A: np.ndarray) -> np.ndarray:
     parents = _parents(node, A)
     children = _children(node, A)
@@ -33,103 +88,127 @@ def _neighbors(node: int, A: np.ndarray) -> np.ndarray:
     neighbors = np.unique(neighbors)
     return neighbors
 
-@njit(cache=True)
-def _boundary(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
-    n = len(nodes)
-    boundary = np.array([0 for _ in range(0)])
-    if n == 0:
-        return boundary
-    for i in range(n):
-        neighbors = _neighbors(nodes[i], A)
-        boundary = np.append(boundary, neighbors)
-    boundary = np.unique(boundary)
-    boundary = difference(boundary, nodes)
+def boundary(graph: Graph, nodes: List[str]) -> List[str]:
+    _nodes = graph.nodes()
+    if not set(nodes).issubset(set(_nodes)):
+        raise Exception('node not in graph.')
+    indices = np.array([_nodes.index(node) for node in nodes])
+    adjacency_matrix = graph.adjacency_matrix(copy=False)
+    boundary = _boundary(indices, adjacency_matrix)
+    boundary = [_nodes[bound] for bound in boundary]
     return boundary
 
-@njit(cache=True)
+@AlternativeBackend()
+def _boundary(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
+    boundary = []
+    for node in nodes:
+        neighbors = _neighbors(node, A)
+        boundary.extend(neighbors)
+    boundary = set(boundary).difference(set(nodes))
+    boundary = np.array(sorted(boundary))
+    return boundary
+
+def ancestors(graph, node: str) -> List[str]:
+    nodes = graph.nodes()
+    if not node in nodes:
+        raise Exception('node not in graph.')
+    adjacency_matrix = graph.adjacency_matrix(copy=False)
+    ancestors = _ancestors(nodes.index(node), adjacency_matrix)
+    ancestors = [nodes[ancestor] for ancestor in ancestors]
+    return ancestors
+
+@AlternativeBackend()
 def _ancestors(node: int, A: np.ndarray) -> np.ndarray:
     parents = _parents(node, A)
     ancestors = _ancestors_recursive(parents, A)
     return ancestors
 
-@njit(cache=True)
 def _ancestors_recursive(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
-    n = len(nodes)
-    ancestors = nodes
-    if n == 0:
-        return ancestors
-    for i in range(n):
-        parents = _parents(nodes[i], A)
-        ancestors = np.append(
-            ancestors,
-            _ancestors_recursive(parents, A)
+    ancestors = set(nodes)
+    for node in nodes:
+        parents = _parents(node, A)
+        ancestors = ancestors.union(
+            set(_ancestors_recursive(parents, A))
         )
-    ancestors = np.unique(ancestors)
+    ancestors = np.array(list(ancestors))
     return ancestors
 
-@njit(cache=True)
+def descendants(graph, node: str) -> List[str]:
+    nodes = graph.nodes()
+    if not node in nodes:
+        raise Exception('node not in graph.')
+    adjacency_matrix = graph.adjacency_matrix(copy=False)
+    descendants = _descendants(nodes.index(node), adjacency_matrix)
+    descendants = [nodes[descendant] for descendant in descendants]
+    return descendants
+
+@AlternativeBackend()
 def _descendants(node: int, A: np.ndarray) -> np.ndarray:
     children = _children(node, A)
     descendants = _descendants_recursive(children, A)
     return descendants
 
-@njit(cache=True)
 def _descendants_recursive(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
-    n = len(nodes)
-    descendants = nodes
-    if n == 0:
-        return descendants
-    for i in range(n):
-        children = _children(nodes[i], A)
-        descendants = np.append(
-            descendants,
-            _descendants_recursive(children, A)
+    descendants = set(nodes)
+    for node in nodes:
+        children = _children(node, A)
+        descendants = descendants.union(
+            set(_descendants_recursive(children, A))
         )
-    descendants = np.unique(descendants)
+    descendants = np.array(list(descendants))
     return descendants
 
-@njit(cache=True)
+def numbering(graph: Graph) -> np.ndarray:
+    nodes = graph.nodes()
+    nodes = np.array(nodes)
+    numbering = _numbering(nodes)
+    return numbering
+
+@AlternativeBackend()
 def _numbering(nodes: np.ndarray) -> np.ndarray:
-    # An array is ordered so that numbering(i) is
-    # actually the i-th nodes, using the array index
     numbering = np.array(nodes, copy=True)
     return numbering
 
-@njit(cache=True)
-def _perfect_numbering(node: int, A: np.ndarray) -> np.ndarray:
-    # Perfect numbering using the Maximum Cardinality Search
-    n = A.shape[0]
-    neighbors = Dict()
-    numbering = np.array([node])
-    X = np.array([i for i in range(n)])
-    for i in range(n):
-        # Caching neighbors sets
-        neighbors[X[i]] = _neighbors(X[i], A)
-    for i in range(1, n):
-        X = difference(X, numbering)
-        x = X.shape[0]
-        vmax = -1
-        pmax = -1
-        for j in range(x):
-            k = len(intersection(neighbors[X[j]], numbering))
-            if vmax < k:
-                vmax = k
-                pmax = j
-        numbering = np.append(numbering, [X[pmax]])
+def perfect_numbering(graph: Graph) -> List[str]:
+    nodes = graph.nodes()
+    adjacency_matrix = graph.adjacency_matrix(copy=False)
+    numbering = _perfect_numbering(0, adjacency_matrix)
+    numbering = [nodes[number] for number in numbering]
     return numbering
 
-@njit(cache=True)
+@AlternativeBackend()
+def _perfect_numbering(node: int, A: np.ndarray) -> np.ndarray:
+    n = A.shape[0]
+    X = set(range(n))
+    numbering = set()
+    numbering.add(node)
+    neighbors = {i: set(_neighbors(i, A)) for i in range(n)}
+    while len(X) > 0:
+        X = X.difference(numbering)
+        xmax = {key: neighbors[key] for key in X}
+        xmax = {key: value.difference(numbering) for key, value in xmax.items()}
+        xmax = {key: len(value) for key, value in xmax.items()}
+        xmax = max(xmax, key=max.get)
+        numbering.add(xmax)
+    return numbering
+
+def is_complete(graph: Graph) -> bool:
+    adjacency_matrix = graph.adjacency_matrix(copy=False)
+    is_complete = _is_complete(adjacency_matrix)
+    return is_complete
+
+@AlternativeBackend()
 def _is_complete(A: np.ndarray) -> bool:
     out = A.copy()
     np.fill_diagonal(out, True)
     return out.all()
 
-@njit(cache=True)
+@AlternativeBackend()
 def _is_complete_set(nodes: np.ndarray, A: np.ndarray) -> bool:
     out = _subset(nodes, A)
     return _is_complete(out)
 
-@njit(cache=True)
+@AlternativeBackend()
 def _fill_in(A: np.array) -> np.ndarray:
     out = A.copy()
     np.fill_diagonal(out, True)
@@ -137,7 +216,7 @@ def _fill_in(A: np.array) -> np.ndarray:
     indices = np.argwhere(out)
     return indices
 
-@njit(cache=True)
+@AlternativeBackend()
 def _fill_in_set(nodes: np.ndarray, A: np.array) -> np.ndarray:
     out = _subset(nodes, A)
     indices = _fill_in(out)
@@ -148,7 +227,7 @@ def _fill_in_set(nodes: np.ndarray, A: np.array) -> np.ndarray:
         indices[i, 1] = nodes[indices[i, 1]]
     return indices
 
-@njit(cache=True)
+@AlternativeBackend()
 def _filter(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
     out = A.copy()
     out[:] = False

@@ -1,19 +1,54 @@
+from typing import Dict, List, Tuple
+
 import numpy as np
 import pandas as pd
-from typing import Dict, List
+import xarray as xa
+
+from ..io import parse_network_file
+from .conditional_probability_table import ConditionalProbabilityTable
 from .graph import DirectedGraph
-from .conditional_probability_table import CPT
-from ..io import  parse_network_file
+from .joint_probability_table import JointProbabilityTable
+from .probability_table import ProbabilityTable
 
 
 class BayesianNetwork(DirectedGraph):
 
-    def __init__(self, nodes: List[str] = None, adjacency_matrix: np.ndarray = None) -> None:
+    def __init__(self, nodes: List[str] = None, adjacency_matrix: np.ndarray = None, cpts: Dict = None) -> None:
         super().__init__(nodes, adjacency_matrix)
+        if cpts is not None:
+            self.set_cpts(cpts)
+    
+    def set_cpts(self, cpts: Dict) -> None:
+        if set(self.nodes()) != set(cpts.keys()):
+            raise Exception('cpts must contain all and only nodes CPTS.')
+        for node, cpt in cpts.items():
+            self[node]['CPT'] = cpt
+        self._compute_margin_tables()
+    
+    def _compute_margin_tables(self) -> None:
+        for node in self.nodes():
+            self._compute_pt(node)
+    
+    def _compute_pt(self, node: str) -> None:
+        attributes = self[node]
+        if 'PT' not in attributes:
+            self._compute_jpt(node)
+            attributes['PT'] = attributes['JPT'].margins([node])
+    
+    def _compute_jpt(self, node: str) -> None:
+        attributes = self[node]
+        if 'JPT' not in attributes:
+            cpt = attributes['CPT']
+            jpt = JointProbabilityTable.from_probability_table(cpt)
+            parents = cpt.dependencies()
+            if len(parents) > 0:
+                for parent in parents:
+                    self._compute_pt(parent)
+                    jpt = jpt * self[parent]['PT']
+            attributes['JPT'] = jpt
     
     @classmethod
-    def from_file(cls, path: str) -> None:
-        parsed = parse_network_file(path)
+    def _structure_from_file_parsed(cls, parsed: Dict) -> Tuple:
         n = len(parsed.keys())
         nodes = list(parsed.keys())
         adjacency_matrix = np.zeros((n, n), dtype=bool)
@@ -22,34 +57,36 @@ class BayesianNetwork(DirectedGraph):
             for dependency in value['dependencies']:
                 parent = nodes.index(dependency)
                 adjacency_matrix[parent, child] = True
-        bn = cls(nodes, adjacency_matrix)
-        for key, value in parsed.items():
+        return nodes, adjacency_matrix
+    
+    @classmethod
+    def _cpts_from_file_parsed(cls, parsed: Dict) -> Dict:
+        cpts = {}
+        for node, value in parsed.items():
+            nodes = [node] + value['dependencies']
+            levels = [parsed[node]['levels'] for node in nodes]
             if len(value['dependencies']) == 0:
-                data = np.array(value['cpt'][0])
-                tuples = None
+                data = [
+                    ([i], v)
+                    for i, v in enumerate(value['cpt'][0])
+                ]
             else:
-                data = np.array([row[1] for row in value['cpt']])
-                tuples = [tuple(row[0]) for row in value['cpt']]
-            bn[key]['CPT'] = CPT(key, value['dependencies'], data, value['levels'], tuples)
-        return bn
-    
+                data = [
+                    ([i] + [levels[j+1].index(w)
+                            for j, w in enumerate(row[0])], v)
+                    for row in value['cpt']
+                    for i, v in enumerate(row[1])
+                ]
+            data = [(tuple(location), item) for location, item in data]
+            cpt = np.zeros([len(l) for l in levels])
+            for (location, item) in data:
+                cpt[location] = item
+            cpts[node] = ConditionalProbabilityTable.from_data(cpt, nodes, levels)
+        return cpts
+
     @classmethod
-    def _load_dataset(cls, graph: DirectedGraph, dataset: str):
-        df = pd.read_csv(dataset)
-        if set(graph.get_nodes()) != set(df.columns):
-            raise Exception('structure and dataset variables are different.')
-        for node in graph.get_nodes():
-            graph[node]['RFT'] = df[node].value_counts() / df[node].size
-        return graph
-    
-    @classmethod
-    def from_file_and_dataset(cls, file: str, dataset: str):
-        graph = cls.from_file(file)
-        graph = cls._load_dataset(graph, dataset)
-        return graph
-    
-    @classmethod
-    def from_structure_and_dataset(cls, structure: str, dataset: str):
-        graph = cls.from_structure(structure)
-        graph = cls._load_dataset(graph, dataset)
-        return graph
+    def from_file(cls, path: str) -> None:
+        parsed = parse_network_file(path)
+        nodes , adjacency_matrix = cls._structure_from_file_parsed(parsed)
+        cpts = cls._cpts_from_file_parsed(parsed)
+        return cls(nodes, adjacency_matrix, cpts)

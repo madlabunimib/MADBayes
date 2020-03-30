@@ -2,7 +2,7 @@ import numpy as np
 import networkx as nx
 from . import weighted_imputation as wi
 
-def test_maximal_cilques():
+def test_triangulate():
     # Generate random graphs from nodes count
     nodes = [1, 10, 25, 50, 75, 100]
     graphs = [

@@ -1,26 +1,44 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import numpy as np
-from numba import njit
-from numba.typed import List
+
+from ..backends import AlternativeBackend
 from .nodes import _children
-from ..utils import union, intersection, difference, IntegerVector, IntegerList
+
+if TYPE_CHECKING:
+    from typing import List
 
 
-@njit(cache=True)
+def all_simple_paths(graph: Graph, source: str, target: str) -> List:
+    nodes = graph.nodes()
+    adjacency_matrix = graph.adjacency_matrix(copy=False)
+    simple_paths = _all_simple_paths(
+        nodes.index(source),
+        nodes.index(target),
+        adjacency_matrix
+    )
+    simple_paths = [
+        [nodes[index] for index in path]
+        for path in simple_paths
+    ]
+    return simple_paths
+
+@AlternativeBackend()
 def _all_simple_paths(source: int, target: int, A: np.ndarray) -> List:
-    out = IntegerList()
-    visited = IntegerVector()
-    _all_simple_paths_recursive(source, target, A, visited, out)
-    return out
+    visited = [source]
+    simple_paths = _all_simple_paths_recursive(source, target, A, visited)
+    return simple_paths
     
-@njit(cache=True)
-def _all_simple_paths_recursive(source: int, target: int, A: np.ndarray, visited: np.ndarray, out: List) -> None:
-    current = np.array([source])
-    visited = np.append(visited, current)
+def _all_simple_paths_recursive(source: int, target: int, A: np.ndarray, visited: np.ndarray) -> List:
+    visited = visited + [source]
     if source == target:
-        out.append(visited)
+        return [visited]
     else:
+        simple_paths = []
         children = _children(source, A)
-        children = difference(children, visited)
-        n = len(children)
-        for i in range(n):
-            _all_simple_paths_recursive(children[i], target, A, visited, out)
+        children = set(children).difference(set(visited))
+        for child in children:
+            simple_paths += _all_simple_paths_recursive(child, target, A, visited)
+        return simple_paths

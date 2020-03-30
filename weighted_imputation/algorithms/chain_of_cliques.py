@@ -1,19 +1,26 @@
-import numpy as np
-from numba import njit, prange
-from typing import List
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+from ..backends import AlternativeBackend
 from .bron_kerbosh import _bron_kerbosh
 from .nodes import _perfect_numbering
-from ..structures import Graph
+
+if TYPE_CHECKING:
+    import numpy as np
+    from typing import List
+    from ..structures import Graph
 
 
+@AlternativeBackend()
 def chain_of_cliques(graph: Graph) -> List:
-    nodes = graph.get_nodes()
-    adjacency_matrix = graph.get_adjacency_matrix()
+    nodes = graph.nodes()
+    adjacency_matrix = graph.adjacency_matrix()
     chain = _chain_of_cliques(adjacency_matrix)
     chain = [[nodes[node] for node in clique] for clique in chain]
     return chain
 
-@njit(cache=True, parallel=True)
+# TODO: Refactor this function
 def _chain_of_cliques(A: np.ndarray) -> List:
     # Calculate the perfect numbering
     # starting from the first node
@@ -25,7 +32,7 @@ def _chain_of_cliques(A: np.ndarray) -> List:
     # number of its nodes
     n = len(cliques)
     order = np.zeros(n)
-    for i in prange(n):
+    for i in range(n):
         clique = cliques[i]
         vmax = 0
         for node in clique:

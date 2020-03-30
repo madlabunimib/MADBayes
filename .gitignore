@@ -1,7 +1,11 @@
 .vscode
+.coverage
 .spyproject
+.pytest_cache
 .ipynb_checkpoints
 __pycache__
+htmlcov
 demo.py
 demo.ipynb
 debug*.png
+coverage.xml

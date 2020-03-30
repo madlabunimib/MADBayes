@@ -1,5 +1,6 @@
 from copy import deepcopy
 from typing import Dict, List
+
 from .graph import DirectedGraph
 from .orderedset import OrderedSet
 
@@ -35,10 +36,10 @@ class Node():
     def __iter__(self):
         return self._attributes.__iter__()
     
-    def get_label(self) -> str:
+    def label(self) -> str:
         return self._label
     
-    def get_parent(self) -> "Node":
+    def parent(self) -> "Node":
         return self._parent
     
     def set_parent(self, parent: "Node") -> None:
@@ -49,7 +50,7 @@ class Node():
         self._children.add(child)
         child._parent = self
     
-    def get_children(self) -> OrderedSet:
+    def children(self) -> OrderedSet:
         return self._children
 
     def set_children(self, children: List["Node"]) -> None:
@@ -99,29 +100,29 @@ class Tree():
         return self._nodes.items().__iter__()
     
     def _index(self, node: Node) -> None:
-        self._nodes[node.get_label()] = node
-        for child in node.get_children():
+        self._nodes[node.label()] = node
+        for child in node.children():
             self._index(child)
     
-    def get_root(self) -> Node:
+    def root(self) -> Node:
         return self._root
 
     def to_directed_graph(self) -> DirectedGraph:
         graph = DirectedGraph()
-        root = self.get_root()
-        graph.add_node(root.get_label())
-        graph[root.get_label()] = deepcopy(root._attributes)
+        root = self.root()
+        graph.add_node(root.label())
+        graph[root.label()] = deepcopy(root._attributes)
         self._to_directed_graph_recursive(graph, root)
         return graph
         
     def _to_directed_graph_recursive(self, graph: DirectedGraph, parent: Node) -> None:
-        for child in parent.get_children():
-            graph.add_node(child.get_label())
+        for child in parent.children():
+            graph.add_node(child.label())
             graph.add_edge(
-                parent.get_label(),
-                child.get_label()
+                parent.label(),
+                child.label()
             )
-            graph[child.get_label()] = deepcopy(child._attributes)
+            graph[child.label()] = deepcopy(child._attributes)
             self._to_directed_graph_recursive(graph, child)
     
     def plot(self) -> None:
