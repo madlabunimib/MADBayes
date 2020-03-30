@@ -10,7 +10,7 @@ def subgraph(graph: Graph, nodes: List[str], attributes: bool = True) -> Graph:
     _nodes = graph.nodes()
     if not set(nodes).issubset(set(_nodes)):
         raise Exception('node not in graph.')
-    indices = np.array([_nodes.index(node) for node in nodes])
+    indices = np.array([_nodes.index(node) for node in nodes], dtype=int)
     adjacency_matrix = graph.adjacency_matrix(copy=False)
     subset = _subset(indices, adjacency_matrix)
     subgraph = type(graph)(nodes, subset)
