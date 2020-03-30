@@ -23,29 +23,6 @@ class BayesianNetwork(DirectedGraph):
             raise Exception('cpts must contain all and only nodes CPTS.')
         for node, cpt in cpts.items():
             self[node]['CPT'] = cpt
-        self._compute_margin_tables()
-    
-    def _compute_margin_tables(self) -> None:
-        for node in self.nodes():
-            self._compute_pt(node)
-    
-    def _compute_pt(self, node: str) -> None:
-        attributes = self[node]
-        if 'PT' not in attributes:
-            self._compute_jpt(node)
-            attributes['PT'] = attributes['JPT'].margins([node])
-    
-    def _compute_jpt(self, node: str) -> None:
-        attributes = self[node]
-        if 'JPT' not in attributes:
-            cpt = attributes['CPT']
-            jpt = JointProbabilityTable.from_probability_table(cpt)
-            parents = cpt.dependencies()
-            if len(parents) > 0:
-                for parent in parents:
-                    self._compute_pt(parent)
-                    jpt = jpt * self[parent]['PT']
-            attributes['JPT'] = jpt
     
     @classmethod
     def _structure_from_file_parsed(cls, parsed: Dict) -> Tuple:
