@@ -110,12 +110,10 @@ def _perfect_numbering(node: int, A: np.ndarray) -> np.ndarray:
     for i in range(1, n):
         X = difference(X, numbering)
         x = X.shape[0]
-        vmax = -1
         pmax = -1
         for j in range(x):
             k = len(intersection(neighbors[X[j]], numbering))
-            if vmax < k:
-                vmax = k
+            if X[pmax] < k:
                 pmax = j
         numbering = np.append(numbering, [X[pmax]])
     return numbering
