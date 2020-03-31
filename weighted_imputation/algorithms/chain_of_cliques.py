@@ -38,7 +38,7 @@ def _chain_of_cliques(A: np.ndarray) -> List:
         clique = cliques[i]
         vmax = 0
         for node in clique:
-            number = np.nonzero(numbering == node)[0][0]
+            number = np.nonzero(numbering == node)[0]
             if vmax < number:
                 vmax = number
         order[i] = vmax
