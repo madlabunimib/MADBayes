@@ -14,13 +14,10 @@ if TYPE_CHECKING:
 
 class JunctionTree(Tree):
     
-    def __init__(self, root: Node, nodes_in_cliques: Dict = None) -> None:
+    def __init__(self, root: Node) -> None:
         super().__init__(root)
-        if nodes_in_cliques is None:
-            self._nodes = {}
-            self._index(self._root)
-        else:
-            self._nodes = nodes_in_cliques
+        self._nodes = {}
+        self._index(self._root)
     
     def _index(self, node: Node) -> None:
         # For each node of a clique
