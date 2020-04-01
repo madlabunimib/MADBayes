@@ -15,23 +15,28 @@ if TYPE_CHECKING:
 class JunctionTree(Tree):
     
     def __init__(self, root: Node) -> None:
-        super().__init__(root)
         self._nodes = {}
-        self._index(self._root)
+        self._cliques = []
+        super().__init__(root)
     
     def _index(self, node: Node) -> None:
-        # For each node of a clique
-        for item in node['nodes']:
-            # If the node is not in the index
-            # then add an empty list in the index
-            if item not in self._nodes.keys():
-                self._nodes[item] = []
-            # Append the node in which the clique
-            # is located to the corresponding list
-            self._nodes[item].append(node)
+        if node['type'] == 'clique':
+            self._cliques.append(node)
+            # For each node of a clique
+            for item in node['nodes']:
+                # If the node is not in the index
+                # then add an empty list in the index
+                if item not in self._nodes.keys():
+                    self._nodes[item] = []
+                # Append the node in which the clique
+                # is located to the corresponding list
+                self._nodes[item].append(node)
         # Repeat for each child of the node
         for child in node.children():
             self._index(child)
+    
+    def cliques(self) -> List[Node]:
+        return self._cliques.copy()
     
     def plot(self) -> None:
         plt.figure(1, figsize=(15,15)) 
