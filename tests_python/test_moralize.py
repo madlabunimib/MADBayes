@@ -5,7 +5,7 @@ from . import weighted_imputation as wi
 
 def test_moralize():
     # Generate random graphs from nodes count
-    nodes = [1, 10, 25, 50, 75, 100, 250]
+    nodes = [2, 10, 25, 50, 75, 100, 250]
     graphs = [
         nx.gnp_random_graph(n, 0.5, directed=True)
         for n in nodes

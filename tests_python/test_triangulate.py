@@ -4,7 +4,7 @@ from . import weighted_imputation as wi
 
 def test_triangulate():
     # Generate random graphs from nodes count
-    nodes = [1, 10, 25, 50, 75, 100]
+    nodes = [2, 10, 25, 50, 75, 100]
     graphs = [
         nx.gnp_random_graph(n, 0.5, directed=False)
         for n in nodes
