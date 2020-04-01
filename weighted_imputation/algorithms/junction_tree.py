@@ -8,7 +8,6 @@ import networkx as nx
 from ..structures import JunctionTree, Node
 from .chain_of_cliques import chain_of_cliques
 from .moralize import moralize
-from .nodes import subgraph
 from .triangulate import triangulate
 
 if TYPE_CHECKING:
@@ -42,7 +41,6 @@ def _node_from_clique(network: BayesianNetwork, clique: List) -> Node:
     node = Node(str(items))
     node['type'] = 'clique'
     node['nodes'] = items
-    node['clique'] = subgraph(network, items, attributes=False)
     return node
 
 def _max_common_clique(chain: List, Ci: Tuple) -> List:
@@ -58,7 +56,6 @@ def _add_separator(network: BayesianNetwork, parent: Node, child: Node) -> None:
     child.set_parent(separator)
     separator['type'] = 'separator'
     separator['nodes'] = separator_nodes
-    separator['clique'] = subgraph(network, separator_nodes, attributes=False)
 
 def _assign_cpts_to_cliques():
     pass
