@@ -32,16 +32,10 @@ def _MCS(node: int, A: np.ndarray, out: np.ndarray) -> np.ndarray:
         xmax = max(xmax, key=xmax.get)
         numbering.add(xmax)
         nodes = np.array(list(neighbors[xmax].intersection(numbering)), dtype=int)
-        if _add_missing_edges(nodes, A, out):
+        fill_in = _fill_in_set(nodes, A)
+        fill_in_size = fill_in.shape[0]
+        if fill_in_size > 0:
+            for j in range(fill_in_size):
+                out[fill_in[j, 0], fill_in[j, 1]] = True
+            np.bitwise_or(out, A, A)
             i = 1
-
-# TODO: Refactor _MCS to remove this function
-def _add_missing_edges(nodes: np.ndarray, A: np.ndarray, out: np.ndarray) -> bool:
-    indices = _fill_in_set(nodes, A)
-    n = indices.shape[0]
-    if n > 0:
-        for i in range(n):
-            out[indices[i, 0], indices[i, 1]] = True
-        np.bitwise_or(out, A, A)
-        return True
-    return False
