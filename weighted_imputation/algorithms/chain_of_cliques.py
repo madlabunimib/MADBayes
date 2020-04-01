@@ -21,9 +21,7 @@ def chain_of_cliques(graph: Graph) -> List:
     chain = [[nodes[node] for node in clique] for clique in chain]
     return chain
 
-# TODO: Refactor this function
 def _chain_of_cliques(A: np.ndarray) -> List:
-    raise NotImplementedError('This function MUST be refactored.')
     # Calculate the perfect numbering
     # starting from the first node
     numbering = _perfect_numbering(0, A)
@@ -32,18 +30,13 @@ def _chain_of_cliques(A: np.ndarray) -> List:
     cliques = _bron_kerbosh(A)
     # Assign to each clique the largest perfect
     # number of its nodes
-    n = len(cliques)
-    order = np.zeros(n)
-    for i in range(n):
-        clique = cliques[i]
-        vmax = 0
-        for node in clique:
-            number = np.nonzero(numbering == node)[0]
-            if vmax < number:
-                vmax = number
-        order[i] = vmax
-    order = np.argsort(order)
-    chain = []
-    for i in range(n):
-        chain.append(cliques[order[i]])
+    chain = {
+        i: max([
+            np.nonzero(numbering == node)[0]
+            for node in clique
+        ])
+        for i, clique in enumerate(cliques)
+    }
+    chain = sorted(chain, key=chain.get)
+    chain = [cliques[i] for i in chain]
     return chain
