@@ -173,23 +173,24 @@ def perfect_numbering(graph: Graph) -> List[str]:
     numbering = [nodes[number] for number in numbering]
     return numbering
 
-# TODO: Refactor this function using OrderedSet
 @AlternativeBackend()
 def _perfect_numbering(node: int, A: np.ndarray) -> np.ndarray:
-    raise NotImplementedError('This function MUST be refactored.')
     n = A.shape[0]
     X = set(range(n))
-    numbering = set()
-    numbering.add(node)
-    neighbors = {i: set(_neighbors(i, A)) for i in range(n)}
-    while len(X) > 0:
-        X = X.difference(numbering)
-        xmax = {key: neighbors[key] for key in X}
-        xmax = {key: value.difference(numbering) for key, value in xmax.items()}
-        xmax = {key: len(value) for key, value in xmax.items()}
+    numbering = [node]
+    neighbors = {
+        x: set(_neighbors(x, A))
+        for x in X
+    }
+    for i in range(1, n):
+        X = X.intersection(numbering)
+        xmax =  {
+            x: len(neighbors[x].intersection(numbering))
+            for x in X
+        }
         xmax = max(xmax, key=xmax.get)
-        numbering.add(xmax)
-    return numbering
+        numbering.append(xmax)
+    return np.array(numbering, dtype=int)
 
 def is_complete(graph: Graph) -> bool:
     adjacency_matrix = graph.adjacency_matrix(copy=False)
