@@ -1,4 +1,4 @@
-from collections.abc import MutableSet
+from collections.abc import Set, MutableSet
 
 
 class OrderedSet(MutableSet):
@@ -32,16 +32,22 @@ class OrderedSet(MutableSet):
         if key in self.values:
             self.values.remove(key)
 
-    def pop(self):
-        return self.values.pop(0)
+    def pop(self, index = 0):
+        return self.values.pop(index)
     
     def intersection(self, other):
+        if not isinstance(other, Set):
+            other = set(other)
         return OrderedSet(self & other)
 
     def union(self, other):
+        if not isinstance(other, Set):
+            other = set(other)
         return OrderedSet(self | other)
 
     def difference(self, other):
+        if not isinstance(other, Set):
+            other = set(other)
         return OrderedSet(self - other)
 
     def __repr__(self):
