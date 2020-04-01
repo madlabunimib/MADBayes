@@ -24,7 +24,7 @@ class JunctionTree(Tree):
     
     def _index(self, node: Node) -> None:
         # For each node of a clique
-        for item in node['clique'].nodes():
+        for item in node['nodes']:
             # If the node is not in the index
             # then add an empty list in the index
             if item not in self._nodes.keys():

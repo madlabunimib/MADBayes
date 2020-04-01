@@ -39,8 +39,6 @@ def _neighbors(node: int, A: np.ndarray) -> np.ndarray:
 def _boundary(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
     n = len(nodes)
     boundary = np.array([0 for _ in range(0)])
-    if n == 0:
-        return boundary
     for i in range(n):
         neighbors = _neighbors(nodes[i], A)
         boundary = np.append(boundary, neighbors)

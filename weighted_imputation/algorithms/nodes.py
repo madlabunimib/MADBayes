@@ -6,20 +6,17 @@ import numpy as np
 from ..backends import AlternativeBackend
 from ..structures import Graph, DirectedGraph
 
-def subgraph(graph: Graph, nodes: List[str]) -> Graph:
+def subgraph(graph: Graph, nodes: List[str], attributes: bool = True) -> Graph:
     _nodes = graph.nodes()
     if not set(nodes).issubset(set(_nodes)):
         raise Exception('node not in graph.')
-    indices = np.array([_nodes.index(node) for node in nodes])
+    indices = np.array([_nodes.index(node) for node in nodes], dtype=int)
     adjacency_matrix = graph.adjacency_matrix(copy=False)
     subset = _subset(indices, adjacency_matrix)
-    subgraph = Graph(nodes, subset)
-    if graph.is_directed():
-        subgraph = DirectedGraph(nodes, subset)
-    else:
-        subgraph = Graph(nodes, subset)
-    for node in nodes:
-        subgraph[node] = deepcopy(graph[node])
+    subgraph = type(graph)(nodes, subset)
+    if attributes:
+        for node in nodes:
+            subgraph[node] = deepcopy(graph[node])
     return subgraph
 
 @AlternativeBackend()
@@ -92,7 +89,7 @@ def boundary(graph: Graph, nodes: List[str]) -> List[str]:
     _nodes = graph.nodes()
     if not set(nodes).issubset(set(_nodes)):
         raise Exception('node not in graph.')
-    indices = np.array([_nodes.index(node) for node in nodes])
+    indices = np.array([_nodes.index(node) for node in nodes], dtype=int)
     adjacency_matrix = graph.adjacency_matrix(copy=False)
     boundary = _boundary(indices, adjacency_matrix)
     boundary = [_nodes[bound] for bound in boundary]
@@ -180,17 +177,20 @@ def perfect_numbering(graph: Graph) -> List[str]:
 def _perfect_numbering(node: int, A: np.ndarray) -> np.ndarray:
     n = A.shape[0]
     X = set(range(n))
-    numbering = set()
-    numbering.add(node)
-    neighbors = {i: set(_neighbors(i, A)) for i in range(n)}
-    while len(X) > 0:
+    numbering = [node]
+    neighbors = {
+        x: set(_neighbors(x, A))
+        for x in X
+    }
+    for i in range(1, n):
         X = X.difference(numbering)
-        xmax = {key: neighbors[key] for key in X}
-        xmax = {key: value.difference(numbering) for key, value in xmax.items()}
-        xmax = {key: len(value) for key, value in xmax.items()}
-        xmax = max(xmax, key=max.get)
-        numbering.add(xmax)
-    return numbering
+        xmax =  {
+            x: len(neighbors[x].intersection(numbering))
+            for x in X
+        }
+        xmax = max(xmax, key=xmax.get)
+        numbering.append(xmax)
+    return np.array(numbering, dtype=int)
 
 def is_complete(graph: Graph) -> bool:
     adjacency_matrix = graph.adjacency_matrix(copy=False)
