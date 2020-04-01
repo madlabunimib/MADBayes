@@ -15,7 +15,6 @@ def MCS(graph: Graph) -> Graph:
     return triangulated
 
 def _MCS(node: int, A: np.ndarray, out: np.ndarray) -> np.ndarray:
-    raise NotImplementedError('This function MUST be refactored.')
     i = 1
     n = A.shape[0]
     while i < n:
