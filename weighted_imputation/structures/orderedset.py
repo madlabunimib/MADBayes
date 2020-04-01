@@ -4,57 +4,48 @@ from collections.abc import MutableSet
 class OrderedSet(MutableSet):
 
     def __init__(self, iterable=None):
-        self.end = end = [] 
-        end += [None, end, end]         # sentinel node for doubly linked list
-        self.map = {}                   # key --> [key, prev, next]
+        self.values = []
         if iterable is not None:
-            self |= iterable
+            for item in iterable:
+                self.add(item)
 
     def __len__(self):
-        return len(self.map)
-
+        return len(self.values)
+    
     def __contains__(self, key):
-        return key in self.map
+        return key in self.values
 
-    def add(self, key):
-        if key not in self.map:
-            end = self.end
-            curr = end[1]
-            curr[2] = end[1] = self.map[key] = [key, curr, end]
+    def __getitem__(self, key):
+        return self.values[key]
 
-    def discard(self, key):
-        if key in self.map:        
-            key, prev, next = self.map.pop(key)
-            prev[2] = next
-            next[1] = prev
+    def __delitem__(self, key) -> None:
+        self.values.remove(key)
 
     def __iter__(self):
-        end = self.end
-        curr = end[2]
-        while curr is not end:
-            yield curr[0]
-            curr = curr[2]
+        return self.values.__iter__()
 
-    def __reversed__(self):
-        end = self.end
-        curr = end[1]
-        while curr is not end:
-            yield curr[0]
-            curr = curr[1]
+    def add(self, key):
+        if key not in self.values:
+            self.values.append(key)
 
-    def pop(self, last=True):
-        if not self:
-            raise KeyError('set is empty.')
-        key = self.end[1][0] if last else self.end[2][0]
-        self.discard(key)
-        return key
+    def discard(self, key):
+        if key in self.values:
+            self.values.remove(key)
+
+    def pop(self):
+        return self.values.pop(0)
+    
+    def intersection(self, other):
+        return OrderedSet(self & other)
+
+    def union(self, other):
+        return OrderedSet(self | other)
+
+    def difference(self, other):
+        return OrderedSet(self - other)
 
     def __repr__(self):
-        if not self:
-            return '%s()' % (self.__class__.__name__,)
-        return '%s(%r)' % (self.__class__.__name__, list(self))
+        return str(self.values)
 
     def __eq__(self, other):
-        if isinstance(other, OrderedSet):
-            return len(self) == len(other) and list(self) == list(other)
         return set(self) == set(other)
