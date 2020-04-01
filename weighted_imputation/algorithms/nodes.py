@@ -183,7 +183,7 @@ def _perfect_numbering(node: int, A: np.ndarray) -> np.ndarray:
         for x in X
     }
     for i in range(1, n):
-        X = X.intersection(numbering)
+        X = X.difference(numbering)
         xmax =  {
             x: len(neighbors[x].intersection(numbering))
             for x in X
