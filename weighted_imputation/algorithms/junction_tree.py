@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 import matplotlib.pyplot as plt
 import networkx as nx
 
-from ..structures import JunctionTree, Node
+from ..structures import JunctionTree, Node, OrderedSet
 from .chain_of_cliques import chain_of_cliques
 from .moralize import moralize
 from .nodes import family
@@ -39,7 +39,7 @@ def _build_junction_tree(network: BayesianNetwork, chain: List) -> Node:
     return root
 
 def _node_from_clique(network: BayesianNetwork, clique: List) -> Node:
-    items = list(clique)
+    items = OrderedSet(clique)
     node = Node(str(items))
     node['type'] = 'clique'
     node['nodes'] = items
@@ -51,13 +51,13 @@ def _max_common_clique(chain: List, Ci: Tuple) -> List:
     return chain[maxs.index(max(maxs))]
 
 def _add_separator(network: BayesianNetwork, parent: Node, child: Node) -> None:
-    separator_nodes = list(set(parent['nodes']).intersection(set(child['nodes'])))
+    separator_nodes = set(parent['nodes']).intersection(set(child['nodes']))
     separator_label = parent.label() + '_' + str(separator_nodes) + '_' + child.label()
     separator = Node(separator_label)
     separator.set_parent(parent)
     child.set_parent(separator)
     separator['type'] = 'separator'
-    separator['nodes'] = separator_nodes
+    separator['nodes'] = OrderedSet(separator_nodes)
 
 def _init_potentials(network: BayesianNetwork, jt: JunctionTree) -> None:
     nodes = set(network.nodes())
@@ -65,7 +65,7 @@ def _init_potentials(network: BayesianNetwork, jt: JunctionTree) -> None:
         assigned = {
             node
             for node in nodes
-            if set(family(network, node)).issubset(set(clique['nodes']))
+            if set(family(network, node)).issubset(clique['nodes'])
         }
         clique['potentials'] = 1
         for node in assigned:
