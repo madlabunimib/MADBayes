@@ -67,7 +67,7 @@ def _init_potentials(network: BayesianNetwork, jt: JunctionTree) -> None:
             for node in nodes
             if set(family(network, node)).issubset(clique['nodes'])
         }
-        clique['potentials'] = 1
+        clique['potential'] = 1
         for node in assigned:
-            clique['potentials'] = clique['potentials'] * network[node]['CPT']
+            clique['potential'] = clique['potential'] * network[node]['CPT']
         nodes = nodes.difference(assigned)
