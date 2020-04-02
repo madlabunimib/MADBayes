@@ -10,9 +10,9 @@ def test_joint_probability_table():
     mts = [margins(jpt) for jpt in jpts]
     mts = [[p.flatten().T for p in mt] for mt in mts]
     # Find margins with test function
-    jpts = [wi.JointProbabilityTable(jpt) for jpt in jpts]
+    jpts = [wi.ProbabilityTable(jpt) for jpt in jpts]
     pts = [
-        [jpt.margins([dim]).values.astype(float) for dim in jpt.dims]
+        [jpt.marginalize([dim]).values.astype(float) for dim in jpt.dims]
         for jpt in jpts
     ]
     # Check if jpts have the same margins

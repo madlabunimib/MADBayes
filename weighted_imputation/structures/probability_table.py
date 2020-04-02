@@ -1,6 +1,6 @@
 from copy import deepcopy
 from itertools import product
-from typing import Dict, Tuple
+from typing import Dict, List, Tuple
 
 import numpy as np
 import xarray as xa
@@ -60,6 +60,12 @@ class ProbabilityTable(xa.DataArray):
             for location in locations
         )
         return locations
+    
+    def marginalize(self, variables: List[str]) -> 'ProbabilityTable':
+        over = [v for v in self.variables() if v not in variables]
+        if len(over) > 0:
+            return self.sum(over)
+        return self.copy()
 
     @classmethod
     def from_data(cls, data, variables, levels):
