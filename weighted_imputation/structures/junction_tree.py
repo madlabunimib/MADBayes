@@ -11,6 +11,7 @@ from .tree import Node, Tree
 if TYPE_CHECKING:
     from typing import Dict, List, Tuple
     from .graph import DirectedGraph, Graph
+    from .probability_table import ProbabilityTable
 
 
 class JunctionTree(Tree):
@@ -39,30 +40,53 @@ class JunctionTree(Tree):
     def cliques(self) -> List[Node]:
         return self._cliques.copy()
     
-    def _calibration(self):
+    def _calibrate(self) -> None:
         # Upward phase
         root = self.root()
-        root['beliefs'] = self._calibration_upward(root)
+        root['belief'] = self._calibrate_upward(root)
         # Downward phase
+        self._calibrate_downward(root, 1)
 
-
-    def _calibration_upward(self, root: Node):
+    def _calibrate_upward(self, root: Node) -> ProbabilityTable:
         if root['type'] == 'separator':
+            # Pass the message down in the tree
             clique = root.children()[0]
-            messages = self._calibration_upward(clique)
-            root['messages'] = messages
+            message = self._calibrate_upward(clique)
+            # Save the returning message
+            root['message'] = message
         if root['type'] == 'clique':
-            messages =  [
-                self._calibration_upward(node)
+            # Gather the messages
+            message =  [
+                self._calibrate_upward(node)
                 for node in root.children()
             ]
-            messages = reduce(lambda a, b: a * b, messages, 1)
-            messages = root['potentials'] * messages
+            # Compute the clique belief
+            message = reduce(lambda a, b: a * b, message, 1)
+            root['belief'] = root['potential'] * message
+            del(root['potential'])
+            # Compute the message
             marginal = root['nodes']
             if root.parent() is not None:
-                marginal = marginal.intersection(root.parent()['nodes'])
-            messages = messages.marginalize(marginal)
-        return messages
+                marginal = root.parent()['nodes']
+            message = root['belief'].marginalize(marginal)
+        return message
+    
+    def _calibrate_downward(self, root: Node, message: ProbabilityTable) -> None:
+        if root['type'] == 'separator':
+            # Compute message using belief
+            message = message.marginalize(root['nodes']) / root['message']
+            # Compute sepset belief
+            root['belief'] = root['message'] * message
+            del(root['message'])
+            # Pass the message down in the tree
+            clique = root.children()[0]
+            self._calibrate_downward(clique, message)
+        if root['type'] == 'clique':
+            # Compute the final belief
+            root['belief'] = root['belief'] * message
+            # Propagate the belief
+            for node in root.children():
+                self._calibrate_downward(node, root['belief'])
     
     def plot(self) -> None:
         plt.figure(1, figsize=(15,15)) 
