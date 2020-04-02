@@ -8,6 +8,7 @@ import networkx as nx
 from ..structures import JunctionTree, Node
 from .chain_of_cliques import chain_of_cliques
 from .moralize import moralize
+from .nodes import family
 from .triangulate import triangulate
 
 if TYPE_CHECKING:
@@ -21,6 +22,7 @@ def junction_tree(network: BayesianNetwork) -> JunctionTree:
     chain = chain_of_cliques(triangulated)
     root = _build_junction_tree(network, chain)
     jt = JunctionTree(root)
+    _init_potentials(network, jt)
     return jt
 
 def _build_junction_tree(network: BayesianNetwork, chain: List) -> Node:
@@ -57,5 +59,15 @@ def _add_separator(network: BayesianNetwork, parent: Node, child: Node) -> None:
     separator['type'] = 'separator'
     separator['nodes'] = separator_nodes
 
-def _assign_cpts_to_cliques():
-    pass
+def _init_potentials(network: BayesianNetwork, jt: JunctionTree) -> None:
+    nodes = set(network.nodes())
+    for clique in jt.cliques():
+        assigned = {
+            node
+            for node in nodes
+            if set(family(network, node)).issubset(set(clique['nodes']))
+        }
+        clique['potentials'] = 1
+        for node in assigned:
+            clique['potentials'] = clique['potentials'] * network[node]['CPT']
+        nodes = nodes.difference(assigned)
