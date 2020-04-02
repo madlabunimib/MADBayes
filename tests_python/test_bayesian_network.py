@@ -56,10 +56,11 @@ def test_bayesian_network():
         bn = getattr(wi.data, key)
         jt = wi.junction_tree(bn)
         for node, pt in value.items():
-            assert([
+            assert(all([
                 np.allclose(
                     clique['belief'].marginalize({node}).values.astype(float),
-                    np.array(pt)
+                    np.array(pt),
+                    rtol=1e-02
                 )
                 for clique in jt[node]
-            ])
+            ]))
