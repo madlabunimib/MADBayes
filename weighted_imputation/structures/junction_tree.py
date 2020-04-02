@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from functools import reduce
 from typing import TYPE_CHECKING
 
 import matplotlib.pyplot as plt
@@ -37,6 +38,31 @@ class JunctionTree(Tree):
     
     def cliques(self) -> List[Node]:
         return self._cliques.copy()
+    
+    def _calibration(self):
+        # Upward phase
+        root = self.root()
+        root['beliefs'] = self._calibration_upward(root)
+        # Downward phase
+
+
+    def _calibration_upward(self, root: Node):
+        if root['type'] == 'separator':
+            clique = root.children()[0]
+            messages = self._calibration_upward(clique)
+            root['messages'] = messages
+        if root['type'] == 'clique':
+            messages =  [
+                self._calibration_upward(node)
+                for node in root.children()
+            ]
+            messages = reduce(lambda a, b: a * b, messages, 1)
+            messages = root['potentials'] * messages
+            marginal = root['nodes']
+            if root.parent() is not None:
+                marginal = marginal.intersection(root.parent()['nodes'])
+            messages = messages.marginalize(marginal)
+        return messages
     
     def plot(self) -> None:
         plt.figure(1, figsize=(15,15)) 
