@@ -20,6 +20,7 @@ class JunctionTree(Tree):
         self._nodes = {}
         self._cliques = []
         super().__init__(root)
+        self._calibrate()
     
     def _index(self, node: Node) -> None:
         if node['type'] == 'clique':
