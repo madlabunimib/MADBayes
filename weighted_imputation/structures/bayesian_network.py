@@ -7,7 +7,6 @@ import xarray as xa
 from ..io import parse_network_file
 from .conditional_probability_table import ConditionalProbabilityTable
 from .graph import DirectedGraph
-from .joint_probability_table import JointProbabilityTable
 from .probability_table import ProbabilityTable
 
 
