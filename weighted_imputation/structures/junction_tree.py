@@ -41,6 +41,16 @@ class JunctionTree(Tree):
     def cliques(self) -> List[Node]:
         return self._cliques.copy()
     
+    def _absorb_hard_evidence(self, variable: str, level: str) -> None:
+        # Select the first clique that constains variable
+        clique = self[variable][0]
+        old_margin = clique['belief'].marginalize([variable])
+        new_margin = old_margin.copy()
+        new_margin.loc[:] = 0
+        new_margin.loc[level] = 1
+        clique['belief'] = clique['belief'] / old_margin * new_margin
+        self._calibrate_downward(None, clique, 1)
+    
     def _calibrate(self) -> None:
         root = self.root()
         # Upward phase
