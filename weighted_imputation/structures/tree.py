@@ -56,6 +56,13 @@ class Node():
     def set_children(self, children: List["Node"]) -> None:
         for child in children:
             self.add_child(child)
+    
+    def neighbors(self) -> OrderedSet:
+        neighbors = OrderedSet()
+        if self._parent is not None:
+            neighbors.add(self._parent)
+        neighbors = neighbors.union(self._children)
+        return neighbors
 
     def __eq__(self, other) -> bool:
         if isinstance(other, Node):

@@ -42,52 +42,50 @@ class JunctionTree(Tree):
         return self._cliques.copy()
     
     def _calibrate(self) -> None:
-        # Upward phase
         root = self.root()
-        root['belief'] = self._calibrate_upward(root)
+        # Upward phase
+        root['belief'] = self._calibrate_upward(None, root)
         # Downward phase
-        self._calibrate_downward(root, 1)
+        self._calibrate_downward(None, root, 1)
 
-    def _calibrate_upward(self, root: Node) -> ProbabilityTable:
-        if root['type'] == 'separator':
+    def _calibrate_upward(self, source: Node, target: Node) -> ProbabilityTable:
+        if target['type'] == 'separator':
             # Pass the message down in the tree
-            clique = root.children()[0]
-            message = self._calibrate_upward(clique)
+            clique = target.neighbors().difference({source})[0]
+            message = self._calibrate_upward(target, clique)
             # Save the returning message
-            root['message'] = message
-        if root['type'] == 'clique':
+            target['belief'] = message
+        if target['type'] == 'clique':
             # Gather the messages
             message =  [
-                self._calibrate_upward(node)
-                for node in root.children()
+                self._calibrate_upward(target, node)
+                for node in target.neighbors().difference({source})
             ]
             # Compute the clique belief
             message = reduce(lambda a, b: a * b, message, 1)
-            root['belief'] = root['potential'] * message
-            del(root['potential'])
+            target['belief'] = target['potential'] * message
             # Compute the message
-            marginal = root['nodes']
-            if root.parent() is not None:
-                marginal = root.parent()['nodes']
-            message = root['belief'].marginalize(marginal)
+            marginal = target['nodes']
+            if source is not None:
+                marginal = source['nodes']
+            message = target['belief'].marginalize(marginal)
         return message
     
-    def _calibrate_downward(self, root: Node, message: ProbabilityTable) -> None:
-        if root['type'] == 'separator':
+    def _calibrate_downward(self, source: Node, target: Node, message: ProbabilityTable) -> None:
+        if target['type'] == 'separator':
             # Compute message using belief
-            message = message.marginalize(root['nodes']) / root['message']
+            message = message.marginalize(target['nodes']) / target['belief']
             # Compute sepset belief
-            root['belief'] = root['message'] * message
-            del(root['message'])
+            target['belief'] = target['belief'] * message
             # Pass the message down in the tree
-            clique = root.children()[0]
-            self._calibrate_downward(clique, message)
-        if root['type'] == 'clique':
+            clique = target.neighbors().difference({source})[0]
+            self._calibrate_downward(target, clique, message)
+        if target['type'] == 'clique':
             # Compute the final belief
-            root['belief'] = root['belief'] * message
+            target['belief'] = target['belief'] * message
             # Propagate the belief
-            for node in root.children():
-                self._calibrate_downward(node, root['belief'])
+            for node in target.neighbors().difference({source}):
+                self._calibrate_downward(target, node, target['belief'])
     
     def plot(self) -> None:
         plt.figure(1, figsize=(15,15)) 
