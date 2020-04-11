@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from copy import deepcopy
 from functools import reduce
 from typing import TYPE_CHECKING
 
@@ -41,13 +42,36 @@ class JunctionTree(Tree):
     def cliques(self) -> List[Node]:
         return self._cliques.copy()
     
-    def _absorb_hard_evidence(self, variable: str, level: str) -> None:
+    def query(self, method: str, variables: List, evidences: Dict = None) -> List:
+        jt = self
+        if evidences is not None:
+            jt = self.set_evidences(**evidences)
+        results = [
+            jt[variable][0]['belief'].marginalize({variable})
+            for variable in variables
+        ]
+        if method == 'joint' or method == 'conditional':
+            joint = reduce(lambda a, b: a * b, results, 1)
+            if method == 'joint':
+                return [joint]
+            if method == 'conditional':
+                condition = reduce(lambda a, b: a * b, results[1:], 1)
+                return [joint/condition]
+        return results
+    
+    def set_evidences(self, **kwargs) -> 'JunctionTree':
+        jt = deepcopy(self)
+        for variable, value in kwargs.items():
+            jt._absorb_evidence(variable, value)
+        return jt
+    
+    def _absorb_evidence(self, variable: str, value: str) -> None:
         # Select the first clique that constains variable
         clique = self[variable][0]
         old_margin = clique['belief'].marginalize([variable])
         new_margin = old_margin.copy()
         new_margin.loc[:] = 0
-        new_margin.loc[level] = 1
+        new_margin.loc[value] = 1
         clique['belief'] = clique['belief'] / old_margin * new_margin
         self._calibrate_downward(None, clique, 1)
     
