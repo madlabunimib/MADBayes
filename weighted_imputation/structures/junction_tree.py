@@ -10,7 +10,7 @@ import networkx as nx
 from .tree import Node, Tree
 
 if TYPE_CHECKING:
-    from typing import Dict, List, Tuple
+    from typing import Dict, List, Set, Tuple
     from .graph import DirectedGraph, Graph
     from .probability_table import ProbabilityTable
 
@@ -42,22 +42,52 @@ class JunctionTree(Tree):
     def cliques(self) -> List[Node]:
         return self._cliques.copy()
     
-    def query(self, method: str, variables: List, evidences: Dict = None) -> List:
+    def query(self, method: str, variables: List[str], evidences: Dict = None) -> List:
         jt = self
         if evidences is not None:
             jt = self.set_evidences(**evidences)
-        results = [
-            jt[variable][0]['belief'].marginalize({variable})
-            for variable in variables
+        if method == 'marginal':
+            return [
+                jt[variable][0]['belief'].marginalize({variable})
+                for variable in variables
+            ]
+        joint = self._query_get_joint(variables)
+        if method == 'joint':
+            return [joint]
+        condition = joint.marginalize(variables[1:])
+        return [joint/condition]
+    
+    def _query_get_joint(self, variables: List[str]) -> ProbabilityTable:
+        # Check if variables are contained in a single clique
+        joint = self._query_search_joint(variables)
+        if joint is not None:
+            return joint
+        # If variables are not contained in a single clique
+        return self._query_build_joint(variables)
+    
+    def _query_search_joint(self, variables: List[str]) -> ProbabilityTable:
+        clique = self._query_search_clique(
+            variables[1:],
+            self[variables[0]]
+        )
+        if clique is not None:
+            return clique['belief'].marginalize(variables)
+        return None
+    
+    def _query_search_clique(self, variables: List[str], cliques: List[Node]) -> Node:
+        if len(variables) == 0:
+            if len(cliques) > 0:
+                return cliques[0]
+            return None
+        cliques = [
+            clique
+            for clique in cliques
+            if variables[0] in clique['nodes']
         ]
-        if method == 'joint' or method == 'conditional':
-            joint = reduce(lambda a, b: a * b, results, 1)
-            if method == 'joint':
-                return [joint]
-            if method == 'conditional':
-                condition = reduce(lambda a, b: a * b, results[1:], 1)
-                return [joint/condition]
-        return results
+        return self._query_search_clique(variables[1:], cliques)
+    
+    def _query_build_joint(self, variables: List[str]) -> ProbabilityTable:
+        pass
     
     def set_evidences(self, **kwargs) -> 'JunctionTree':
         jt = deepcopy(self)
