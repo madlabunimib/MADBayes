@@ -17,6 +17,9 @@ class BayesianNetwork(DirectedGraph):
         if cpts is not None:
             self.set_cpts(cpts)
     
+    def levels(self, variable: str) -> Tuple[str]:
+        return tuple(self[variable]['CPT'].coords[variable].values)
+    
     def set_cpts(self, cpts: Dict) -> None:
         if set(self.nodes()) != set(cpts.keys()):
             raise Exception('cpts must contain all and only nodes CPTS.')
