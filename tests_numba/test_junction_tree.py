@@ -78,4 +78,3 @@ def test_junction_tree_query():
             out_1 = jte_0.query(query['method'], query['variables'])
             for j, _ in enumerate(out_0):
                 assert(out_0[j].equals(out_1[j]))
-
