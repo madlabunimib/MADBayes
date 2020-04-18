@@ -116,21 +116,20 @@ class JunctionTree(Tree):
             message = self._calibrate_upward(target, clique)
             # Save the returning message
             target['belief'] = message
-        if target['type'] == 'clique':
-            # Gather the messages
-            message =  [
-                self._calibrate_upward(target, node)
-                for node in target.neighbors().difference({source})
-            ]
-            # Compute the clique belief
-            message = reduce(lambda a, b: a * b, message, 1)
-            target['belief'] = target['potential'] * message
-            # Compute the message
-            marginal = target['nodes']
-            if source is not None:
-                marginal = source['nodes']
-            message = target['belief'].marginalize(marginal)
-        return message
+            return message
+        # Gather the messages
+        message =  [
+            self._calibrate_upward(target, node)
+            for node in target.neighbors().difference({source})
+        ]
+        # Compute the clique belief
+        message = reduce(lambda a, b: a * b, message, 1)
+        target['belief'] = target['potential'] * message
+        # Compute the message
+        marginal = target['nodes']
+        if source is not None:
+            marginal = source['nodes']
+        return target['belief'].marginalize(marginal)
     
     def _calibrate_downward(self, source: Node, target: Node, message: ProbabilityTable) -> None:
         if target['type'] == 'separator':
