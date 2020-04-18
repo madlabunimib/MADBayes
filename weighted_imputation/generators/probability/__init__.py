@@ -1,1 +1,0 @@
-from .joint_probability_table import generate_joint_probability_table
