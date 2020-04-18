@@ -5,7 +5,7 @@ from typing import Dict
 
 from ..structures import BayesianNetwork
 
-NETWORKS = abspath(join(dirname(__file__), '../networks'))
+NETWORKS = abspath(join(dirname(__file__), 'networks'))
 NETWORKS = [join(NETWORKS, network) for network in listdir(NETWORKS)]
 NETWORKS = [
     network
