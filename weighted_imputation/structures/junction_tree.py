@@ -42,13 +42,10 @@ class JunctionTree(Tree):
     def cliques(self) -> List[Node]:
         return self._cliques.copy()
     
-    def query(self, method: str, variables: List[str], evidences: Dict = None) -> List:
-        jt = self
-        if evidences is not None:
-            jt = self.set_evidences(**evidences)
+    def query(self, method: str, variables: List[str]) -> List:
         if method == 'marginal':
             return [
-                jt[variable][0]['belief'].marginalize({variable})
+                self[variable][0]['belief'].marginalize({variable})
                 for variable in variables
             ]
         joint = self._query_get_joint(variables)
