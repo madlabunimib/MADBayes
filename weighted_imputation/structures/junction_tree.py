@@ -117,7 +117,7 @@ class JunctionTree(Tree):
             message = message * target['belief']
         return message
 
-    def set_evidences(self, **kwargs) -> 'JunctionTree':
+    def set_evidence(self, **kwargs) -> 'JunctionTree':
         jt = deepcopy(self)
         for variable, value in kwargs.items():
             jt._absorb_evidence(variable, value)
