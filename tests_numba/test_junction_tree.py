@@ -1,5 +1,6 @@
-from random import choice, randint, sample
 from itertools import combinations
+from random import choice, randint, sample
+from xarray.testing import assert_allclose
 from . import weighted_imputation as wi
 
 def test_junction_tree():
@@ -77,4 +78,4 @@ def test_junction_tree_query():
             out_0 = jte_0.query(query['method'], query['variables'])
             out_1 = jte_0.query(query['method'], query['variables'])
             for j, _ in enumerate(out_0):
-                assert(out_0[j].equals(out_1[j]))
+                assert_allclose(out_0[j], out_1[j])
