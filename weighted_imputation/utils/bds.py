@@ -7,20 +7,18 @@ from ..structures import BayesianNetwork, Dataset
 from ..algorithms import parents
 
 
-def bds_score(dataset: str, bn: BayesianNetwork, iss: float):
+def bds_score(dataset: str, bn: BayesianNetwork, iss: float, DEBUG: bool):
 
     dataset = load_datasets_from_disk()[dataset]
     nodes = bn.nodes()
     nodes_levels = {node: bn.levels(node) for node in nodes}
     
-    score = np.sum(
-        [
-            node_bds_score(dataset, bn, iss, nodes_levels, node) 
-            for node 
-            in nodes
-        ]
-    )
-    return score
+    score = {node : node_bds_score(dataset, bn, iss, nodes_levels, node) for node in nodes}
+    if DEBUG:
+        from pprint import pprint 
+        pprint(score)
+    
+    return sum(score.values())
 
 
 def node_bds_score(dataset: Dataset, bn: BayesianNetwork, iss: float, nodes_levels: dict, node) -> float:
