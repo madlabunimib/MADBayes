@@ -12,6 +12,9 @@ class Dataset:
     def absolute_frequencies_sublist(self, columns: list):
         return self.data.groupby(columns).size().reset_index(name='count')
 
+    def get_rows_number(self):
+        return len(self.data.index)
+
     @classmethod
     def from_file(cls, path: str):
         dataset = pd.read_csv(
