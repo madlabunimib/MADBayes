@@ -3,51 +3,57 @@ from math import lgamma
 from itertools import product
 
 from ..data import load_datasets_from_disk
-from ..structures import BayesianNetwork
+from ..structures import BayesianNetwork, Dataset
 from ..algorithms import parents
+
 
 def bds_score(dataset: str, bn: BayesianNetwork, iss: float):
 
     dataset = load_datasets_from_disk()[dataset]
-    abs_freq = dataset.absolute_frequencies()
-    
-    score = 0
-
     nodes = bn.nodes()
-    node_levels = {}
-    #nodes -> ['A', 'S', 'E', 'O', 'R', 'T']
-    for node in nodes:
-        node_levels.update({node: bn.levels(node)})
-
-    '''first product'''
-    for node in nodes:
-        parent_list = parents(bn, node)
-        if len(parent_list) > 0:
-            #Create all possible parents configuration
-            parents_configurations = dict_product({par : node_levels[par] for par in parent_list})
-
-            r_i = len(node_levels[node])
-            q_i = len(parents_configurations)
-
-            '''second product'''
-            for parents_conf in parents_configurations:
-                n_ij = configuration_count(dataset, parents_conf)
-                a_ij = 0
-
-                '''third product'''
-                for level in node_levels[node]:
-                    parents_conf.update({node : level})
-                    n_ijk = configuration_count(dataset, parents_conf)
-                    a_ijk = compute_iss_ijk(iss, n_ij, r_i, q_i)
-                    score += (lgamma(a_ijk+n_ijk) / lgamma(a_ijk))
-                    
-                    a_ij += a_ijk #Sum over k to obtain a_ij
-
-                score += (lgamma(a_ij) / lgamma(a_ij + n_ij))
+    nodes_levels = {node: bn.levels(node) for node in nodes}
+    
+    score = np.sum(
+        [
+            node_bds_score(dataset, bn, iss, nodes_levels, node) 
+            for node 
+            in nodes
+        ]
+    )
     return score
 
 
-def compute_iss_ijk(iss, n_ij, r_i, q_i):
+def node_bds_score(dataset: Dataset, bn: BayesianNetwork, iss: float, nodes_levels: dict, node) -> float:
+
+    parent_list = parents(bn, node)
+    #Create all possible parents configuration
+    parents_configurations = dict_product({parent : nodes_levels[parent] for parent in parent_list})
+    
+    r_i = len(nodes_levels[node])
+    q_i = len(parents_configurations)
+        
+    node_score = 0
+    for parents_conf in parents_configurations:
+        n_ij = compute_n_ij(dataset, parents_conf)
+        a_ijk = compute_a_ijk(iss, n_ij, r_i, q_i)
+        a_ij = a_ijk * r_i
+
+        if a_ijk != 0:
+            node_score += (lgamma(a_ij) - lgamma(a_ij + n_ij)) #external product/sum
+            for level in nodes_levels[node]:
+                parents_conf.update({node : level})
+                n_ijk = frequencies_count(dataset, parents_conf)                
+                node_score += (lgamma(a_ijk+n_ijk) - lgamma(a_ijk)) #inner product/sum
+
+    return node_score
+
+def compute_n_ij(dataset, configuration: dict):
+    if configuration != {}:
+        return frequencies_count(dataset, configuration)
+    else:
+        return dataset.get_rows_number()
+
+def compute_a_ijk(iss, n_ij, r_i, q_i):
     if n_ij > 0:
         return iss / (r_i * q_i)
     else:
@@ -56,7 +62,7 @@ def compute_iss_ijk(iss, n_ij, r_i, q_i):
 def dict_product(inp):
     return [dict(zip(inp.keys(), values)) for values in product(*inp.values())]
 
-def configuration_count(dataset, configuration: dict) -> int:
+def frequencies_count(dataset, configuration: dict) -> int:
 
     variables = [variable for variable in configuration]
     configuration_abs_freq = dataset.absolute_frequencies_sublist(variables)
