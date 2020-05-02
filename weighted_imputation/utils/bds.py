@@ -28,7 +28,10 @@ def node_bds_score(dataset: Dataset, bn: BayesianNetwork, iss: float, nodes_leve
     parents_configurations = dict_product({parent : nodes_levels[parent] for parent in parent_list})
     
     r_i = len(nodes_levels[node])
-    q_i = len(parents_configurations)
+    q_i = 0
+    for parents_conf in parents_configurations:
+        if compute_n_ij(dataset, parents_conf) > 0:
+            q_i+=1
         
     node_score = 0
     for parents_conf in parents_configurations:
@@ -36,7 +39,7 @@ def node_bds_score(dataset: Dataset, bn: BayesianNetwork, iss: float, nodes_leve
         a_ijk = compute_a_ijk(iss, n_ij, r_i, q_i)
         a_ij = a_ijk * r_i
 
-        if a_ijk != 0:
+        if a_ijk > 0:
             node_score += (lgamma(a_ij) - lgamma(a_ij + n_ij)) #external product/sum
             for level in nodes_levels[node]:
                 parents_conf.update({node : level})
@@ -68,7 +71,7 @@ def frequencies_count(dataset, configuration: dict) -> int:
     for _, row in configuration_abs_freq.iterrows():
         match = True
         for variable in variables:
-            if not(row[variable] == configuration[variable]):
+            if not(str(row[variable]) == str(configuration[variable])):
                 match = False
                 break
         if match:
