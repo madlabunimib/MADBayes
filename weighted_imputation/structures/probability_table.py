@@ -66,6 +66,26 @@ class ProbabilityTable(xa.DataArray):
         if len(over) > 0:
             return self.sum(over)
         return self.copy()
+    
+    def fillna(self, value):
+        indices = np.isnan(self.values)
+        self.values[indices] = value
+        return self
+    
+    def sort(self):
+        variables = sorted(self.variables())
+        out = self.sortby(
+            variables = variables
+        )
+        out = type(self)(
+            out.values,
+            dims = variables,
+            coords = tuple(
+                out.coords[variable].values
+                for variable in variables
+            )
+        )
+        return out
 
     @classmethod
     def from_data(cls, data, variables, levels):
