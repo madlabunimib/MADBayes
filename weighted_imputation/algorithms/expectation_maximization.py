@@ -14,7 +14,13 @@ if TYPE_CHECKING:
     from ..structures import Dataset
 
 
-def expectation_maximization(dag: BayesianNetwork, dataset: Dataset) -> BayesianNetwork:
+def expectation_maximization(
+    dag: BayesianNetwork,
+    dataset: Dataset,
+    max_iter: int = 50,
+    rtol: float = 1e-05,
+    atol: float = 1e-08
+) -> BayesianNetwork:
     # If DAG is string, buld BayesianNetwork
     if isinstance(dag, str):
         dag = BayesianNetwork.from_structure(dag)
@@ -38,8 +44,10 @@ def expectation_maximization(dag: BayesianNetwork, dataset: Dataset) -> Bayesian
     # and transform in list of dicts by row
     dataset = dataset.absolute_frequencies()
     dataset = dataset.to_dict('records')
-    # Repeat until convergence
-    while True:
+    # Repeat until convergence or max iterations reached
+    iteration = 0
+    converged = False
+    while not converged and iteration < max_iter:
         ### Expectation Step ###
 
         # Compute the Junction Tree for exact inference
@@ -76,11 +84,17 @@ def expectation_maximization(dag: BayesianNetwork, dataset: Dataset) -> Bayesian
 
         ### Maximization Step ###
 
-        # For each node update CPT
+        # For each node compute CPT
         frequencies = {
             node: freq / freq.sum(axis=0)
             for node, freq in frequencies.items()
         }
+
+        ### Check stopping criteria ###
+        converged = _has_converged(dag, frequencies, rtol, atol)
+        iteration += 1
+
+        # Update CPT in DAG
         dag.set_cpts(frequencies)
     return dag
 
@@ -106,3 +120,15 @@ def _build_evidence(row: Dict, variables: List):
         or k != 'count'
         or not pd.isnull(v)
     }
+
+
+def _has_converged(dag: BayesianNetwork, frequencies: Dict, rtol: float, atol: float):
+    return all([
+        np.allclose(
+            dag[node]['CPT'].values,
+            cpt.values,
+            rtol=rtol,
+            atol=atol
+        )
+        for node, cpt in frequencies.items()
+    ])
