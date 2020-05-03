@@ -60,7 +60,8 @@ class BayesianNetwork(DirectedGraph):
             cpt = np.zeros([len(l) for l in levels])
             for (location, item) in data:
                 cpt[location] = item
-            cpts[node] = ConditionalProbabilityTable.from_data(cpt, nodes, levels)
+            cpt = ConditionalProbabilityTable.from_data(cpt, nodes, levels)
+            cpts[node] = cpt.sort()
         return cpts
 
     @classmethod

@@ -73,17 +73,12 @@ class ProbabilityTable(xa.DataArray):
         return self
     
     def sort(self):
-        variables = sorted(self.variables())
-        out = self.sortby(
-            variables = variables
-        )
+        variables = sorted(self.dims)
+        out = self.sortby(variables)
         out = type(self)(
             out.values,
-            dims = variables,
-            coords = tuple(
-                out.coords[variable].values
-                for variable in variables
-            )
+            dims = out.dims,
+            coords = out.coords
         )
         return out
 
