@@ -104,6 +104,5 @@ def _build_evidence(row: Dict, variables: List):
         k: v for k, v in row.items()
         if k not in variables
         or k != 'count'
-        or v is not None
         or not pd.isnull(v)
     }
