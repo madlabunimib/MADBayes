@@ -117,8 +117,8 @@ def _build_evidence(row: Dict, variables: List):
     return {
         k: v for k, v in row.items()
         if k not in variables
-        or k != 'count'
-        or not pd.isnull(v)
+        and k != 'count'
+        and not pd.isnull(v)
     }
 
 
