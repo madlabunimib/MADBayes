@@ -8,6 +8,15 @@ class Dataset:
 
     def absolute_frequencies(self):
         return self.data.groupby(list(self.data.columns)).size().reset_index(name='count')
+    
+    def levels(self):
+        return {
+            column : sorted(self.data[column].dropna().unique())
+            for column in self.data.columns
+        }
+    
+    def to_dict(self):
+        return self.data.to_dict('records')
 
     @classmethod
     def from_file(cls, path: str):
