@@ -1,4 +1,7 @@
+import numpy as np
 import pandas as pd
+
+from random import sample
 
 
 class Dataset:
@@ -8,13 +11,26 @@ class Dataset:
 
     def absolute_frequencies(self):
         return self.data.groupby(list(self.data.columns)).size().reset_index(name='count')
-    
+
     def levels(self):
         return {
-            column : sorted(self.data[column].dropna().unique())
+            column: sorted(self.data[column].dropna().unique())
             for column in self.data.columns
         }
-    
+
+    def random_nan(self, nan_rows_rate: float = 0.2, max_nan_per_row: int = 2):
+        data = self.data.copy()
+        rows, cols = self.data.shape
+        rows = sample(range(rows), min([int(rows * nan_rows_rate), rows]))
+        rows = [
+            (i, j)
+            for i in rows
+            for j in sample(range(cols), min([max_nan_per_row, cols]))
+        ]
+        for i, j in rows:
+            data.iloc[[i], [j]] = np.nan
+        return type(self)(data)
+
     def to_dict(self):
         return self.data.to_dict('records')
 
@@ -26,3 +42,6 @@ class Dataset:
             header=0
         )
         return cls(dataset)
+
+    def __repr__(self):
+        return super().__repr__()
