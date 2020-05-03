@@ -5,6 +5,7 @@ from .depth_first_search import DFS
 from .junction_tree import junction_tree
 from .maximal_cliques import maximal_cliques
 from .maximum_cardinality_search import MCS
+from .expectation_maximization import expectation_maximization
 from .min_qs import min_qs_triangulate
 from .moralize import moralize
 from .nodes import (ancestors, boundary, children, descendants, family,
