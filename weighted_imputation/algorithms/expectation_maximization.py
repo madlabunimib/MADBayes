@@ -43,7 +43,7 @@ def expectation_maximization(
     # variables configurations in dataset
     # and transform in list of dicts by row
     dataset = dataset.absolute_frequencies()
-    dataset = dataset.to_dict('records')
+    dataset = dataset.reset_index().to_dict('records')
     # Repeat until convergence or max iterations reached
     iteration = 0
     converged = False
