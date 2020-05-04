@@ -6,14 +6,10 @@ class Dataset:
     def __init__(self, dataset: pd.DataFrame):
         self.data = dataset
 
-    def absolute_frequencies(self):
-        return self.data.groupby(list(self.data.columns)).size().reset_index(name='count')
-
-    def absolute_frequencies_sublist(self, columns: list):
-        return self.data.groupby(columns).size().reset_index(name='count')
-
-    def get_rows_number(self):
-        return len(self.data.index)
+    def absolute_frequencies(self, columns=None):
+        if columns is None or len(columns) == 0:
+            columns = list(self.data.columns)
+        return self.data.groupby(columns).size().to_frame('count')
 
     @classmethod
     def from_file(cls, path: str):
