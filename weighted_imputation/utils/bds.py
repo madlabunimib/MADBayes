@@ -40,8 +40,8 @@ def node_bds_score(dataset: Dataset, bn: BayesianNetwork, iss: float, levels: di
         
     score = 0
     for config, n_ij in configs:
-        a_ijk = iss / (r_i * q_i)
-        a_ij = a_ijk * r_i
+        a_ij = iss / q_i
+        a_ijk = a_ij / r_i
 
         score += (lgamma(a_ij) - lgamma(a_ij + n_ij))               # outer product/sum
         for level in levels:
