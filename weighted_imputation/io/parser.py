@@ -65,7 +65,7 @@ class ExtractData(Transformer):
         return Token('variabledeclaration', {arg.type: arg.value for arg in args})
     
     def probabilityvalueslist(self, args):
-        return Token('levels', [arg.value for arg in args])
+        return Token('levels', [str(arg.value) for arg in args])
     
     def floatingpointlist(self, args):
         return Token('probability', [float(arg.value) for arg in args])

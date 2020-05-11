@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 
 
@@ -16,6 +17,7 @@ class Dataset:
         dataset = pd.read_csv(
             path,
             sep=',',
-            header=0
+            header=0,
+            dtype=np.str
         )
         return cls(dataset)
