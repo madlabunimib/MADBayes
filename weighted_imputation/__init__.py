@@ -1,5 +1,5 @@
 from . import data, utils
-from .algorithms import (BFS, DFS, MCS, ancestors, boundary, chain_of_cliques,
+from .algorithms import (BFS, DFS, MCS, ancestors, bds_score, boundary, chain_of_cliques,
                          children, descendants, family, is_complete,
                          junction_tree, maximal_cliques, moralize, neighbors,
                          numbering, parents, perfect_numbering, subgraph,
