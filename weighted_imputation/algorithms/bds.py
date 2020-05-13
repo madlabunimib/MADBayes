@@ -12,12 +12,12 @@ from multiprocessing import Pool
 from .nodes import parents as _parents
 
 
-def bds_score(dataset: Dataset, bn: BayesianNetwork, iss: float = 1, with_nodes: bool = False):
-    nodes = sorted(bn.nodes())
-    levels = {node: bn.levels(node) for node in nodes}
+def bds_score(dataset: Dataset, network: BayesianNetwork, iss: float = 1, with_nodes: bool = False):
+    nodes = sorted(network.nodes())
+    levels = {node: network.levels(node) for node in nodes}
 
     score = [
-        (node, dataset, bn, iss, levels[node])
+        (node, dataset, network, iss, levels[node])
         for node in nodes
     ]
     
@@ -37,10 +37,10 @@ def bds_score(dataset: Dataset, bn: BayesianNetwork, iss: float = 1, with_nodes:
     return sum(score.values())
 
 
-def _node_bds_score(node: str, dataset: Dataset, bn: BayesianNetwork, iss: float, levels: list) -> float:
+def _node_bds_score(node: str, dataset: Dataset, network: BayesianNetwork, iss: float, levels: list) -> float:
     size = dataset.data.shape[0]
 
-    parents = _parents(bn, node)
+    parents = _parents(network, node)
     dataset = dataset.absolute_frequencies([node] + parents)
     configs = [((), size)]
     r_i = len(levels)
