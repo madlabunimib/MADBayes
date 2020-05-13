@@ -5,6 +5,6 @@ from .algorithms import (BFS, DFS, MCS, ancestors, bds_score, boundary, chain_of
                          numbering, parents, perfect_numbering, subgraph,
                          triangulate)
 from .backends import disable_alternative_backends, force_alternative_backends
-from .structures import (BayesianNetwork, ConditionalProbabilityTable,
+from .structures import (BayesianNetwork, ConditionalProbabilityTable, Dataset,
                          DirectedGraph, Graph, JunctionTree, Node,
                          ProbabilityTable, Tree)
