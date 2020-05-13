@@ -1,4 +1,3 @@
-import numpy as np
 import pandas as pd
 
 
@@ -18,6 +17,6 @@ class Dataset:
             path,
             sep=',',
             header=0,
-            dtype=np.str
+            dtype=str
         )
         return cls(dataset)
