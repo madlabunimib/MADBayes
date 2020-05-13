@@ -15,9 +15,10 @@ if TYPE_CHECKING:
 
 bnlearn = None
 gRain = None
+utils = None
 
 def rpy2_init() -> None:
-    global bnlearn, gRain
+    global bnlearn, gRain, utils
     # Initialize RPY2
     utils = rpackages.importr('utils')
     utils.chooseCRANmirror(ind=1)
