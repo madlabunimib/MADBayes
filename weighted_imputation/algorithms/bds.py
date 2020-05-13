@@ -1,27 +1,33 @@
-import numpy as np
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ..structures import BayesianNetwork, Dataset
+
 from math import lgamma
 from itertools import product
 
-from ..data import load_datasets_from_disk
-from ..structures import BayesianNetwork, Dataset
-from ..algorithms import parents as _parents
+from .nodes import parents as _parents
 
 
-def bds_score(dataset: str, bn: BayesianNetwork, iss: float, DEBUG: bool):
+def bds_score(dataset: Dataset, bn: BayesianNetwork, iss: float = 1, with_nodes: bool = False):
 
-    dataset = load_datasets_from_disk()[dataset]
     nodes = bn.nodes()
-    nodes_levels = {node: bn.levels(node) for node in nodes}
+    levels = {node: bn.levels(node) for node in nodes}
     
-    score = {node : node_bds_score(dataset, bn, iss, nodes_levels[node], node) for node in nodes}
-    if DEBUG:
-        from pprint import pprint
-        pprint(score)
-    
+    score = {
+        node : _node_bds_score(node, dataset, bn, iss, levels[node])
+        for node in nodes
+    }
+
+    if with_nodes:
+        return sum(score.values()), score
+
     return sum(score.values())
 
 
-def node_bds_score(dataset: Dataset, bn: BayesianNetwork, iss: float, levels: dict, node) -> float:
+def _node_bds_score(node: str, dataset: Dataset, bn: BayesianNetwork, iss: float, levels: list) -> float:
     size = dataset.data.shape[0]
 
     parents = _parents(bn, node)
@@ -43,10 +49,10 @@ def node_bds_score(dataset: Dataset, bn: BayesianNetwork, iss: float, levels: di
         a_ij = iss / q_i
         a_ijk = a_ij / r_i
 
-        score += (lgamma(a_ij) - lgamma(a_ij + n_ij))               # outer product/sum
+        score += (lgamma(a_ij) - lgamma(a_ij + n_ij))
         for level in levels:
             n_ijk = _get_n_ijk(dataset, level, config)
-            score += (lgamma(a_ijk + n_ijk) - lgamma(a_ijk))        # inner product/sum
+            score += (lgamma(a_ijk + n_ijk) - lgamma(a_ijk))
 
     return score
 

@@ -1,3 +1,4 @@
+from .bds import bds_score
 from .breadth_first_search import BFS
 from .bron_kerbosh import bron_kerbosh
 from .chain_of_cliques import chain_of_cliques
