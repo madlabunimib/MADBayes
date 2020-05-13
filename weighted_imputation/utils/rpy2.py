@@ -38,6 +38,9 @@ def rpy2_init() -> None:
 
 class BNLearnNetwork():
 
+    def as_bn(self):
+        return bnlearn.model2network(self.structure())
+
     def as_grain(self):
         return bnlearn.as_grain(self._network)
 
@@ -48,6 +51,9 @@ class BNLearnNetwork():
             ListVector(kwargs)
         )
         return network
+    
+    def structure(self):
+        return bnlearn.modelstring(self._network)
 
     @classmethod
     def from_bif(cls, path: str) -> None:
