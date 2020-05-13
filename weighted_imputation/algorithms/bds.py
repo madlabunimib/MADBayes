@@ -13,7 +13,6 @@ from .nodes import parents as _parents
 
 
 def bds_score(dataset: Dataset, bn: BayesianNetwork, iss: float = 1, with_nodes: bool = False):
-
     nodes = sorted(bn.nodes())
     levels = {node: bn.levels(node) for node in nodes}
 
