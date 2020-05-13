@@ -6,19 +6,30 @@ if TYPE_CHECKING:
     from ..structures import BayesianNetwork, Dataset
 
 from math import lgamma
-from itertools import product
+from os import sched_getaffinity
+from multiprocessing import Pool
 
 from .nodes import parents as _parents
 
 
 def bds_score(dataset: Dataset, bn: BayesianNetwork, iss: float = 1, with_nodes: bool = False):
 
-    nodes = bn.nodes()
+    nodes = sorted(bn.nodes())
     levels = {node: bn.levels(node) for node in nodes}
-    
-    score = {
-        node : _node_bds_score(node, dataset, bn, iss, levels[node])
+
+    score = [
+        (node, dataset, bn, iss, levels[node])
         for node in nodes
+    ]
+    
+    pool = Pool(len(sched_getaffinity(0)) // 2)
+    score = pool.starmap(_node_bds_score, score)
+    pool.close()
+    pool.join()
+
+    score = {
+        node: score[i]
+        for i, node in enumerate(nodes)
     }
 
     if with_nodes:
