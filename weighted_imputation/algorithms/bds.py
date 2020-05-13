@@ -22,7 +22,7 @@ def bds_score(dataset: Dataset, bn: BayesianNetwork, iss: float = 1, with_nodes:
         for node in nodes
     ]
     
-    pool = Pool(len(sched_getaffinity(0)) // 2)
+    pool = Pool(len(sched_getaffinity(0)))
     score = pool.starmap(_node_bds_score, score)
     pool.close()
     pool.join()
