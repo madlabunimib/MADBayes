@@ -18,7 +18,7 @@ def test_bds_score():
     for dataset, dataset_path, network, network_path in datasets_networks:
         df = wi.utils.rpy2.utils.read_csv(dataset_path)
         bn = wi.utils.BNLearnNetwork.from_bif(network_path)
-        bds_python = wi.bds_score(dataset, network)
-        bds_r = wi.utils.rpy2.bnlearn.score(bn.as_bn(), df, type = "bds")
+        bds_python, bds_python_nodes = wi.bds_score(dataset, network, with_nodes=True)
+        bds_r = wi.utils.rpy2.bnlearn.score(bn.as_bn(), df, type = "bds", debug = True)
         bds_r = np.array(bds_r)[0]
         assert(isclose(bds_python, bds_r))
