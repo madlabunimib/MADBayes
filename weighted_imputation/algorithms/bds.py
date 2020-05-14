@@ -12,7 +12,11 @@ from multiprocessing import Pool
 from .nodes import parents as _parents
 
 
-def bds_score(dataset: Dataset, network: BayesianNetwork, iss: float = 1, with_nodes: bool = False):
+def bds_score(network: BayesianNetwork, dataset: Dataset, iss: float = 1, with_nodes: bool = False):
+    # If network is string, buld BayesianNetwork
+    if isinstance(network, str):
+        network = BayesianNetwork.from_structure(network)
+
     nodes = sorted(network.nodes())
     levels = {node: network.levels(node) for node in nodes}
 
