@@ -1,1 +1,1 @@
-from .querygrain import rpy2_init, BNLearnNetwork, gRainJunctionTree
+from .rpy2 import rpy2_init, BNLearnNetwork, gRainJunctionTree

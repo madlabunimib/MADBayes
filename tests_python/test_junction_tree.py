@@ -4,9 +4,9 @@ from xarray.testing import assert_allclose
 from . import weighted_imputation as wi
 
 def test_junction_tree():
-    networks = dir(wi.data)
+    networks = dir(wi.data.network)
     networks = [
-        getattr(wi.data, network)
+        getattr(wi.data.network, network)
         for network in networks
     ]
     networks = [
@@ -22,8 +22,14 @@ def test_junction_tree():
 
 def test_junction_tree_query():
     wi.utils.rpy2_init()
-    for name, path in wi.data.NETWORKS.items():
-        jt_0 = getattr(wi.data, name)
+    networks = ['asia', 'cancer', 'earthquake', 'sachs', 'survey']
+    networks = {
+        name: path
+        for name, path in wi.data.network.NETWORKS.items()
+        if name in networks
+    }
+    for name, path in networks.items():
+        jt_0 = getattr(wi.data.network, name)
         # Nodes of the bayesian network
         nodes = list(jt_0.nodes())
         levels = {
