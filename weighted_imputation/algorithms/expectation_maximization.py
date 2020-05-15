@@ -4,6 +4,8 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
+from os import sched_getaffinity
+from multiprocessing import Pool
 
 from .junction_tree import junction_tree
 from .nodes import parents as _parents
@@ -52,42 +54,25 @@ def expectation_maximization(
 
         # Compute the Junction Tree for exact inference
         jt = junction_tree(dag)
-        # Dictionary for computing absolute frequencies
-        frequencies = {}
+        # Initialize list of parameters
+        frequencies = [
+            (node, parents[node], dataset, zeros[node].copy(), jt)
+            for node in nodes
+        ]
         # For each node, for each row compute absolute
         # frequencies counting from dataset and using
         # joint queries when NAN values are present
-        for node in nodes:
-            counter = zeros[node].copy()
-            for row in dataset:
-                # Init query
-                query = 1
-                # Select variables
-                variables = [node] + parents[node]
-                # Select variables values
-                values = {
-                    k: v for k, v in row.items()
-                    if k in variables
-                }
-                # Check if there are NAN values
-                any_nan = any([pd.isnull(v) for _, v in values.items()])
-                if (any_nan):
-                    # Set evidence
-                    evidence = _build_evidence(row, variables)
-                    jte = jt.set_evidence(**evidence)
-                    # Execute query
-                    query = jte.query('joint', variables)[0]
-                # Update values
-                counter.loc[values] += query * row['count']
-            # Add counter to frequencies
-            frequencies[node] = counter
+        pool = Pool(len(sched_getaffinity(0)))
+        frequencies = pool.starmap(_expectation_maximization_node, frequencies)
+        pool.close()
+        pool.join()
 
         ### Maximization Step ###
 
         # For each node compute CPT
         frequencies = {
-            node: freq / freq.sum(axis=0)
-            for node, freq in frequencies.items()
+            nodes[i]: freq / freq.sum(axis=0)
+            for i, freq in enumerate(frequencies)
         }
 
         ### Check stopping criteria ###
@@ -97,6 +82,30 @@ def expectation_maximization(
         # Update CPT in DAG
         dag.set_cpts(frequencies)
     return dag
+
+
+def _expectation_maximization_node(node, parents, dataset, counter, jt):
+    for row in dataset:
+        # Init query
+        query = 1
+        # Select variables
+        variables = [node] + parents
+        # Select variables values
+        values = {
+            k: v for k, v in row.items()
+            if k in variables
+        }
+        # Check if there are NAN values
+        any_nan = any([pd.isnull(v) for _, v in values.items()])
+        if (any_nan):
+            # Set evidence
+            evidence = _build_evidence(row, variables)
+            jte = jt.set_evidence(**evidence)
+            # Execute query
+            query = jte.query('joint', variables)[0]
+        # Update values
+        counter.loc[values] += query * row['count']
+    return counter
 
 
 def _build_empty_cpts(nodes: List, levels: Dict, parents: Dict):
