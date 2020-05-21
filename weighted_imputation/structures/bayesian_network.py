@@ -17,7 +17,12 @@ class BayesianNetwork(DirectedGraph):
         if cpts is not None:
             self.set_cpts(cpts)
     
-    def levels(self, variable: str) -> Tuple[str]:
+    def levels(self, variable: str = None) -> Tuple[str]:
+        if variable is None:
+            return {
+                variable: list(self[variable]['CPT'].coords[variable].values)
+                for variable in self.nodes()
+            }
         return tuple(self[variable]['CPT'].coords[variable].values)
     
     def set_cpts(self, cpts: Dict) -> None:
