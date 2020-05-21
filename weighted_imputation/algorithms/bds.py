@@ -3,12 +3,13 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ..structures import BayesianNetwork, Dataset
+    from ..structures import Dataset
 
 from math import lgamma
 from os import sched_getaffinity
 from multiprocessing import Pool
 
+from ..structures import BayesianNetwork
 from .nodes import parents as _parents
 
 
@@ -18,7 +19,7 @@ def bds_score(network: BayesianNetwork, dataset: Dataset, iss: float = 1, with_n
         network = BayesianNetwork.from_structure(network)
 
     nodes = sorted(network.nodes())
-    levels = {node: network.levels(node) for node in nodes}
+    levels = dataset.levels()
 
     score = [
         (node, dataset, network, iss, levels[node])
@@ -50,7 +51,7 @@ def _node_bds_score(node: str, dataset: Dataset, network: BayesianNetwork, iss: 
     r_i = len(levels)
 
     q_i = 1
-    if len(parents) != 0:
+    if len(parents) > 0:
         configs = dataset.groupby(parents).sum()
         configs = [
             (config, value['count'])
@@ -65,13 +66,13 @@ def _node_bds_score(node: str, dataset: Dataset, network: BayesianNetwork, iss: 
 
         score += (lgamma(a_ij) - lgamma(a_ij + n_ij))
         for level in levels:
-            n_ijk = _get_n_ijk(dataset, level, config)
+            n_ijk = _n_ijk(dataset, level, config)
             score += (lgamma(a_ijk + n_ijk) - lgamma(a_ijk))
 
     return score
 
 
-def _get_n_ijk(dataset, level, config):
+def _n_ijk(dataset, level, config):
     try:
         if not isinstance(level, tuple):
             level = tuple([level])
