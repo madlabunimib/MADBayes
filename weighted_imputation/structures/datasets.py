@@ -37,7 +37,7 @@ class Dataset:
         return self.data.to_dict('records')
 
     @classmethod
-    def from_file(cls, path: str):
+    def from_csv(cls, path: str):
         dataset = pd.read_csv(
             path,
             sep=',',

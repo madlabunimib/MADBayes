@@ -16,7 +16,7 @@ DATASETS = {
 
 def load_datasets_from_disk() -> Dict:
     return {
-        key: Dataset.from_file(value)
+        key: Dataset.from_csv(value)
         for key, value in DATASETS.items()
     }
 
