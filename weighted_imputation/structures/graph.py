@@ -213,7 +213,15 @@ class DirectedGraph(Graph):
             raise Exception('parent and child nodes must be in adjacency_matrix before removing edge.')
         self._adjacency_matrix.loc[parent, child] = False
         return self
-    
+
+    def get_edges(self) -> List:
+        return [
+            (parent, child) 
+            for parent in self._adjacency_matrix.columns
+            for child in self._adjacency_matrix.columns
+            if self._adjacency_matrix.loc[parent, child] == True
+            ]
+        
     def is_directed(self) -> bool:
         return True
     
