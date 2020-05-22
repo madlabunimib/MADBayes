@@ -213,6 +213,13 @@ class DirectedGraph(Graph):
             raise Exception('parent and child nodes must be in adjacency_matrix before removing edge.')
         self._adjacency_matrix.loc[parent, child] = False
         return self
+    
+    def reverse_edge(self, parent: str, child: str) -> "DirectedGraph":
+        if parent not in self._adjacency_matrix or child not in self._adjacency_matrix:
+            raise Exception('parent and child nodes must be in adjacency_matrix before reversing edge.')
+        self._adjacency_matrix.loc[parent, child] = False
+        self._adjacency_matrix.loc[child, parent] = True
+        return self
 
     def get_edges(self) -> List:
         return [
