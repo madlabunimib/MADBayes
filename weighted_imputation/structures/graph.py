@@ -1,6 +1,6 @@
 import re
 from copy import deepcopy
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 import matplotlib.pyplot as plt
 import networkx as nx
@@ -45,6 +45,11 @@ class Graph():
 
     def nodes(self) -> List[str]:
         return list(self._adjacency_matrix.index.values)
+    
+    def edges(self) -> List[Tuple[str]]:
+        edges = self._adjacency_matrix.stack()
+        edges = edges[edges == True].index.tolist()
+        return edges
     
     def set_nodes(self, nodes: List[str]) -> "Graph":
         try:
@@ -220,14 +225,6 @@ class DirectedGraph(Graph):
         self._adjacency_matrix.loc[parent, child] = False
         self._adjacency_matrix.loc[child, parent] = True
         return self
-
-    def get_edges(self) -> List:
-        return [
-            (parent, child) 
-            for parent in self._adjacency_matrix.columns
-            for child in self._adjacency_matrix.columns
-            if self._adjacency_matrix.loc[parent, child] == True
-            ]
         
     def is_directed(self) -> bool:
         return True
