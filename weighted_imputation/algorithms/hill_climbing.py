@@ -20,53 +20,50 @@ def hill_climbing(dataset: Dataset):
         progress = False
         
         dag = DirectedGraph(nodes, best_dag.adjacency_matrix())
-        dag_edges = dag.get_edges()
-        reversed_dag_edges = [(edge[1], edge[0]) for edge in dag_edges]
+        edges = dag.edges()
+        reversed_dag_edges = [(edge[1], edge[0]) for edge in edges]
 
-        print(dag_edges)
+        print(edges)
         
-        add_edges = [edge for edge in all_edges if edge not in dag_edges and edge not in reversed_dag_edges]
+        add_edges = [edge for edge in all_edges if edge not in edges and edge not in reversed_dag_edges]
         # TRY ADDING EDGES NOT IN DAG
         for edge in add_edges:
             if edge[0] != edge[1]:
-                dag.add_edge(edge[0], edge[1])
+                dag.add_edge(*edge)
                 dag_score = bds_score(dag, dataset)
                 # if adding that edge does not create a loop
                 if dag_score > best_dag_score:
-                    best_dag.add_edge(edge[0], edge[1])
+                    best_dag.add_edge(*edge)
                     best_dag_score = dag_score
                     progress = True
                     
-                dag.remove_edge(edge[0], edge[1])
+                dag.remove_edge(*edge)
 
 
         # TRY REMOVING DAG'S EDGES
-        for edge in dag_edges:
-            dag.remove_edge(edge[0], edge[1])
+        for edge in edges:
+            dag.remove_edge(*edge)
             dag_score = bds_score(dag, dataset)
 
             if dag_score > best_dag_score:
-                best_dag.remove_edge(edge[0], edge[1])
+                best_dag.remove_edge(*edge)
                 best_dag_score = dag_score
                 progress = True
 
-            dag.add_edge(edge[0], edge[1])
+            dag.add_edge(*edge)
 
 
         # TRY REVERSE DAG'S EDGES
-        for edge in dag_edges:
-            dag.remove_edge(edge[0], edge[1])
-            dag.add_edge(edge[1], edge[0])
+        for edge in edges:
+            dag.reverse_edge(*edge)
             dag_score = bds_score(dag, dataset)
             # if adding that edge does not create a loop
             if dag_score > best_dag_score:
-                best_dag.remove_edge(edge[0], edge[1])
-                best_dag.add_edge(edge[1], edge[0])
+                best_dag.reverse_edge(*edge)
                 best_dag_score = dag_score
                 progress = True
 
-            dag.add_edge(edge[0], edge[1])
-            dag.remove_edge(edge[1], edge[0])
+            dag.reverse_edge(edge[1], edge[0])
 
 
     best_dag.plot()   
