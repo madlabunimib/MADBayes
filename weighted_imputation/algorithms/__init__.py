@@ -4,6 +4,7 @@ from .bron_kerbosh import bron_kerbosh
 from .chain_of_cliques import chain_of_cliques
 from .depth_first_search import DFS
 from .hill_climbing import hill_climbing
+from .impute import impute
 from .junction_tree import junction_tree
 from .maximal_cliques import maximal_cliques
 from .maximum_cardinality_search import MCS
