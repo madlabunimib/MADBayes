@@ -51,6 +51,11 @@ class Graph():
         edges = edges[edges == True].index.tolist()
         return edges
     
+    def missing_edges(self) -> List[Tuple[str]]:
+        edges = self._adjacency_matrix.stack()
+        edges = edges[edges == False].index.tolist()
+        return edges
+    
     def set_nodes(self, nodes: List[str]) -> "Graph":
         try:
             if self._adjacency_matrix.shape[0] != len(nodes):

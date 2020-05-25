@@ -12,23 +12,25 @@ def BFS(graph: Graph) -> Dict:
     pass
 
 # Use BFS to check path between parent and child
-def is_reachable(graph: Graph, source: Node, destination: Node): 
+
+
+def is_reachable(graph: Graph, edge):
 
     visited = {node: False for node in graph.nodes()}
-    
-    queue=[] 
-    queue.append(source) 
-    visited[source] = True
 
-    while queue: 
-        node = queue.pop(0) 
-    
-        if node == destination: 
+    queue = []
+    queue.append(edge[1])
+    visited[edge[1]] = True
+
+    while queue:
+        node = queue.pop(0)
+
+        if node == edge[0]:
             return True
 
-        for child in children(graph, node): 
-            if visited[child] == False: 
-                queue.append(child) 
+        for child in children(graph, node):
+            if visited[child] == False:
+                queue.append(child)
                 visited[child] = True
 
     return False

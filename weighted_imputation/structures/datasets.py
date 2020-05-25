@@ -13,6 +13,9 @@ class Dataset:
         if columns is None or len(columns) == 0:
             columns = list(self.data.columns)
         return self.data.groupby(columns).size().to_frame('count')
+    
+    def columns(self):
+        return list(self.data.columns)
 
     def levels(self):
         return {
