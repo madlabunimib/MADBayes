@@ -39,3 +39,18 @@
     - [x] Compute parameters
     - [x] Message passing
     - [x] Query interface
+- [ ] Score Functions
+    - [ ] BIC
+    - [ ] AIC
+    - [ ] LL
+    - [ ] BDeu
+    - [x] BDs
+- [ ] Score-based Structure Learning
+    - [ ] (Hill-Climbing)-Like
+        - [x] Hill-Climbing
+        - [ ] Tabu Search
+        - [ ] Greedy-Equivalent Search
+    - [ ] Genetic Algorithms
+    - [ ] Simulated Annealing
+- [x] Excpectation-Maximization
+- [ ] Structural EM
