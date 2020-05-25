@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
+from copy import deepcopy
 from os import sched_getaffinity
 from multiprocessing import Pool
 
@@ -24,6 +25,8 @@ def expectation_maximization(
     atol: float = 1e-08
 ) -> BayesianNetwork:
     # If DAG is string, buld BayesianNetwork
+    if isinstance(dag, BayesianNetwork):
+        dag = deepcopy(dag)
     if isinstance(dag, str):
         dag = BayesianNetwork.from_structure(dag)
     # Get nodes from dag
