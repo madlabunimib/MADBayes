@@ -10,6 +10,7 @@ from multiprocessing import Pool
 
 from .junction_tree import junction_tree
 from .nodes import parents as _parents
+from .kullback_leibler_divergence import kullback_leibler_divergence as kl
 from ..structures import BayesianNetwork, ConditionalProbabilityTable
 
 if TYPE_CHECKING:
@@ -21,8 +22,7 @@ def expectation_maximization(
     dag: BayesianNetwork,
     dataset: Dataset,
     max_iter: int = 50,
-    rtol: float = 1e-05,
-    atol: float = 1e-08
+    tol: float = 1e-08
 ) -> BayesianNetwork:
     # If DAG is string, buld BayesianNetwork
     if isinstance(dag, BayesianNetwork):
@@ -79,7 +79,7 @@ def expectation_maximization(
         }
 
         ### Check stopping criteria ###
-        converged = _has_converged(dag, frequencies, rtol, atol)
+        converged = _has_converged(dag, frequencies, tol)
         iteration += 1
 
         # Update CPT in DAG
@@ -134,13 +134,8 @@ def _build_evidence(row: Dict, variables: List):
     }
 
 
-def _has_converged(dag: BayesianNetwork, frequencies: Dict, rtol: float, atol: float):
+def _has_converged(dag: BayesianNetwork, frequencies: Dict, tol: float):
     return all([
-        np.allclose(
-            dag[node]['CPT'].values,
-            cpt.values,
-            rtol=rtol,
-            atol=atol
-        )
+        kl(dag[node]['CPT'].values, cpt.values) < tol
         for node, cpt in frequencies.items()
     ])
