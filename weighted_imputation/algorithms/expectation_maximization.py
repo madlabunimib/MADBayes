@@ -5,9 +5,8 @@ from typing import TYPE_CHECKING
 import numpy as np
 import pandas as pd
 from copy import deepcopy
-from os import sched_getaffinity
-from multiprocessing import Pool
 from scipy.special import rel_entr as kl
+from multiprocessing import Pool, cpu_count
 
 from .junction_tree import junction_tree
 from .nodes import parents as _parents
@@ -68,7 +67,7 @@ def expectation_maximization(
         # For each node, for each row compute absolute
         # frequencies counting from dataset and using
         # joint queries when NAN values are present
-        pool = Pool(len(sched_getaffinity(0)))
+        pool = Pool(cpu_count())
         frequencies = pool.starmap(_expectation_maximization_node, frequencies)
         pool.close()
         pool.join()

@@ -6,8 +6,7 @@ if TYPE_CHECKING:
     from ..structures import Dataset
 
 from math import lgamma
-from os import sched_getaffinity
-from multiprocessing import Pool
+from multiprocessing import Pool, cpu_count
 
 from ..structures import BayesianNetwork
 from .nodes import parents as _parents
@@ -26,7 +25,7 @@ def bds_score(network: BayesianNetwork, dataset: Dataset, iss: float = 1, with_n
         for node in nodes
     ]
     
-    pool = Pool(len(sched_getaffinity(0)))
+    pool = Pool(cpu_count())
     score = pool.starmap(_node_bds_score, score)
     pool.close()
     pool.join()
