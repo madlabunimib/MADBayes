@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from ..structures import BayesianNetwork
 
 
-def impute(network: BayesianNetwork, dataset: Dataset):
+def impute(network: BayesianNetwork, dataset: Dataset) -> Dataset:
     jt = junction_tree(network)
     data = deepcopy(dataset.data)
     nans = data[data.isnull().any(axis=1)]
