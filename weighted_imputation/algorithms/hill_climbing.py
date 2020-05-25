@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from typing import List
 
 
-def hill_climbing(dataset: Dataset, score=bds_score):
+def hill_climbing(dataset: Dataset, score=bds_score) -> DirectedGraph:
     nodes = dataset.columns()
     dag_best = DirectedGraph(nodes=nodes)
     score_dag_best = score(dag_best, dataset)

@@ -7,11 +7,11 @@ import pandas as pd
 from copy import deepcopy
 from os import sched_getaffinity
 from multiprocessing import Pool
+from scipy.special import rel_entr as kl
 
 from .junction_tree import junction_tree
 from .nodes import parents as _parents
-from .kullback_leibler_divergence import kullback_leibler_divergence as kl
-from ..structures import BayesianNetwork, ConditionalProbabilityTable
+from ..structures import DirectedGraph, BayesianNetwork, ConditionalProbabilityTable
 
 if TYPE_CHECKING:
     from typing import Dict, List
@@ -19,16 +19,19 @@ if TYPE_CHECKING:
 
 
 def expectation_maximization(
-    dag: BayesianNetwork,
+    dag: DirectedGraph,
     dataset: Dataset,
     max_iter: int = 50,
     tol: float = 1e-08
 ) -> BayesianNetwork:
-    # If DAG is string, buld BayesianNetwork
-    if isinstance(dag, BayesianNetwork):
-        dag = deepcopy(dag)
+    # If DAG is string, build BayesianNetwork
     if isinstance(dag, str):
         dag = BayesianNetwork.from_structure(dag)
+    if isinstance(dag, DirectedGraph):
+        dag = BayesianNetwork(
+            nodes=dag.nodes(),
+            adjacency_matrix=dag.adjacency_matrix()
+        )
     # Get nodes from dag
     nodes = dag.nodes()
     # Get variables levels from dataset
@@ -136,6 +139,6 @@ def _build_evidence(row: Dict, variables: List):
 
 def _has_converged(dag: BayesianNetwork, frequencies: Dict, tol: float):
     return all([
-        kl(dag[node]['CPT'].values, cpt.values) < tol
+        np.sum(kl(dag[node]['CPT'].values, cpt.values)) < tol
         for node, cpt in frequencies.items()
     ])

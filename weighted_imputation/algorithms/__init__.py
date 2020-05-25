@@ -15,4 +15,5 @@ from .nodes import (ancestors, boundary, children, descendants, family,
                     is_complete, neighbors, numbering, parents,
                     perfect_numbering, subgraph)
 from .paths import _all_simple_paths
+from .structural_em import structural_em
 from .triangulate import triangulate
