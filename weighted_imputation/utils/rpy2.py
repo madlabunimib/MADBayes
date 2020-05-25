@@ -3,12 +3,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import xarray as xa
-import rpy2.robjects as ro
-import rpy2.robjects.packages as rpackages
-from rpy2.robjects import pandas2ri
-from rpy2.rlike.container import TaggedList
-from rpy2.robjects.conversion import localconverter
-from rpy2.robjects.vectors import StrVector, ListVector
 
 if TYPE_CHECKING:
     from typing import List
@@ -18,6 +12,8 @@ gRain = None
 utils = None
 
 def rpy2_init() -> None:
+    import rpy2.robjects.packages as rpackages
+    from rpy2.robjects.vectors import StrVector
     global bnlearn, gRain, utils
     # Initialize RPY2
     utils = rpackages.importr('utils')
@@ -45,6 +41,7 @@ class BNLearnNetwork():
         return bnlearn.as_grain(self._network)
 
     def mutilated(self, **kwargs) -> 'BNLearnNetwork':
+        from rpy2.robjects.vectors import ListVector
         network = type(self)()
         network._network = bnlearn.mutilated(
             self._network,
@@ -71,6 +68,7 @@ class gRainJunctionTree():
         return type(self)(self._network.mutilated(**kwargs))
 
     def query(self, method: str, variables: List[str]) -> List:
+        from rpy2.robjects.vectors import StrVector
         out = gRain.querygrain(
             self._network.as_grain(),
             nodes=StrVector(variables),
@@ -88,6 +86,9 @@ class gRainJunctionTree():
         return [self._format_query_to_xarray(variables, out)]
 
     def _format_query_to_xarray(self, variables: List[str], out) -> xa.DataArray:
+        import rpy2.robjects as ro
+        from rpy2.robjects import pandas2ri
+        from rpy2.robjects.conversion import localconverter
         with localconverter(ro.default_converter + pandas2ri.converter):
             out = ro.conversion.rpy2py(out)
         out = out.set_index(variables).to_xarray()
