@@ -39,24 +39,15 @@ def hill_climbing(dataset: Dataset, score=bds_score, iss: float = 1) -> Directed
 
 
 def _hc_score(network: BayesianNetwork, dataset: Dataset, operator: str, edge: Tuple, score, iss: float):
-
     nodes_scores = deepcopy(score[1])
     # If we add or remove an edge we need only to update the child's score value
-    if operator == "add_edge" or operator == "remove_edge":
-        levels = dataset.levels()[edge[1]]
-        nodes_scores[edge[1]] = _node_bds_score(
-            edge[1], dataset, network, iss, levels)
-        return (sum(nodes_scores.values()), nodes_scores)
-
+    nodes_scores[edge[1]] = _node_bds_score(
+        edge[1], dataset, network, iss)
     # If we revert an edge we need to update both nodes
-    else:
-        levels = dataset.levels()[edge[1]]
-        nodes_scores[edge[1]] = _node_bds_score(
-            edge[1], dataset, network, iss, levels)
-        levels = dataset.levels()[edge[0]]
+    if operator == 'reverse_edge':
         nodes_scores[edge[0]] = _node_bds_score(
-            edge[0], dataset, network, iss, levels)
-        return (sum(nodes_scores.values()), nodes_scores)
+            edge[0], dataset, network, iss)
+    return (sum(nodes_scores.values()), nodes_scores)
 
 
 def _hc_operators(dag: DirectedGraph) -> List[Tuple]:

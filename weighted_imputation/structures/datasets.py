@@ -17,11 +17,13 @@ class Dataset:
     def columns(self):
         return list(self.data.columns)
 
-    def levels(self):
-        return {
-            column: sorted(self.data[column].dropna().unique())
-            for column in self.data.columns
-        }
+    def levels(self, variable = None):
+        if variable is None:
+            return {
+                column: sorted(self.data[column].dropna().unique())
+                for column in self.data.columns
+            }
+        return sorted(self.data[variable].dropna().unique())
 
     def random_nan(self, nan_rows_rate: float = 0.2, max_nan_per_row: int = 2):
         data = self.data.copy()
