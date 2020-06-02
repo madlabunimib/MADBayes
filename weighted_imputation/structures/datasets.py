@@ -25,17 +25,9 @@ class Dataset:
             }
         return sorted(self.data[variable].dropna().unique())
 
-    def random_nan(self, nan_rows_rate: float = 0.2, max_nan_per_row: int = 2):
+    def random_nan(self, ratio: float = 0.20):
         data = self.data.copy()
-        rows, cols = self.data.shape
-        rows = sample(range(rows), min([int(rows * nan_rows_rate), rows]))
-        rows = [
-            (i, j)
-            for i in rows
-            for j in sample(range(cols), min([max_nan_per_row, cols]))
-        ]
-        for i, j in rows:
-            data.iloc[[i], [j]] = np.nan
+        data = data.mask(np.random.random(data.shape) < ratio)
         return type(self)(data)
 
     def to_dict(self):
