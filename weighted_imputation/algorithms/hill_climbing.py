@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from typing import List
 
 
-def hill_climbing(dataset: Dataset, score=bds_score, iss: float = 1) -> DirectedGraph:
+def hill_climbing(dataset: Dataset, score=bds_score, node_score=_node_bds_score, iss: float = 1) -> DirectedGraph:
     nodes = dataset.columns()
     dag_best = DirectedGraph(nodes=nodes)
     score_dag_best = score(dag_best, dataset, iss=iss, with_nodes=True)
@@ -30,7 +30,8 @@ def hill_climbing(dataset: Dataset, score=bds_score, iss: float = 1) -> Directed
             if _hc_legal_solution(dag_o, operator, edge):
                 o(*edge)
                 score_dag_o = _hc_score(
-                    dag_o, dataset, operator, edge, score_dag, iss)
+                    node_score, dag_o, dataset, operator, edge, score_dag, iss
+                )
                 if score_dag_o[0] > score_dag_best[0]:
                     progress = True
                     dag_best = dag_o
@@ -38,15 +39,17 @@ def hill_climbing(dataset: Dataset, score=bds_score, iss: float = 1) -> Directed
     return dag_best
 
 
-def _hc_score(network: BayesianNetwork, dataset: Dataset, operator: str, edge: Tuple, score, iss: float):
+def _hc_score(node_score, network: BayesianNetwork, dataset: Dataset, operator: str, edge: Tuple, score, iss: float):
     nodes_scores = deepcopy(score[1])
     # If we add or remove an edge we need only to update the child's score value
-    nodes_scores[edge[1]] = _node_bds_score(
-        edge[1], dataset, network, iss)
+    nodes_scores[edge[1]] = node_score(
+        edge[1], dataset, network, iss
+    )
     # If we revert an edge we need to update both nodes
     if operator == 'reverse_edge':
-        nodes_scores[edge[0]] = _node_bds_score(
-            edge[0], dataset, network, iss)
+        nodes_scores[edge[0]] = node_score(
+            edge[0], dataset, network, iss
+        )
     return (sum(nodes_scores.values()), nodes_scores)
 
 
