@@ -38,9 +38,6 @@ def structural_em(
         converged = _has_converged(bn, bn_next, tol)
         iteration += 1
 
-        print('converged: ' + str(converged) +
-              ', iteration: ' + str(iteration))
-
         bn = bn_next
 
     return bn
