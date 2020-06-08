@@ -1,5 +1,7 @@
 # MADLab MADBayes
 
+[![CodeFactor](https://www.codefactor.io/repository/github/madlabunimib/madbayes/badge/master)](https://www.codefactor.io/repository/github/madlabunimib/madbayes/overview/master)
+
 MADBayes is a Python library about Bayesian Networks.
 
 ## TODO List
