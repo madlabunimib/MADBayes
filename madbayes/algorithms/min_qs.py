@@ -54,7 +54,7 @@ def _find_quasi_split_graph(graph: Graph) -> Dict:
     set_at_distance_l_from_s = bfs(graph, 0)  # 0 is for the first node in the set, it is a random choice
     set_at_distance_l_from_s.reverse()
 
-    for level in range(len(set_at_distance_l_from_s)-1):
+    for level in range(len(set_at_distance_l_from_s) - 1):
         # Find the connected component for each level
         connencted_components_level = _find_connected_component_of_set(graph, set_at_distance_l_from_s[level])
         F = []
@@ -64,7 +64,7 @@ def _find_quasi_split_graph(graph: Graph) -> Dict:
             P = _get_neighborhood_of_set_in_subset(
                 graph.adjacency_matrix(),
                 Q,
-                set_at_distance_l_from_s[level+1])
+                set_at_distance_l_from_s[level + 1])
             # Saturate the neighborhood
             F_part = _saturate_set(P)
             F.extend(F_part)
@@ -155,7 +155,7 @@ def bfs(graph: Graph, source_index: int) -> List[Set]:
                 queue.put(child)
 
     distance_l_from_s = []
-    for distance in range(max(distances)+1):
+    for distance in range(max(distances) + 1):
         distance_i_from_s = set()
         for elem in range(len(graph_nodes)):
             if distances[elem] == distance:

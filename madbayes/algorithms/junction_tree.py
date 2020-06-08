@@ -66,7 +66,7 @@ def _node_from_clique(network: BayesianNetwork, clique: List, cpts: List) -> Nod
     node = Node(str(items))
     node['type'] = 'clique'
     node['nodes'] = items
-    node['potential'] = reduce(lambda a, b: a*b, cpts, 1)
+    node['potential'] = reduce(lambda a, b: a * b, cpts, 1)
     return node
 
 

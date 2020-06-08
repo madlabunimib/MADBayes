@@ -52,7 +52,7 @@ class JunctionTree(Tree):
         if method == 'joint':
             return [joint]
         condition = joint.marginalize(variables[1:])
-        return [joint/condition]
+        return [joint / condition]
 
     def _query_get_joint(self, variables: List[str]) -> ProbabilityTable:
         # Check if variables are contained in a single clique

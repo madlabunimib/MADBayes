@@ -4,12 +4,12 @@ The Interchange Format for Bayesian Networks (BIF)
 Ref: http://www.cs.washington.edu/dm/vfml/appendixes/bif.htm
 
 A more formal description of the proposed Interchange Format is given
-here. The notation used by the Jack parser generator is used here. 
+here. The notation used by the Jack parser generator is used here.
 In the description below, the patterns used by the lexer to define
 tokens are very similar to regular expressions used by the Unix regexp
 facility. Non-terminals have a parenthesis pair "()" after their
 names; terminals are usually capitalized. Some structures that may
-appear in expansions are: 
+appear in expansions are:
 
    ( e )?      : An optional occurrence of e
    e1 | e2 | e3 | ... : A choice of e1, e2, e3, etc.
@@ -21,7 +21,7 @@ appear in expansions are:
 
 --------------------------------------------------------------------------------
 
-The following patterns are ignored when they appear between tokens: 
+The following patterns are ignored when they appear between tokens:
 
 " "
 "\t"
@@ -35,56 +35,56 @@ The following patterns are ignored when they appear between tokens:
 
 --------------------------------------------------------------------------------
 
-The definition of a word is: 
+The definition of a word is:
 
 WORD: LETTER (LETTER | DIGIT)*
 LETTER: ["a"-"z","A"-"Z","_","-"]
-DIGIT:  ["0"-"9"] 
+DIGIT:  ["0"-"9"]
 
 
 --------------------------------------------------------------------------------
 
-The definition of a non-negative integer number is: 
+The definition of a non-negative integer number is:
 
-DECIMAL_LITERAL: ["1"-"9"] (["0"-"9"])* 
+DECIMAL_LITERAL: ["1"-"9"] (["0"-"9"])*
 
 
 
 --------------------------------------------------------------------------------
-The definition of a non-negative real number is: 
-FLOATING_POINT_LITERAL: (["0"-"9"])+ "." (["0"-"9"])* (EXPONENT)? 
-      | "." (["0"-"9"])+ (EXPONENT)? 
-      | (["0"-"9"])+ (EXPONENT)? 
+The definition of a non-negative real number is:
+FLOATING_POINT_LITERAL: (["0"-"9"])+ "." (["0"-"9"])* (EXPONENT)?
+      | "." (["0"-"9"])+ (EXPONENT)?
+      | (["0"-"9"])+ (EXPONENT)?
 #EXPONENT: ["e","E"] (["+","-"])? (["0"-"9"])+
 
 
 --------------------------------------------------------------------------------
 
-The following words are keywords: 
+The following words are keywords:
 
-NETWORK: "network" 
-VARIABLE: "variable" 
-PROBABILITY: "probability" 
-PROPERTY: "property" 
-VARIABLETYPE: "type" 
-DISCRETE: "discrete" 
-DEFAULTVALUE: "default" 
-TABLEVALUES: "table" 
+NETWORK: "network"
+VARIABLE: "variable"
+PROBABILITY: "probability"
+PROPERTY: "property"
+VARIABLETYPE: "type"
+DISCRETE: "discrete"
+DEFAULTVALUE: "default"
+TABLEVALUES: "table"
 
 
 --------------------------------------------------------------------------------
 
-A property is defined as: 
+A property is defined as:
 
 PROPERTYSTRING: PROPERTY (~[";"])* ";"
 
 
 --------------------------------------------------------------------------------
 
-The productions of the grammar are: 
+The productions of the grammar are:
 
 CompilationUnit() :
-  NetworkDeclaration() 
+  NetworkDeclaration()
   ( VariableDeclaration()   |    ProbabilityDeclaration()  )*
   EOF
 
@@ -101,11 +101,11 @@ VariableContent(String name) :
   "{"  ( Property() | VariableDiscrete() )*   "}"
 
 VariableDiscrete() :
-  VARIABLETYPE DISCRETE 
+  VARIABLETYPE DISCRETE
     "[" DECIMAL_LITERAL "]" "{"    VariableValuesList()    "}" ";"
 
 void VariableValuesList() :
-    ProbabilityVariableValue() 
+    ProbabilityVariableValue()
     ( ProbabilityVariableValue() )*
 
 ProbabilityVariableValue() : WORD
@@ -116,7 +116,7 @@ ProbabilityDeclaration() :
 ProbabilityVariablesList() :
    "("  ProbabilityVariableName() ( ProbabilityVariableName()   )* ")"
 
-ProbabilityVariableName() : 
+ProbabilityVariableName() :
 
 ProbabilityContent()
   "{" ( Property() | ProbabilityDefaultEntry()   | ProbabilityEntry()
@@ -139,9 +139,9 @@ ProbabilityTable() :
 FloatingPointList() :
   FloatingPointToken()  ( FloatingPointToken()  )*
 
-FloatingPointToken() :  
+FloatingPointToken() :
 
-Property() :  
+Property() :
 
 
 
@@ -160,24 +160,24 @@ BIF_GRAMMAR = r"""
   %ignore ","
   %ignore "|"
 
-  WORD: LETTER (LETTER | DIGIT)* 
-  LETTER: /[a-zA-Z_-]/ 
-  DIGIT:  /[0-9]/ 
+  WORD: LETTER (LETTER | DIGIT)*
+  LETTER: /[a-zA-Z_-]/
+  DIGIT:  /[0-9]/
 
-  DECIMAL_LITERAL: /[0-9][1-9]*/ 
-  FLOATING_POINT_LITERAL: /[0-9]+\.[0-9]*/ (EXPONENT)? 
-        | /\.[0-9]/ (EXPONENT)? 
-        | /[0-9]+/ (EXPONENT)? 
+  DECIMAL_LITERAL: /[0-9][1-9]*/
+  FLOATING_POINT_LITERAL: /[0-9]+\.[0-9]*/ (EXPONENT)?
+        | /\.[0-9]/ (EXPONENT)?
+        | /[0-9]+/ (EXPONENT)?
   EXPONENT: ("e"|"E") ("+"|"-")? /[0-9]+/
 
-  NETWORK: "network" 
-  VARIABLE: "variable" 
-  PROBABILITY: "probability" 
-  PROPERTY: "property" 
-  VARIABLETYPE: "type" 
-  DISCRETE: "discrete" 
-  DEFAULTVALUE: "default" 
-  TABLEVALUES: "table" 
+  NETWORK: "network"
+  VARIABLE: "variable"
+  PROBABILITY: "probability"
+  PROPERTY: "property"
+  VARIABLETYPE: "type"
+  DISCRETE: "discrete"
+  DEFAULTVALUE: "default"
+  TABLEVALUES: "table"
 
   PROPERTYSTRING: PROPERTY /[^;]*/ ";"
 
@@ -202,7 +202,7 @@ BIF_GRAMMAR = r"""
   probabilityvariableslist: "(" probabilityvariablename ( probabilityvariablename )* ")"
 
   probabilityvariablename: WORD
-  
+
   probabilitycontent: "{" ( property | probabilitydefaultentry | probabilityentry | probabilitytable )* "}"
 
   probabilityentry: probabilityvalueslist floatingpointlist ";"

@@ -11,22 +11,22 @@ DSC_GRAMMAR = r"""
   %ignore ","
   %ignore "|"
 
-  WORD: LETTER (LETTER | DIGIT)* 
-  LETTER: /[a-zA-Z_-]/ 
-  DIGIT:  /[0-9]/ 
+  WORD: LETTER (LETTER | DIGIT)*
+  LETTER: /[a-zA-Z_-]/
+  DIGIT:  /[0-9]/
 
-  DECIMAL_LITERAL: /[0-9][1-9]*/ 
-  FLOATING_POINT_LITERAL: /[0-9]+\.[0-9]*/ (EXPONENT)? 
-        | /\.[0-9]/ (EXPONENT)? 
-        | /[0-9]+/ (EXPONENT)? 
+  DECIMAL_LITERAL: /[0-9][1-9]*/
+  FLOATING_POINT_LITERAL: /[0-9]+\.[0-9]*/ (EXPONENT)?
+        | /\.[0-9]/ (EXPONENT)?
+        | /[0-9]+/ (EXPONENT)?
   EXPONENT: ("e"|"E") ("+"|"-")? /[0-9]+/
 
-  NETWORK: "belief network" 
-  VARIABLE: "node" 
-  PROBABILITY: "probability" 
-  PROPERTY: "property" 
-  VARIABLETYPE: "type" 
-  DISCRETE: "discrete" 
+  NETWORK: "belief network"
+  VARIABLE: "node"
+  PROBABILITY: "probability"
+  PROPERTY: "property"
+  VARIABLETYPE: "type"
+  DISCRETE: "discrete"
 
   PROPERTYSTRING: PROPERTY /[^;]*/ ";"
 
@@ -51,7 +51,7 @@ DSC_GRAMMAR = r"""
   probabilityvariableslist: "(" probabilityvariablename ( probabilityvariablename )* ")"
 
   probabilityvariablename: (WORD | DECIMAL_LITERAL)
-  
+
   probabilitycontent: "{" ( property | probabilityentry | probabilitytable )* "}"
 
   probabilityentry: probabilityvalueslist ":" floatingpointlist ";"

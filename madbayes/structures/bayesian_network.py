@@ -56,7 +56,7 @@ class BayesianNetwork(DirectedGraph):
                 ]
             else:
                 data = [
-                    ([i] + [levels[j+1].index(w)
+                    ([i] + [levels[j + 1].index(w)
                             for j, w in enumerate(row[0])], v)
                     for row in value['cpt']
                     for i, v in enumerate(row[1])
