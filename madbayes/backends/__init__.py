@@ -20,7 +20,7 @@ def force_alternative_backends(backend: str):
 
 
 BACKENDS = {
-    module: import_module('.' + module, package='weighted_imputation.backends')
+    module: import_module('.' + module, package='madbayes.backends')
     for (_, module, _) in iter_modules([dirname(__file__)])    
 }
 

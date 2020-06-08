@@ -6,6 +6,5 @@ numpy
 scipy
 pandas
 xarray
-tbb
 rpy2
 lark-parser

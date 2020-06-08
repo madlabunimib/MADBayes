@@ -1,6 +1,6 @@
 import numpy as np
 import networkx as nx
-from . import weighted_imputation as wi
+from . import madbayes as mb
 
 def test_triangulate():
     # Generate random graphs from nodes count
@@ -10,8 +10,8 @@ def test_triangulate():
         for n in nodes
     ]
     try:
-        wi_graphs = [wi.Graph.from_networkx(G) for G in graphs]
-        wi_triang = [wi.triangulate(graph) for graph in wi_graphs]
+        wi_graphs = [mb.Graph.from_networkx(G) for G in graphs]
+        wi_triang = [mb.triangulate(graph) for graph in wi_graphs]
         wi_triang = [nx.is_chordal(graph.to_networkx()) for graph in wi_triang]
         assert(all(wi_triang))
     except NotImplementedError:

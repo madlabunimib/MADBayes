@@ -1,7 +1,7 @@
 library(bnlearn, gRain)
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
-BASE_PATH = "~/madlab_weighted_imputation/weighted_imputation/networks"
+BASE_PATH = "~/madlab_madbayes/madbayes/networks"
 file = "asia.bif"
 fitted = read.bif(paste(BASE_PATH, file, sep="/"))
 fitted = mutilated(fitted, evidence = list('lung' = 'yes'))

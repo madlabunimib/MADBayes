@@ -1,6 +1,6 @@
 from random import sample
-from . import weighted_imputation as wi
-OrderedSet = wi.structures.OrderedSet
+from . import madbayes as mb
+OrderedSet = mb.structures.OrderedSet
 
 
 def test_orderedset():

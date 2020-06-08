@@ -1,35 +1,35 @@
 from itertools import combinations
 from random import choice, randint, sample
 from xarray.testing import assert_allclose
-from . import weighted_imputation as wi
+from . import madbayes as mb
 
 def test_junction_tree():
-    networks = dir(wi.data.network)
+    networks = dir(mb.data.network)
     networks = [
-        getattr(wi.data.network, network)
+        getattr(mb.data.network, network)
         for network in networks
     ]
     networks = [
         network
         for network in networks
-        if isinstance(network, wi.BayesianNetwork)
+        if isinstance(network, mb.BayesianNetwork)
     ]
     assert(len(networks) > 0)
     jts = [
-        wi.junction_tree(network)
+        mb.junction_tree(network)
         for network in networks
     ]
 
 def test_junction_tree_query():
-    wi.utils.rpy2_init()
+    mb.utils.rpy2_init()
     networks = ['asia', 'cancer', 'earthquake', 'sachs', 'survey']
     networks = {
         name: path
-        for name, path in wi.data.network.NETWORKS.items()
+        for name, path in mb.data.network.NETWORKS.items()
         if name in networks
     }
     for name, path in networks.items():
-        jt_0 = getattr(wi.data.network, name)
+        jt_0 = getattr(mb.data.network, name)
         # Nodes of the bayesian network
         nodes = list(jt_0.nodes())
         levels = {
@@ -40,10 +40,10 @@ def test_junction_tree_query():
             for node in nodes
         }
         # Build junction tree
-        jt_0 = wi.junction_tree(jt_0)
+        jt_0 = mb.junction_tree(jt_0)
         # Load bnlearn and grain
-        jt_1 = wi.utils.BNLearnNetwork.from_bif(path)
-        jt_1 = wi.utils.gRainJunctionTree(jt_1)
+        jt_1 = mb.utils.BNLearnNetwork.from_bif(path)
+        jt_1 = mb.utils.gRainJunctionTree(jt_1)
         # Generate random queries
         queries = [
             list(query)

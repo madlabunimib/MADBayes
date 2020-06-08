@@ -1,7 +1,7 @@
 import numpy as np
 import networkx as nx
 from networkx.algorithms.moral import moral_graph
-from . import weighted_imputation as wi
+from . import madbayes as mb
 
 def test_maximal_cilques():
     # Generate random graphs from nodes count
@@ -21,8 +21,8 @@ def test_maximal_cilques():
         for clique in cliques
     ]
     # Find all maximal cliques with test function
-    wi_graphs = [wi.Graph.from_networkx(G) for G in graphs]
-    wi_cliques = [wi.maximal_cliques(graph) for graph in wi_graphs]
+    wi_graphs = [mb.Graph.from_networkx(G) for G in graphs]
+    wi_cliques = [mb.maximal_cliques(graph) for graph in wi_graphs]
     wi_cliques = [
         set([tuple(sorted(nodes)) for nodes in clique])
         for clique in wi_cliques]

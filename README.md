@@ -1,4 +1,4 @@
-# MADLab Weighted Imputation
+# MADLab MADBayes
 
 ## TODO List
 
@@ -53,4 +53,4 @@
     - [ ] Genetic Algorithms
     - [ ] Simulated Annealing
 - [x] Excpectation-Maximization
-- [ ] Structural EM
+- [x] Structural EM

@@ -21,7 +21,7 @@ write_json <- function(x, file, pretty = TRUE, na = FALSE, auto_unbox = FALSE) {
   write(json, file)
 }
 
-BASE_PATH = "~/madlab_weighted_imputation/weighted_imputation/networks/"
+BASE_PATH = "~/madlab_madbayes/madbayes/networks/"
 files = list.files(BASE_PATH)
 for (file in files) {
   if (endsWith(file, ".bif")) {
