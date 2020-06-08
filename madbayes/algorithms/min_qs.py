@@ -19,7 +19,9 @@ def min_qs_triangulate(graph: Graph) -> Graph:
     raise NotImplementedError('This algorithm has not been tested yes.')
     return graph
 
-#Return the list of edges to triangulate the quasi-split graph
+# Return the list of edges to triangulate the quasi-split graph
+
+
 def _min_qs(quasi_split_graph_dict: Dict) -> List:
     adj_matrix = quasi_split_graph_dict["quasi_split_graph"].adjacency_matrix()
     nodes = quasi_split_graph_dict["quasi_split_graph"].nodes()
@@ -39,56 +41,58 @@ def _min_qs(quasi_split_graph_dict: Dict) -> List:
             adj_matrix[v, row] = False
             adj_matrix[row, v] = False
 
-    return [(nodes[node[0]], nodes[node[1]]) for node in D] 
+    return [(nodes[node[0]], nodes[node[1]]) for node in D]
 
-# Q = node of the connected component 
+# Q = node of the connected component
 # P = neighborhood of Q
 # F = set of edges needed for saturation
+
+
 def _find_quasi_split_graph(graph: Graph) -> Dict:
     quasi_split_graph_list = []
-    #For each node compute the distance from a (random) source node whit BFS 
-    set_at_distance_l_from_s = bfs(graph, 0) # 0 is for the first node in the set, it is a random choice
-    set_at_distance_l_from_s.reverse()    
+    # For each node compute the distance from a (random) source node whit BFS
+    set_at_distance_l_from_s = bfs(graph, 0)  # 0 is for the first node in the set, it is a random choice
+    set_at_distance_l_from_s.reverse()
 
     for level in range(len(set_at_distance_l_from_s)-1):
-        #Find the connected component for each level
+        # Find the connected component for each level
         connencted_components_level = _find_connected_component_of_set(graph, set_at_distance_l_from_s[level])
         F = []
 
         for Q in connencted_components_level:
-            #Find the neighborhood of the connected component
+            # Find the neighborhood of the connected component
             P = _get_neighborhood_of_set_in_subset(
                 graph.adjacency_matrix(),
                 Q,
                 set_at_distance_l_from_s[level+1])
-            #Saturate the neighborhood
-            F_part = _saturate_set(P)   
-            F.extend(F_part)       
-            #Create the quasi-split graph
+            # Saturate the neighborhood
+            F_part = _saturate_set(P)
+            F.extend(F_part)
+            # Create the quasi-split graph
             nodes = Q | P
             nodes = [graph.nodes()[node_index] for node_index in nodes]
             adj_matrix = np.zeros(shape=(len(nodes), len(nodes)), dtype=bool)
-            #Add to the quasi-split graph the edges already in the graph
+            # Add to the quasi-split graph the edges already in the graph
             for i in range(len(adj_matrix)):
                 for j in range(len(adj_matrix)):
                     node_i = nodes[i]
                     node_j = nodes[j]
-                    if graph.adjacency_matrix()[graph.nodes().index(node_i),graph.nodes().index(node_j)] == True:
-                        adj_matrix[i,j] = True        
-            #Add to the quasi-split graph the edges add for the saturation
+                    if graph.adjacency_matrix()[graph.nodes().index(node_i), graph.nodes().index(node_j)] == True:
+                        adj_matrix[i, j] = True
+            # Add to the quasi-split graph the edges add for the saturation
             for edge in F_part:
                 edge_0 = graph.nodes()[edge[0]]
                 edge_1 = graph.nodes()[edge[1]]
                 adj_matrix[nodes.index(edge_0), nodes.index(edge_1)] = True
-            #Create the graph and add to the quasi-split graph list
+            # Create the graph and add to the quasi-split graph list
             quasi_split_graph = Graph(nodes, adj_matrix)
             quasi_split_graph_list.append({
                 "quasi_split_graph": quasi_split_graph,
                 "P": [graph.nodes()[node_index] for node_index in P],
                 "Q": [graph.nodes()[node_index] for node_index in Q]
-                })
+            })
 
-        #Add the saturation edges at the graph
+        # Add the saturation edges at the graph
         for edge in F:
             graph.add_edge(graph.nodes()[edge[0]], graph.nodes()[edge[1]])
             graph.add_edge(graph.nodes()[edge[1]], graph.nodes()[edge[0]])
@@ -96,6 +100,8 @@ def _find_quasi_split_graph(graph: Graph) -> Dict:
     return quasi_split_graph_list
 
 # Every pair of edges between node set
+
+
 def _saturate_set(set_nodes: Set) -> List:
     edges_to_add = []
     for node1 in set_nodes:
@@ -105,9 +111,11 @@ def _saturate_set(set_nodes: Set) -> List:
     return edges_to_add
 
 # Connected component of node set
+
+
 def _find_connected_component_of_set(graph: Graph, set_nodes: Set) -> Set:
     adj_matrix = graph.adjacency_matrix()
-    queue = Queue(maxsize = 0) #infinity queue
+    queue = Queue(maxsize=0)  # infinity queue
 
     node_to_be_visited = [node for node in set_nodes]
     connected_components = []
@@ -127,13 +135,15 @@ def _find_connected_component_of_set(graph: Graph, set_nodes: Set) -> Set:
     return connected_components
 
 # BFS return list of sets of nodes with same distance
+
+
 def bfs(graph: Graph, source_index: int) -> List[Set]:
     adj_matrix = graph.adjacency_matrix()
     graph_nodes = graph.nodes()
     visited = np.zeros(len(graph_nodes), dtype=bool)
     distances = np.zeros(len(graph_nodes), dtype=int)
-    queue = Queue(maxsize = 0) #infinity queue
-    
+    queue = Queue(maxsize=0)  # infinity queue
+
     queue.put(source_index)
     visited[source_index] = True
     while not queue.empty():
@@ -154,6 +164,7 @@ def bfs(graph: Graph, source_index: int) -> List[Set]:
 
     return distance_l_from_s
 
+
 def _get_neighborhood_of_set_in_subset(adj_matrix: np.ndarray, set_nodes: Set, subset: List) -> Set:
     neighborhood = []
     for node in set_nodes:
@@ -161,6 +172,8 @@ def _get_neighborhood_of_set_in_subset(adj_matrix: np.ndarray, set_nodes: Set, s
     return set(neighborhood)
 
 # _neighbors
+
+
 def _get_neighborhood(adj_matrix: np.ndarray, parent_index: int) -> Set:
     neighbors = set()
     n = adj_matrix.shape[0]
@@ -168,6 +181,7 @@ def _get_neighborhood(adj_matrix: np.ndarray, parent_index: int) -> Set:
         if adj_matrix[parent_index, index] == 1 or adj_matrix[index, parent_index] == 1:
             neighbors.add(index)
     return neighbors
+
 
 def _get_neighborhood_in_subset(adj_matrix: np.ndarray, parent_index: int, subset: List) -> Set:
     return [node for node in _get_neighborhood(adj_matrix, parent_index) if node in subset]

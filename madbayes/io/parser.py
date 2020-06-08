@@ -11,6 +11,7 @@ GRAMMARS = {
     '.dsc': DSC_GRAMMAR
 }
 
+
 def parse_network_file(path: str) -> Dict:
     with open(path, 'r') as file:
         text = file.read()
@@ -42,49 +43,49 @@ class ExtractData(Transformer):
 
     def TABLEVALUES(self, args):
         raise Discard
-    
+
     def networkdeclaration(self, args):
         raise Discard
 
     def probabilityvariablevalue(self, args):
         return args[0]
-    
+
     def variablevalueslist(self, args):
         return Token('levels', [arg.value for arg in args])
-    
+
     def variablediscrete(self, args):
         return args[0]
-    
+
     def variablecontent(self, args):
         return args[0]
-    
+
     def probabilityvariablename(self, args):
         return Token('label', args[0].value)
-    
+
     def variabledeclaration(self, args):
         return Token('variabledeclaration', {arg.type: arg.value for arg in args})
-    
+
     def probabilityvalueslist(self, args):
         return Token('levels', [str(arg.value) for arg in args])
-    
+
     def floatingpointlist(self, args):
         return Token('probability', [float(arg.value) for arg in args])
-    
+
     def probabilitytable(self, args):
         return Token('table', args[0].value)
-    
+
     def probabilityentry(self, args):
         return Token('table', [args[0].value, args[1].value])
-    
+
     def probabilitycontent(self, args):
         return Token('table', [arg.value for arg in args])
-    
+
     def probabilityvariableslist(self, args):
         return Token('labels', [arg.value for arg in args])
-    
+
     def probabilitydeclaration(self, args):
         return Token('probabilitydeclaration', {arg.type: arg.value for arg in args})
-    
+
     def compilationunit(self, args):
         variables = {
             arg.value['label']: {'levels': arg.value['levels']}
@@ -102,6 +103,6 @@ class ExtractData(Transformer):
         for key, value in probabilities.items():
             variables[key].update(value)
         return Token('parsed', variables)
-    
+
     def start(self, args):
         return args[0].value

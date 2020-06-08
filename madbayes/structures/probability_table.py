@@ -11,16 +11,16 @@ class ProbabilityTable(xa.DataArray):
     __slots__ = []
 
     def __init__(
-            self,
-            data=None,
-            coords=None,
-            dims=None,
-            name=None,
-            attrs=None,
-            indexes=None,
-            fastpath=False
-        ) -> None:
-        
+        self,
+        data=None,
+        coords=None,
+        dims=None,
+        name=None,
+        attrs=None,
+        indexes=None,
+        fastpath=False
+    ) -> None:
+
         if dims is not None:
             dims = tuple(dims)
 
@@ -33,20 +33,20 @@ class ProbabilityTable(xa.DataArray):
             indexes=indexes,
             fastpath=fastpath
         )
-    
+
     def __call__(self, **kwargs):
         location = tuple([
             kwargs.get(variable, slice(None))
             for variable in self.dims
         ])
         return self.loc[location]
-    
+
     def variables(self) -> Tuple[str]:
         return self.dims
-    
+
     def levels(self, variable: str) -> Tuple[str]:
         return tuple(self.coords[variable].values)
-    
+
     def locations(self, variables=None) -> Tuple[Dict]:
         if variables is None:
             variables = self.variables()
@@ -60,32 +60,32 @@ class ProbabilityTable(xa.DataArray):
             for location in locations
         )
         return locations
-    
+
     def marginalize(self, variables: List[str]) -> 'ProbabilityTable':
         over = [v for v in self.variables() if v not in variables]
         if len(over) > 0:
             return self.sum(over)
         return self.copy()
-    
+
     def fillna(self, value):
         indices = np.isnan(self.values)
         self.values[indices] = value
         return self
-    
+
     def sort(self):
         variables = sorted(self.dims)
         out = self.sortby(variables)
         out = type(self)(
             out.values,
-            dims = out.dims,
-            coords = out.coords
+            dims=out.dims,
+            coords=out.coords
         )
         return out
 
     @classmethod
     def from_data(cls, data, variables, levels):
         return cls(data=data, dims=variables, coords=levels)
-    
+
     @classmethod
     def from_probability_table(cls, pt):
         return cls(

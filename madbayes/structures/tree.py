@@ -20,7 +20,7 @@ class Node():
         else:
             self.set_children(children)
         self._attributes = {}
-    
+
     def __len__(self) -> int:
         return len(self._attributes.keys())
 
@@ -35,13 +35,13 @@ class Node():
 
     def __iter__(self):
         return self._attributes.__iter__()
-    
+
     def label(self) -> str:
         return self._label
-    
+
     def parent(self) -> "Node":
         return self._parent
-    
+
     def set_parent(self, parent: "Node") -> None:
         self._parent = parent
         parent._children.add(self)
@@ -49,14 +49,14 @@ class Node():
     def add_child(self, child: "Node") -> None:
         self._children.add(child)
         child._parent = self
-    
+
     def children(self) -> OrderedSet:
         return self._children
 
     def set_children(self, children: List["Node"]) -> None:
         for child in children:
             self.add_child(child)
-    
+
     def neighbors(self) -> OrderedSet:
         neighbors = OrderedSet()
         if self._parent is not None:
@@ -68,10 +68,10 @@ class Node():
         if isinstance(other, Node):
             return self._label == other._label
         return NotImplementedError
-    
+
     def __hash__(self) -> int:
         return hash(self._label)
-    
+
     def __repr__(self) -> str:
         return self._label
 
@@ -88,7 +88,7 @@ class Tree():
         else:
             self._root = root
         self._index(self._root)
-    
+
     def __len__(self) -> int:
         return len(self._nodes.keys())
 
@@ -105,12 +105,12 @@ class Tree():
 
     def __iter__(self):
         return self._nodes.items().__iter__()
-    
+
     def _index(self, node: Node) -> None:
         self._nodes[node.label()] = node
         for child in node.children():
             self._index(child)
-    
+
     def root(self) -> Node:
         return self._root
 
@@ -121,7 +121,7 @@ class Tree():
         graph[root.label()] = deepcopy(root._attributes)
         self._to_directed_graph_recursive(graph, root)
         return graph
-        
+
     def _to_directed_graph_recursive(self, graph: DirectedGraph, parent: Node) -> None:
         for child in parent.children():
             graph.add_node(child.label())
@@ -131,7 +131,7 @@ class Tree():
             )
             graph[child.label()] = deepcopy(child._attributes)
             self._to_directed_graph_recursive(graph, child)
-    
+
     def plot(self) -> None:
         graph = self.to_directed_graph()
         graph.plot()

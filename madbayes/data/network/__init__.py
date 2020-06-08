@@ -13,15 +13,17 @@ NETWORKS = [
     if isfile(network) and network.endswith('.bif')
 ]
 NETWORKS = {
-    splitext(basename(network))[0] : network
+    splitext(basename(network))[0]: network
     for network in NETWORKS
 }
 
+
 def load_networks_from_disk() -> Dict:
     return {
-        key : BayesianNetwork.from_file(value)
+        key: BayesianNetwork.from_file(value)
         for key, value in NETWORKS.items()
     }
+
 
 for key, value in load_networks_from_disk().items():
     setattr(sys.modules[__name__], key, value)

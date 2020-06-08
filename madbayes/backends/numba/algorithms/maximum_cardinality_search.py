@@ -15,6 +15,7 @@ def MCS(graph: Graph) -> Graph:
     triangulated = Graph(graph.nodes(), adjacency_matrix)
     return triangulated
 
+
 @njit(cache=True)
 def _MCS(node: int, A: np.ndarray, out: np.ndarray) -> np.ndarray:
     i = 1
@@ -41,6 +42,7 @@ def _MCS(node: int, A: np.ndarray, out: np.ndarray) -> np.ndarray:
         nodes = intersection(neighbors[X[pmax]], numbering[:i])
         if _add_missing_edges(nodes, A, out):
             i = 1
+
 
 @njit(cache=True)
 def _add_missing_edges(nodes: np.ndarray, A: np.ndarray, out: np.ndarray) -> bool:

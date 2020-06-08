@@ -12,7 +12,8 @@ def _all_simple_paths(source: int, target: int, A: np.ndarray) -> List:
     visited = IntegerVector()
     _all_simple_paths_recursive(source, target, A, visited, out)
     return out
-    
+
+
 @njit(cache=True)
 def _all_simple_paths_recursive(source: int, target: int, A: np.ndarray, visited: np.ndarray, out: List) -> None:
     current = np.array([source])

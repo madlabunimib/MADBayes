@@ -20,6 +20,7 @@ def moralize(graph: DirectedGraph) -> Graph:
     moral = Graph(graph.nodes(), A)
     return moral
 
+
 def _moralize(A: np.ndarray, out: np.ndarray):
     n = A.shape[0]
     for node in range(n):

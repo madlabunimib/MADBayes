@@ -25,6 +25,7 @@ def junction_tree(network: BayesianNetwork) -> JunctionTree:
     jt = JunctionTree(root)
     return jt
 
+
 def _build_junction_tree(network: BayesianNetwork, chain: List) -> Node:
     chain = [tuple(clique) for clique in chain]
     cliques_cpts = _assign_cpts(network, chain)
@@ -42,6 +43,7 @@ def _build_junction_tree(network: BayesianNetwork, chain: List) -> Node:
         _add_separator(network, nodes[Ck], nodes[Ci])
     return root
 
+
 def _assign_cpts(network: BayesianNetwork, chain: List) -> Dict:
     cpts = {}
     nodes = set(network.nodes())
@@ -58,18 +60,21 @@ def _assign_cpts(network: BayesianNetwork, chain: List) -> Dict:
         nodes = nodes.difference(assigned)
     return cpts
 
+
 def _node_from_clique(network: BayesianNetwork, clique: List, cpts: List) -> Node:
     items = OrderedSet(clique)
     node = Node(str(items))
     node['type'] = 'clique'
     node['nodes'] = items
-    node['potential'] = reduce(lambda a,b: a*b, cpts, 1)
+    node['potential'] = reduce(lambda a, b: a*b, cpts, 1)
     return node
+
 
 def _max_common_clique(chain: List, Ci: Tuple) -> List:
     maxs = [set(Ci).intersection(set(clique)) for clique in chain]
     maxs = [len(common) for common in maxs]
     return chain[maxs.index(max(maxs))]
+
 
 def _add_separator(network: BayesianNetwork, parent: Node, child: Node) -> None:
     separator_nodes = set(parent['nodes']).intersection(set(child['nodes']))

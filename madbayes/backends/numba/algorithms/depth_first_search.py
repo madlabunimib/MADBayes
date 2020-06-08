@@ -19,28 +19,30 @@ def DFS(graph: Graph) -> Dict:
     _DFS(A, color, times, parents)
     return {'parents': parents, 'times': times}
 
+
 @njit(cache=True)
 def _DFS(
-        A: np.ndarray,
-        color: np.ndarray,
-        times: np.ndarray,
-        parents: np.ndarray
-    ) -> None:
+    A: np.ndarray,
+    color: np.ndarray,
+    times: np.ndarray,
+    parents: np.ndarray
+) -> None:
     time = 0
     n = A.shape[0]
     for i in range(n):
         if color[i]:
             time = _DFS_Visit(i, time, A, color, times, parents)
 
+
 @njit
 def _DFS_Visit(
-        node: int,
-        time: int,
-        A: np.ndarray,
-        color: np.ndarray,
-        times: np.ndarray,
-        parents: np.ndarray
-    ) -> int:
+    node: int,
+    time: int,
+    A: np.ndarray,
+    color: np.ndarray,
+    times: np.ndarray,
+    parents: np.ndarray
+) -> int:
     n = A.shape[0]
     color[node] = False
     times[node, 0] = time

@@ -11,7 +11,7 @@ class OrderedSet(MutableSet):
 
     def __len__(self):
         return len(self.values)
-    
+
     def __contains__(self, key):
         return key in self.values
 
@@ -32,9 +32,9 @@ class OrderedSet(MutableSet):
         if key in self.values:
             self.values.remove(key)
 
-    def pop(self, index = 0):
+    def pop(self, index=0):
         return self.values.pop(index)
-    
+
     def intersection(self, other):
         if not isinstance(other, Set):
             other = set(other)

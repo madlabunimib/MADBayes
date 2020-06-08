@@ -11,6 +11,7 @@ bnlearn = None
 gRain = None
 utils = None
 
+
 def rpy2_init() -> None:
     import rpy2.robjects.packages as rpackages
     from rpy2.robjects.vectors import StrVector
@@ -48,7 +49,7 @@ class BNLearnNetwork():
             ListVector(kwargs)
         )
         return network
-    
+
     def structure(self):
         return bnlearn.modelstring(self._network)
 

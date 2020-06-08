@@ -1,15 +1,13 @@
 from __future__ import annotations
+from .nodes import parents as _parents
+from ..structures import BayesianNetwork
+from multiprocessing import Pool, cpu_count
+from math import lgamma
 
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ..structures import Dataset
-
-from math import lgamma
-from multiprocessing import Pool, cpu_count
-
-from ..structures import BayesianNetwork
-from .nodes import parents as _parents
 
 
 def bds_score(network: BayesianNetwork, dataset: Dataset, iss: float = 1, with_nodes: bool = False):
@@ -23,7 +21,7 @@ def bds_score(network: BayesianNetwork, dataset: Dataset, iss: float = 1, with_n
         (node, dataset, network, iss)
         for node in nodes
     ]
-    
+
     pool = Pool(cpu_count())
     score = pool.starmap(_node_bds_score, score)
     pool.close()
@@ -57,7 +55,7 @@ def _node_bds_score(node: str, dataset: Dataset, network: BayesianNetwork, iss: 
             for config, value in configs.iterrows()
         ]
         q_i = len(configs)
-        
+
     score = 0
     for config, n_ij in configs:
         a_ij = iss / q_i

@@ -16,7 +16,7 @@ class BayesianNetwork(DirectedGraph):
         super().__init__(nodes, adjacency_matrix)
         if cpts is not None:
             self.set_cpts(cpts)
-    
+
     def levels(self, variable: str = None) -> Tuple[str]:
         if variable is None:
             return {
@@ -24,13 +24,13 @@ class BayesianNetwork(DirectedGraph):
                 for variable in self.nodes()
             }
         return tuple(self[variable]['CPT'].coords[variable].values)
-    
+
     def set_cpts(self, cpts: Dict) -> None:
         if set(self.nodes()) != set(cpts.keys()):
             raise Exception('cpts must contain all and only nodes CPTS.')
         for node, cpt in cpts.items():
             self[node]['CPT'] = cpt
-    
+
     @classmethod
     def _structure_from_file_parsed(cls, parsed: Dict) -> Tuple:
         n = len(parsed.keys())
@@ -42,7 +42,7 @@ class BayesianNetwork(DirectedGraph):
                 parent = nodes.index(dependency)
                 adjacency_matrix[parent, child] = True
         return nodes, adjacency_matrix
-    
+
     @classmethod
     def _cpts_from_file_parsed(cls, parsed: Dict) -> Dict:
         cpts = {}
@@ -72,6 +72,6 @@ class BayesianNetwork(DirectedGraph):
     @classmethod
     def from_file(cls, path: str) -> None:
         parsed = parse_network_file(path)
-        nodes , adjacency_matrix = cls._structure_from_file_parsed(parsed)
+        nodes, adjacency_matrix = cls._structure_from_file_parsed(parsed)
         cpts = cls._cpts_from_file_parsed(parsed)
         return cls(nodes, adjacency_matrix, cpts)

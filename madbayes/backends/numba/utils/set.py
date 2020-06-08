@@ -8,6 +8,7 @@ def union(a: np.ndarray, b: np.ndarray) -> np.ndarray:
     out = np.unique(out)
     return out
 
+
 @njit(cache=True)
 def intersection(a: np.ndarray, b: np.ndarray) -> np.ndarray:
     out = np.append(a, b)
@@ -15,6 +16,7 @@ def intersection(a: np.ndarray, b: np.ndarray) -> np.ndarray:
     out = np.nonzero(out > 1)[0]
     out = out.T
     return out
+
 
 @njit(cache=True)
 def difference(a: np.ndarray, b: np.ndarray) -> np.ndarray:

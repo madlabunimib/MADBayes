@@ -14,6 +14,7 @@ def MCS(graph: Graph) -> Graph:
     triangulated = Graph(graph.nodes(), adjacency_matrix)
     return triangulated
 
+
 def _MCS(node: int, A: np.ndarray, out: np.ndarray) -> np.ndarray:
     i = 1
     n = A.shape[0]

@@ -19,6 +19,7 @@ def moralize(graph: DirectedGraph) -> Graph:
     moral = Graph(graph.nodes(), A)
     return moral
 
+
 @njit(cache=True, parallel=True)
 def _moralize(A: np.ndarray, out: np.ndarray) -> None:
     n = A.shape[0]

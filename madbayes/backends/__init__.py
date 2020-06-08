@@ -8,6 +8,7 @@ def disable_alternative_backends():
     global BACKENDS
     BACKENDS.clear()
 
+
 def force_alternative_backends(backend: str):
     global BACKENDS
     if backend not in BACKENDS.keys():
@@ -21,7 +22,7 @@ def force_alternative_backends(backend: str):
 
 BACKENDS = {
     module: import_module('.' + module, package='madbayes.backends')
-    for (_, module, _) in iter_modules([dirname(__file__)])    
+    for (_, module, _) in iter_modules([dirname(__file__)])
 }
 
 
@@ -29,10 +30,11 @@ class AlternativeBackend():
 
     def __init__(self, backend: str = None):
         self.backend = backend
-    
+
     def __call__(self, function):
         update_wrapper(self, function)
         self.function = function
+
         def wrapper(*args, **kwargs):
             if self.backend is not None:
                 if self.backend == 'python':
@@ -40,7 +42,8 @@ class AlternativeBackend():
                 if self.backend in BACKENDS:
                     funct = getattr(BACKENDS[self.backend], self.function.__name__)
                     return funct(*args, **kwargs)
-                raise NotImplementedError('"' + self.function.__name__ + '" not implemented in "' + self.backend + '" backend yet.')
+                raise NotImplementedError('"' + self.function.__name__ +
+                                          '" not implemented in "' + self.backend + '" backend yet.')
             if self.backend is None:
                 modules = [
                     back for back, module in BACKENDS.items()

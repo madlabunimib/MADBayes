@@ -25,12 +25,14 @@ def all_simple_paths(graph: Graph, source: str, target: str) -> List:
     ]
     return simple_paths
 
+
 @AlternativeBackend()
 def _all_simple_paths(source: int, target: int, A: np.ndarray) -> List:
     visited = [source]
     simple_paths = _all_simple_paths_recursive(source, target, A, visited)
     return simple_paths
-    
+
+
 def _all_simple_paths_recursive(source: int, target: int, A: np.ndarray, visited: np.ndarray) -> List:
     visited = visited + [source]
     if source == target:

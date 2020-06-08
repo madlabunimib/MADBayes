@@ -21,6 +21,7 @@ def chain_of_cliques(graph: Graph) -> List:
     chain = [[nodes[node] for node in clique] for clique in chain]
     return chain
 
+
 def _chain_of_cliques(A: np.ndarray) -> List:
     # Calculate the perfect numbering
     # starting from the first node

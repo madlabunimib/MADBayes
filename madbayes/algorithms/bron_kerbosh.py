@@ -22,6 +22,7 @@ def bron_kerbosh(graph: Graph) -> List:
     ]
     return maximal_cliques
 
+
 def _bron_kerbosh(adjacency_matrix: np.ndarray) -> List:
     n = adjacency_matrix.shape[0]
     A = set()
@@ -30,6 +31,7 @@ def _bron_kerbosh(adjacency_matrix: np.ndarray) -> List:
     # Caching neighbors
     neighbors = {i: set(_neighbors(i, adjacency_matrix)) for i in range(n)}
     return _bron_kerbosh_recursive(neighbors, A, B, C)
+
 
 def _bron_kerbosh_recursive(neighbors: Dict, A: Set, B: Set, C: Set) -> List:
     if len(B) == 0 and len(C) == 0:
@@ -52,6 +54,7 @@ def _bron_kerbosh_recursive(neighbors: Dict, A: Set, B: Set, C: Set) -> List:
             B = B.difference({node})
             C = C.union({node})
     return out
+
 
 def _bron_kerbosh_pivot(neighbors: Dict, B: Set, C: Set) -> int:
     # Select the pivot vertex by Cazals-Karande method

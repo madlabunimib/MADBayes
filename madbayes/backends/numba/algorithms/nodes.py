@@ -9,11 +9,13 @@ from ..utils import difference, intersection, union
 def _subset(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
     return A[nodes, :][:, nodes]
 
+
 @njit(cache=True)
 def _parents(node: int, A: np.ndarray) -> np.ndarray:
     parents = A.T[node]
     parents = np.nonzero(parents)[0].T
     return parents
+
 
 @njit(cache=True)
 def _family(node: int, A: np.ndarray) -> np.ndarray:
@@ -21,11 +23,13 @@ def _family(node: int, A: np.ndarray) -> np.ndarray:
     family = np.append(parents, [node])
     return family
 
+
 @njit(cache=True)
 def _children(node: int, A: np.ndarray) -> np.ndarray:
     children = A[node]
     children = np.nonzero(children)[0].T
     return children
+
 
 @njit(cache=True)
 def _neighbors(node: int, A: np.ndarray) -> np.ndarray:
@@ -34,6 +38,7 @@ def _neighbors(node: int, A: np.ndarray) -> np.ndarray:
     neighbors = np.append(parents, children)
     neighbors = np.unique(neighbors)
     return neighbors
+
 
 @njit(cache=True)
 def _boundary(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
@@ -46,11 +51,13 @@ def _boundary(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
     boundary = difference(boundary, nodes)
     return boundary
 
+
 @njit(cache=True)
 def _ancestors(node: int, A: np.ndarray) -> np.ndarray:
     parents = _parents(node, A)
     ancestors = _ancestors_recursive(parents, A)
     return ancestors
+
 
 @njit(cache=True)
 def _ancestors_recursive(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
@@ -67,11 +74,13 @@ def _ancestors_recursive(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
     ancestors = np.unique(ancestors)
     return ancestors
 
+
 @njit(cache=True)
 def _descendants(node: int, A: np.ndarray) -> np.ndarray:
     children = _children(node, A)
     descendants = _descendants_recursive(children, A)
     return descendants
+
 
 @njit(cache=True)
 def _descendants_recursive(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
@@ -88,12 +97,14 @@ def _descendants_recursive(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
     descendants = np.unique(descendants)
     return descendants
 
+
 @njit(cache=True)
 def _numbering(nodes: np.ndarray) -> np.ndarray:
     # An array is ordered so that numbering(i) is
     # actually the i-th nodes, using the array index
     numbering = np.array(nodes, copy=True)
     return numbering
+
 
 @njit(cache=True)
 def _perfect_numbering(node: int, A: np.ndarray) -> np.ndarray:
@@ -118,16 +129,19 @@ def _perfect_numbering(node: int, A: np.ndarray) -> np.ndarray:
         numbering = np.append(numbering, [X[pmax]])
     return numbering
 
+
 @njit(cache=True)
 def _is_complete(A: np.ndarray) -> bool:
     out = A.copy()
     np.fill_diagonal(out, True)
     return out.all()
 
+
 @njit(cache=True)
 def _is_complete_set(nodes: np.ndarray, A: np.ndarray) -> bool:
     out = _subset(nodes, A)
     return _is_complete(out)
+
 
 @njit(cache=True)
 def _fill_in(A: np.array) -> np.ndarray:
@@ -136,6 +150,7 @@ def _fill_in(A: np.array) -> np.ndarray:
     np.bitwise_not(out, out)
     indices = np.argwhere(out)
     return indices
+
 
 @njit(cache=True)
 def _fill_in_set(nodes: np.ndarray, A: np.array) -> np.ndarray:
@@ -147,6 +162,7 @@ def _fill_in_set(nodes: np.ndarray, A: np.array) -> np.ndarray:
         indices[i, 0] = nodes[indices[i, 0]]
         indices[i, 1] = nodes[indices[i, 1]]
     return indices
+
 
 @njit(cache=True)
 def _filter(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:

@@ -21,7 +21,7 @@ class Graph():
             self.set_adjacency_matrix(adjacency_matrix)
         if nodes is None and adjacency_matrix is None:
             self._adjacency_matrix = pd.DataFrame(dtype=bool)
-    
+
     def __len__(self) -> int:
         return len(self.nodes())
 
@@ -45,17 +45,17 @@ class Graph():
 
     def nodes(self) -> List[str]:
         return list(self._adjacency_matrix.index.values)
-    
+
     def edges(self) -> List[Tuple[str]]:
         edges = self._adjacency_matrix.stack()
         edges = edges[edges == True].index.tolist()
         return edges
-    
+
     def missing_edges(self) -> List[Tuple[str]]:
         edges = self._adjacency_matrix.stack()
         edges = edges[edges == False].index.tolist()
         return edges
-    
+
     def set_nodes(self, nodes: List[str]) -> "Graph":
         try:
             if self._adjacency_matrix.shape[0] != len(nodes):
@@ -86,7 +86,7 @@ class Graph():
 
     def adjacency_matrix(self, copy: bool = True) -> np.ndarray:
         return self._adjacency_matrix.to_numpy(dtype=bool, copy=copy)
-    
+
     def set_adjacency_matrix(self, adjacency_matrix: np.ndarray) -> "Graph":
         if len(adjacency_matrix.shape) != 2:
             raise Exception('adjacency_matrix must be a 2D matrix.')
@@ -145,15 +145,15 @@ class Graph():
         self._adjacency_matrix.loc[parent, child] = False
         self._adjacency_matrix.loc[child, parent] = False
         return self
-    
+
     def is_directed(self) -> bool:
         return False
 
     def __repr__(self):
         return str(self._adjacency_matrix)
-    
+
     def to_networkx(self) -> nx.Graph:
-        mapping = {k:v for k,v in enumerate(self.nodes())}
+        mapping = {k: v for k, v in enumerate(self.nodes())}
         G = nx.Graph(self.adjacency_matrix())
         G = nx.relabel_nodes(G, mapping)
         attributes = self._nodes_attributes
@@ -162,12 +162,12 @@ class Graph():
                 for key, value in attributes[node].items():
                     G.nodes[node][key] = deepcopy(value)
         return G
-    
+
     def plot(self) -> None:
         G = self.to_networkx()
         nx.draw(G, with_labels=True)
         plt.show()
-    
+
     @classmethod
     def from_networkx(cls, G: nx.Graph) -> "Graph":
         nodes = [str(node) for node in G.nodes]
@@ -179,7 +179,7 @@ class DirectedGraph(Graph):
 
     def __init__(self, nodes: List[str] = None, adjacency_matrix: np.ndarray = None) -> None:
         super().__init__(nodes, adjacency_matrix)
-    
+
     def set_adjacency_matrix(self, adjacency_matrix: np.ndarray) -> "Graph":
         if len(adjacency_matrix.shape) != 2:
             raise Exception('adjacency_matrix must be a 2D matrix.')
@@ -211,7 +211,7 @@ class DirectedGraph(Graph):
                 copy=True
             )
         return self
-    
+
     def add_edge(self, parent: str, child: str) -> "DirectedGraph":
         if parent not in self._adjacency_matrix or child not in self._adjacency_matrix:
             raise Exception('parent and child nodes must be in adjacency_matrix before adding edge.')
@@ -223,22 +223,22 @@ class DirectedGraph(Graph):
             raise Exception('parent and child nodes must be in adjacency_matrix before removing edge.')
         self._adjacency_matrix.loc[parent, child] = False
         return self
-    
+
     def reverse_edge(self, parent: str, child: str) -> "DirectedGraph":
         if parent not in self._adjacency_matrix or child not in self._adjacency_matrix:
             raise Exception('parent and child nodes must be in adjacency_matrix before reversing edge.')
         self._adjacency_matrix.loc[parent, child] = False
         self._adjacency_matrix.loc[child, parent] = True
         return self
-        
+
     def is_directed(self) -> bool:
         return True
-    
+
     def to_undirected(self) -> "Graph":
         return Graph(self.nodes(), self.adjacency_matrix())
-    
+
     def to_networkx(self) -> nx.Graph:
-        mapping = {k:v for k,v in enumerate(self.nodes())}
+        mapping = {k: v for k, v in enumerate(self.nodes())}
         G = nx.DiGraph(self.adjacency_matrix())
         G = nx.relabel_nodes(G, mapping)
         attributes = self._nodes_attributes
@@ -247,16 +247,16 @@ class DirectedGraph(Graph):
                 for key, value in attributes[node].items():
                     G.nodes[node][key] = deepcopy(value)
         return G
-    
+
     def plot(self) -> None:
         G = self.to_networkx()
         nx.draw(
             G,
-            pos = nx.nx_pydot.graphviz_layout(G, prog='dot'),
-            with_labels = True
+            pos=nx.nx_pydot.graphviz_layout(G, prog='dot'),
+            with_labels=True
         )
         plt.show()
-    
+
     @classmethod
     def from_structure(cls, structure: str) -> "DirectedGraph":
         pattern = re.compile(r"\[(\w*)(?:\|(\w+[:\w+]*)){0,1}\]")
