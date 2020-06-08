@@ -1,5 +1,7 @@
 # MADLab MADBayes
 
+MADBayes is a Python library about Bayesian Networks.
+
 ## TODO List
 
 - [ ] Data structures
