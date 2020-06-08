@@ -29,8 +29,8 @@ def test_bds_score():
 
 def test_bds_score_suzuki_2016():
     refs = [
-        '../test_data/suzuki_2016_1.csv',
-        '../test_data/suzuki_2016_2.csv'
+        '../tests_data/suzuki_2016_1.csv',
+        '../tests_data/suzuki_2016_2.csv'
     ]
     refs = [abspath(join(dirname(__file__), ref)) for ref in refs]
     refs = [mb.Dataset.from_csv(ref) for ref in refs]
