@@ -1,0 +1,43 @@
+language: python
+cache: pip
+jobs:
+  allow_failures:
+    - os: osx
+  include:
+    - name: "Python 3.7.0 on Bionic Linux"
+      dist: bionic
+      python: 3.7
+    - name: "Python 3.8.0 on Bionic Linux"
+      dist: bionic
+      python: 3.8           # this works for Linux but is ignored on macOS or Windows
+    - name: "Python 3.7.4 on macOS"
+      os: osx
+      osx_image: xcode11.2  # Python 3.7.4 running on macOS 10.14.4
+      language: shell       # 'language: python' is an error on Travis CI macOS
+      addons:
+        homebrew:
+          update: true
+          packages: python3
+      before_install:
+        - python3 -m pip install --upgrade pytest pytest-cov codecov virtualenv
+        - virtualenv -p python3 --system-site-packages "$HOME/venv"
+        - source "$HOME/venv/bin/activate"
+    - name: "Python 3.8.0 on Windows"
+      os: windows           # Windows 10.0.17134 N/A Build 17134
+      language: shell       # 'language: python' is an error on Travis CI Windows
+      before_install:
+        - choco install python --version 3.8.0
+        - python -m pip install --upgrade pip
+      env: PATH=/c/Python38:/c/Python38/Scripts:$PATH
+    - stage: deploy
+      python: 3.7
+      script: skip
+
+install:
+  - pip3 install -r requirements.txt
+  - pip3 install .
+  - pip3 install pytest-cov codecov
+script:
+  - pytest --cov-report=html --cov=madbayes --cov-append tests_python
+  - NUMBA_DISABLE_JIT=0 pytest --cov-report=html --cov=madbayes --cov-append tests_numba
+  - codecov
