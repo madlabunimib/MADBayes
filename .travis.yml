@@ -47,6 +47,8 @@ jobs:
       script: skip
 
 install:
+  - R -e 'install.packages("BiocManager")'
+  - R -e 'BiocManager::install(c("bnlearn", "gRain"))'
   - pip3 install -r requirements.txt
   - pip3 install .
   - pip3 install pytest-cov codecov
