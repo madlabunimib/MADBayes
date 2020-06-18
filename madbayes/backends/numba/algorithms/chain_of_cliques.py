@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import numpy as np
-from numba import njit, prange
+from numba import njit
 
 from .bron_kerbosh import _bron_kerbosh
 from .nodes import _perfect_numbering
@@ -21,7 +21,7 @@ def chain_of_cliques(graph: Graph) -> List:
     return chain
 
 
-@njit(cache=True, parallel=True)
+@njit(cache=True)
 def _chain_of_cliques(A: np.ndarray) -> List:
     # Calculate the perfect numbering
     # starting from the first node
@@ -33,7 +33,7 @@ def _chain_of_cliques(A: np.ndarray) -> List:
     # number of its nodes
     n = len(cliques)
     order = np.zeros(n)
-    for i in prange(n):
+    for i in range(n):
         clique = cliques[i]
         vmax = 0
         for node in clique:
