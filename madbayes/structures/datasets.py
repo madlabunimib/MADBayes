@@ -24,6 +24,9 @@ class Dataset:
                 for column in self.data.columns
             }
         return sorted(self.data[variable].dropna().unique())
+    
+    def count_nan(self) -> int:
+        return self.data.size - self.data.count().sum()
 
     def random_nan(self, ratio: float = 0.20):
         data = self.data.copy()

@@ -7,7 +7,7 @@ from random import uniform
 from multiprocessing import Pool, cpu_count
 from copy import deepcopy
 
-from ..structures import DirectedGraph, BayesianNetwork
+from ..structures import DirectedGraph, BayesianNetwork, Dataset
 from .nodes import parents, children
 
 if TYPE_CHECKING:
@@ -27,7 +27,7 @@ def forward_sampling(bn: BayesianNetwork, n_samples: int):
     pool.close()
     pool.join()
 
-    return pd.concat(samples, axis=1).T
+    return Dataset(pd.concat(samples, axis=1).T)
 
 
 def _sample(bn: BayesianNetwork, order: List):
@@ -56,7 +56,7 @@ def _find_order(dag: DirectedGraph) -> List:
     return order
 
 
-def _find_order_rec(dag: DirectedGraph, node: Node, order: List, visited: Ser) -> None:
+def _find_order_rec(dag: DirectedGraph, node: Node, order: List, visited: Set) -> None:
     try:
         parents_list = parents(dag, node)
         while len(parents_list) > 0:
