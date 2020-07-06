@@ -12,6 +12,8 @@ namespace madbayes {
 
 namespace structures {
 
+using Nodes = std::vector<std::string>;
+
 class Graph {
    protected:
     igraph_t graph;
@@ -19,10 +21,13 @@ class Graph {
 
    public:
     explicit Graph(const igraph_t *other);
-    Graph(const std::vector<std::string> &nodes, bool mode = IGRAPH_UNDIRECTED);
+    Graph(const Nodes &nodes, bool mode = IGRAPH_UNDIRECTED);
     Graph(const Graph &other);
     Graph &operator=(const Graph &other);
     virtual ~Graph();
+
+    Nodes get_nodes() const;
+    void set_nodes(const Nodes &nodes);
 
     size_t size() const;
     bool is_directed() const;

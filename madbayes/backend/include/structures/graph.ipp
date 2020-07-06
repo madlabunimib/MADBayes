@@ -10,9 +10,9 @@ Graph::Graph(const igraph_t *other) {
     igraph_copy(&graph, other);
 }
 
-Graph::Graph(const std::vector<std::string> &_n, bool mode) {
+Graph::Graph(const Nodes &_n, bool mode) {
     igraph_empty(&graph, _n.size(), mode);
-    for (size_t i = 0; i < _n.size(); i++) nodes[_n[i]] = i;
+    set_nodes(_n);
 }
 
 Graph::Graph(const Graph &other) : nodes(other.nodes) {
@@ -30,6 +30,19 @@ Graph &Graph::operator=(const Graph &other) {
 
 Graph::~Graph() {
     igraph_destroy(&graph);
+}
+
+Nodes Graph::get_nodes() const {
+    Nodes keys;
+    for(auto it = nodes.begin(); it != nodes.end(); ++it) {
+        keys.push_back(it->first);
+    }
+    return keys;
+}
+
+void Graph::set_nodes(const Nodes &_n) {
+    if (_n.size() != size()) throw std::runtime_error("Labels must have size equals to nodes."); 
+    for (size_t i = 0; i < _n.size(); i++) nodes[_n[i]] = i;
 }
 
 size_t Graph::size() const {

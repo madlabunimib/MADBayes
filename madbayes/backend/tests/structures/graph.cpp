@@ -37,6 +37,17 @@ TEST(TestGraph, PointerContructor) {
     ASSERT_EQ(g.size(), N_SIZE);
 }
 
+TEST(TestGraph, GetNodes) {
+    Graph g(N);
+    ASSERT_EQ(g.get_nodes(), Nodes(N));
+}
+
+TEST(TestGraph, SetNodes) {
+    Graph g(N);
+    g.set_nodes(N);
+    ASSERT_EQ(g.get_nodes(), Nodes(N));
+}
+
 TEST(TestGraph, Size) {
     Graph g(N);
     ASSERT_EQ(g.size(), N_SIZE);

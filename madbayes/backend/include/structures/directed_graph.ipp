@@ -8,7 +8,7 @@ namespace structures {
 
 DirectedGraph::DirectedGraph(const igraph_t *other) : Graph(other) {}
 
-DirectedGraph::DirectedGraph(const std::vector<std::string> &nodes) : Graph(nodes, IGRAPH_DIRECTED) {}
+DirectedGraph::DirectedGraph(const Nodes &nodes) : Graph(nodes, IGRAPH_DIRECTED) {}
 
 DirectedGraph::DirectedGraph(const DirectedGraph &other) : Graph(other) {}
 
@@ -37,6 +37,7 @@ Graph DirectedGraph::to_undirected() {
     igraph_to_undirected(&undirected, IGRAPH_TO_UNDIRECTED_COLLAPSE, 0);
     Graph result(&undirected);
     igraph_destroy(&undirected);
+    result.set_nodes(get_nodes());
     return result;
 }
 
