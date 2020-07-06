@@ -9,6 +9,8 @@ namespace madbayes {
 
 namespace structures {
 
+void handle_status(int status);
+
 class Graph {
    protected:
     igraph_t graph;

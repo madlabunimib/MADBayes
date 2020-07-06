@@ -9,7 +9,8 @@ namespace structures {
 DirectedGraph::DirectedGraph(int64_t nodes) : Graph(nodes, IGRAPH_DIRECTED) {}
 
 DirectedGraph::DirectedGraph(const DirectedGraph &other) : Graph() {
-    igraph_copy(&graph, &other.graph);
+    int status = igraph_copy(&graph, &other.graph);
+    handle_status(status);
 }
 
 DirectedGraph &DirectedGraph::operator=(const DirectedGraph &other) {
@@ -21,12 +22,14 @@ DirectedGraph &DirectedGraph::operator=(const DirectedGraph &other) {
 }
 
 DirectedGraph::~DirectedGraph() {
-    igraph_destroy(&graph);
+    int status = igraph_destroy(&graph);
+    handle_status(status);
 }
 
 bool DirectedGraph::is_dag() const {
     igraph_bool_t result;
-    igraph_is_dag(&graph, &result);
+    int status = igraph_is_dag(&graph, &result);
+    handle_status(status);
     return result;
 }
 

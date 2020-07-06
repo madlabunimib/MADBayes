@@ -6,19 +6,27 @@ namespace madbayes {
 
 namespace structures {
 
+void handle_status(int status) {
+    if (status != IGRAPH_SUCCESS) {
+        throw std::runtime_error(igraph_strerror(status));
+    }
+}
+
 Graph::Graph() {}
 
 Graph::Graph(const igraph_t *other) {
-    igraph_copy(&graph, other);
+    int status = igraph_copy(&graph, other);
+    handle_status(status);
 }
 
 Graph::Graph(int64_t nodes, bool mode) {
-    size_t flag = igraph_empty(&graph, nodes, mode);
-    if (flag == IGRAPH_EINVAL) throw std::runtime_error("Invalid number of vertices");
+    int status = igraph_empty(&graph, nodes, mode);
+    handle_status(status);
 }
 
 Graph::Graph(const Graph &other) {
-    igraph_copy(&graph, &other.graph);
+    int status = igraph_copy(&graph, &other.graph);
+    handle_status(status);
 }
 
 Graph &Graph::operator=(const Graph &other) {
@@ -30,7 +38,8 @@ Graph &Graph::operator=(const Graph &other) {
 }
 
 Graph::~Graph() {
-    igraph_destroy(&graph);
+    int status = igraph_destroy(&graph);
+    handle_status(status);
 }
 
 size_t Graph::size() const {
@@ -43,7 +52,8 @@ bool Graph::is_directed() const {
 
 bool Graph::is_chordal() const {
     igraph_bool_t result;
-    igraph_is_chordal(&graph, 0, 0, &result, 0, 0);
+    int status = igraph_is_chordal(&graph, 0, 0, &result, 0, 0);
+    handle_status(status);
     return result;
 }
 
