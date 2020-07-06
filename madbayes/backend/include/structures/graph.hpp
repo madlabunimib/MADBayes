@@ -46,6 +46,8 @@ class Graph {
     void add_edge(const Node &from, const Node &to);
     void remove_edge(const Node &from, const Node &to);
 
+    Graph subgraph(const Nodes &labels);
+
     size_t size() const;
     bool is_directed() const;
     bool is_chordal() const;

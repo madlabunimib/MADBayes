@@ -46,6 +46,13 @@ TEST(TestDirectedGraph, IsDag) {
     FAIL();
 }
 
+TEST(TestDirectedGraph, FromUndirected) {
+    Graph ug(N);
+    DirectedGraph g(ug);
+    ASSERT_EQ(g.size(), ug.size());
+    ASSERT_TRUE(g.is_directed());
+}
+
 TEST(TestDirectedGraph, ToUndirected) {
     DirectedGraph g(N);
     Graph ug = g.to_undirected();
