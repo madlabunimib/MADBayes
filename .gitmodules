@@ -1,0 +1,3 @@
+[submodule "madbayes/backend/extern/googletest"]
+	path = madbayes/backend/extern/googletest
+	url = https://github.com/google/googletest.git
