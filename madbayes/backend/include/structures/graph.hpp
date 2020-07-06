@@ -11,15 +11,17 @@ namespace structures {
 
 class Graph {
    protected:
+    Graph();
     igraph_t graph;
 
    public:
-    explicit Graph(int64_t nodes);
+    Graph(int64_t nodes, bool mode = IGRAPH_UNDIRECTED);
     Graph(const Graph &other);
     Graph &operator=(const Graph &other);
-    ~Graph();
+    virtual ~Graph();
 
     size_t size() const;
+    bool is_directed() const;
 };
 
 }  // namespace structures

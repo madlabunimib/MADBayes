@@ -6,8 +6,10 @@ namespace madbayes {
 
 namespace structures {
 
-Graph::Graph(int64_t nodes) {
-    size_t flag = igraph_empty(&graph, nodes, IGRAPH_UNDIRECTED);
+Graph::Graph() {}
+
+Graph::Graph(int64_t nodes, bool mode) {
+    size_t flag = igraph_empty(&graph, nodes, mode);
     if (flag == IGRAPH_EINVAL) throw std::runtime_error("Invalid number of vertices");
 }
 
@@ -29,6 +31,10 @@ Graph::~Graph() {
 
 size_t Graph::size() const {
     return igraph_vcount(&graph);
+}
+
+bool Graph::is_directed() const {
+    return igraph_is_directed(&graph);
 }
 
 }  // namespace structures

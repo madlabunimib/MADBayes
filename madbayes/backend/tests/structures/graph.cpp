@@ -28,3 +28,13 @@ TEST(TestGraph, Destructor) {
     ASSERT_EQ(g->size(), N);
     delete g;
 }
+
+TEST(TestGraph, Size) {
+    Graph g(N);
+    ASSERT_EQ(g.size(), N);
+}
+
+TEST(TestGraph, IsDirected) {
+    Graph g(N);
+    ASSERT_FALSE(g.is_directed());
+}
