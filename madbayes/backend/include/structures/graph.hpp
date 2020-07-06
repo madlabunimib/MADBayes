@@ -12,22 +12,28 @@ namespace madbayes {
 
 namespace structures {
 
-using Nodes = std::vector<std::string>;
+using Labels = std::vector<std::string>;
 
 class Graph {
    protected:
     igraph_t graph;
-    std::map<std::string, size_t> nodes;
+    std::map<std::string, size_t> labels;
 
    public:
     explicit Graph(const igraph_t *other);
-    Graph(const Nodes &nodes, bool mode = IGRAPH_UNDIRECTED);
+    Graph(const Labels &labels, bool mode = IGRAPH_UNDIRECTED);
     Graph(const Graph &other);
     Graph &operator=(const Graph &other);
     virtual ~Graph();
 
-    Nodes get_nodes() const;
-    void set_nodes(const Nodes &nodes);
+    Labels get_labels() const;
+    void set_labels(const Labels &label);
+
+    void add_vertex(const std::string &label);
+    void remove_vertex(const std::string &label);
+
+    void add_edge(const std::string &from, const std::string &to);
+    void remove_edge(const std::string &from, const std::string &to);
 
     size_t size() const;
     bool is_directed() const;

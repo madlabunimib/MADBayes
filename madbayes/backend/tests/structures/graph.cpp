@@ -37,15 +37,15 @@ TEST(TestGraph, PointerContructor) {
     ASSERT_EQ(g.size(), N_SIZE);
 }
 
-TEST(TestGraph, GetNodes) {
+TEST(TestGraph, GetLabels) {
     Graph g(N);
-    ASSERT_EQ(g.get_nodes(), Nodes(N));
+    ASSERT_EQ(g.get_labels(), Labels(N));
 }
 
-TEST(TestGraph, SetNodes) {
+TEST(TestGraph, SetLabels) {
     Graph g(N);
-    g.set_nodes(N);
-    ASSERT_EQ(g.get_nodes(), Nodes(N));
+    g.set_labels(N);
+    ASSERT_EQ(g.get_labels(), Labels(N));
 }
 
 TEST(TestGraph, Size) {
