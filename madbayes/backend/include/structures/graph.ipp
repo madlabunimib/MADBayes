@@ -6,40 +6,30 @@ namespace madbayes {
 
 namespace structures {
 
-void handle_status(int status) {
-    if (status != IGRAPH_SUCCESS) {
-        throw std::runtime_error(igraph_strerror(status));
-    }
-}
-
-Graph::Graph() {}
-
 Graph::Graph(const igraph_t *other) {
-    int status = igraph_copy(&graph, other);
-    handle_status(status);
+    igraph_copy(&graph, other);
 }
 
-Graph::Graph(int64_t nodes, bool mode) {
-    int status = igraph_empty(&graph, nodes, mode);
-    handle_status(status);
+Graph::Graph(const std::vector<std::string> &_n, bool mode) {
+    igraph_empty(&graph, _n.size(), mode);
+    for (size_t i = 0; i < _n.size(); i++) nodes[_n[i]] = i;
 }
 
-Graph::Graph(const Graph &other) {
-    int status = igraph_copy(&graph, &other.graph);
-    handle_status(status);
+Graph::Graph(const Graph &other) : nodes(other.nodes) {
+    igraph_copy(&graph, &other.graph);
 }
 
 Graph &Graph::operator=(const Graph &other) {
     if (this != &other) {
         Graph tmp(other);
         std::swap(tmp.graph, graph);
+        std::swap(tmp.nodes, nodes);
     }
     return *this;
 }
 
 Graph::~Graph() {
-    int status = igraph_destroy(&graph);
-    handle_status(status);
+    igraph_destroy(&graph);
 }
 
 size_t Graph::size() const {
@@ -52,8 +42,7 @@ bool Graph::is_directed() const {
 
 bool Graph::is_chordal() const {
     igraph_bool_t result;
-    int status = igraph_is_chordal(&graph, 0, 0, &result, 0, 0);
-    handle_status(status);
+    igraph_is_chordal(&graph, 0, 0, &result, 0, 0);
     return result;
 }
 

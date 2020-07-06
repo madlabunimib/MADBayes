@@ -3,23 +3,23 @@
 #include <igraph/igraph.h>
 
 #include <algorithm>
+#include <map>
 #include <stdexcept>
+#include <string>
+#include <vector>
 
 namespace madbayes {
 
 namespace structures {
 
-void handle_status(int status);
-
 class Graph {
    protected:
     igraph_t graph;
-
-    Graph();
+    std::map<std::string, size_t> nodes;
 
    public:
     explicit Graph(const igraph_t *other);
-    Graph(int64_t nodes, bool mode = IGRAPH_UNDIRECTED);
+    Graph(const std::vector<std::string> &nodes, bool mode = IGRAPH_UNDIRECTED);
     Graph(const Graph &other);
     Graph &operator=(const Graph &other);
     virtual ~Graph();

@@ -2,13 +2,14 @@
 
 #include "structures/directed_graph.ipp"
 
-#define N 10
+#define N {"1", "2", "3", "4", "5"}
+#define N_SIZE 5
 
 using namespace madbayes::structures;
 
 TEST(TestDirectedGraph, DefaultContructor) {
     DirectedGraph g(N);
-    ASSERT_EQ(g.size(), N);
+    ASSERT_EQ(g.size(), N_SIZE);
 }
 
 TEST(TestDirectedGraph, CopyConstructor) {
@@ -25,20 +26,20 @@ TEST(TestDirectedGraph, AssignmentConstructor) {
 
 TEST(TestDirectedGraph, Destructor) {
     DirectedGraph *g = new DirectedGraph(N);
-    ASSERT_EQ(g->size(), N);
+    ASSERT_EQ(g->size(), N_SIZE);
     delete g;
 }
 
 TEST(TestDirectedGraph, PointerContructor) {
     igraph_t ig;
-    igraph_empty(&ig, N, IGRAPH_DIRECTED);
+    igraph_empty(&ig, N_SIZE, IGRAPH_DIRECTED);
     DirectedGraph g(&ig);
-    ASSERT_EQ(g.size(), N);
+    ASSERT_EQ(g.size(), N_SIZE);
 }
 
 TEST(TestDirectedGraph, Size) {
     DirectedGraph g(N);
-    ASSERT_EQ(g.size(), N);
+    ASSERT_EQ(g.size(), N_SIZE);
 }
 
 TEST(TestDirectedGraph, IsDirected) {

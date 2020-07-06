@@ -2,13 +2,14 @@
 
 #include "structures/graph.ipp"
 
-#define N 10
+#define N {"1", "2", "3", "4", "5"}
+#define N_SIZE 5
 
 using namespace madbayes::structures;
 
 TEST(TestGraph, DefaultContructor) {
     Graph g(N);
-    ASSERT_EQ(g.size(), N);
+    ASSERT_EQ(g.size(), N_SIZE);
 }
 
 TEST(TestGraph, CopyConstructor) {
@@ -25,20 +26,20 @@ TEST(TestGraph, AssignmentConstructor) {
 
 TEST(TestGraph, Destructor) {
     Graph *g = new Graph(N);
-    ASSERT_EQ(g->size(), N);
+    ASSERT_EQ(g->size(), N_SIZE);
     delete g;
 }
 
 TEST(TestGraph, PointerContructor) {
     igraph_t ig;
-    igraph_empty(&ig, N, IGRAPH_UNDIRECTED);
+    igraph_empty(&ig, N_SIZE, IGRAPH_UNDIRECTED);
     Graph g(&ig);
-    ASSERT_EQ(g.size(), N);
+    ASSERT_EQ(g.size(), N_SIZE);
 }
 
 TEST(TestGraph, Size) {
     Graph g(N);
-    ASSERT_EQ(g.size(), N);
+    ASSERT_EQ(g.size(), N_SIZE);
 }
 
 TEST(TestGraph, IsDirected) {
