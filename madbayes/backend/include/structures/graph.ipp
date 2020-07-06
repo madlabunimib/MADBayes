@@ -8,6 +8,10 @@ namespace structures {
 
 Graph::Graph() {}
 
+Graph::Graph(const igraph_t *other) {
+    igraph_copy(&graph, other);
+}
+
 Graph::Graph(int64_t nodes, bool mode) {
     size_t flag = igraph_empty(&graph, nodes, mode);
     if (flag == IGRAPH_EINVAL) throw std::runtime_error("Invalid number of vertices");

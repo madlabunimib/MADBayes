@@ -29,6 +29,13 @@ TEST(TestGraph, Destructor) {
     delete g;
 }
 
+TEST(TestDirectedGraph, PointerContructor) {
+    igraph_t ig;
+    igraph_empty(&ig, N, IGRAPH_UNDIRECTED);
+    Graph g(&ig);
+    ASSERT_EQ(g.size(), N);
+}
+
 TEST(TestGraph, Size) {
     Graph g(N);
     ASSERT_EQ(g.size(), N);
