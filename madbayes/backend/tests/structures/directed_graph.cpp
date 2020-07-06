@@ -29,6 +29,13 @@ TEST(TestDirectedGraph, Destructor) {
     delete g;
 }
 
+TEST(TestDirectedGraph, PointerContructor) {
+    igraph_t ig;
+    igraph_empty(&ig, N, IGRAPH_DIRECTED);
+    DirectedGraph g(&ig);
+    ASSERT_EQ(g.size(), N);
+}
+
 TEST(TestDirectedGraph, Size) {
     DirectedGraph g(N);
     ASSERT_EQ(g.size(), N);
@@ -37,4 +44,11 @@ TEST(TestDirectedGraph, Size) {
 TEST(TestDirectedGraph, IsDirected) {
     DirectedGraph g(N);
     ASSERT_TRUE(g.is_directed());
+}
+
+TEST(TestDirectedGraph, ToUndirected) {
+    DirectedGraph g(N);
+    Graph ug = g.to_undirected();
+    ASSERT_EQ(g.size(), ug.size());
+    ASSERT_FALSE(ug.is_directed());
 }

@@ -29,7 +29,7 @@ TEST(TestGraph, Destructor) {
     delete g;
 }
 
-TEST(TestDirectedGraph, PointerContructor) {
+TEST(TestGraph, PointerContructor) {
     igraph_t ig;
     igraph_empty(&ig, N, IGRAPH_UNDIRECTED);
     Graph g(&ig);
