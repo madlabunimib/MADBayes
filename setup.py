@@ -32,7 +32,6 @@ setuptools.setup(
         'pydot',
         'matplotlib',
         'networkx>=2.4',
-        'numba>=0.48',
         'numpy',
         'scipy',
         'pandas',

@@ -19,6 +19,5 @@ install:
   - pip3 install .
   - pip3 install pytest-cov codecov
 script:
-  - pytest --cov-report=html --cov=madbayes --cov-append tests_python
-  - NUMBA_DISABLE_JIT=0 pytest --cov-report=html --cov=madbayes --cov-append tests_numba
+  - pytest --cov-report=html --cov=madbayes --cov-append tests
   - codecov

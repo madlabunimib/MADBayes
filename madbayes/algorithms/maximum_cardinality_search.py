@@ -1,12 +1,10 @@
 import numpy as np
 
-from ..backends import AlternativeBackend
 from ..structures import Graph
 from .nodes import _fill_in_set, _filter, _neighbors
 from .paths import _all_simple_paths
 
 
-@AlternativeBackend()
 def MCS(graph: Graph) -> Graph:
     adjacency_matrix = graph.adjacency_matrix()
     out = np.zeros(adjacency_matrix.shape, dtype=bool)

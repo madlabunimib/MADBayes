@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
-from ..backends import AlternativeBackend
 from .bron_kerbosh import _bron_kerbosh
 from .nodes import _perfect_numbering
 
@@ -13,7 +12,6 @@ if TYPE_CHECKING:
     from ..structures import Graph
 
 
-@AlternativeBackend()
 def chain_of_cliques(graph: Graph) -> List:
     nodes = graph.nodes()
     adjacency_matrix = graph.adjacency_matrix()

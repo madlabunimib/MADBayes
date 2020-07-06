@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
-from ..backends import AlternativeBackend
 from .nodes import _children
 
 if TYPE_CHECKING:
@@ -26,7 +25,6 @@ def all_simple_paths(graph: Graph, source: str, target: str) -> List:
     return simple_paths
 
 
-@AlternativeBackend()
 def _all_simple_paths(source: int, target: int, A: np.ndarray) -> List:
     visited = [source]
     simple_paths = _all_simple_paths_recursive(source, target, A, visited)

@@ -3,7 +3,6 @@ from copy import deepcopy
 
 import numpy as np
 
-from ..backends import AlternativeBackend
 from ..structures import Graph, DirectedGraph
 
 
@@ -21,7 +20,6 @@ def subgraph(graph: Graph, nodes: List[str], attributes: bool = True) -> Graph:
     return subgraph
 
 
-@AlternativeBackend()
 def _subset(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
     return A[nodes, :][:, nodes]
 
@@ -36,7 +34,6 @@ def parents(graph: Graph, node: str) -> List[str]:
     return parents
 
 
-@AlternativeBackend()
 def _parents(node: int, A: np.ndarray) -> np.ndarray:
     parents = A.T[node]
     parents = np.nonzero(parents)[0].T
@@ -53,7 +50,6 @@ def family(graph: Graph, node: str) -> List[str]:
     return family
 
 
-@AlternativeBackend()
 def _family(node: int, A: np.ndarray) -> np.ndarray:
     parents = _parents(node, A)
     family = np.append(parents, [node])
@@ -70,7 +66,6 @@ def children(graph: Graph, node: str) -> List[str]:
     return children
 
 
-@AlternativeBackend()
 def _children(node: int, A: np.ndarray) -> np.ndarray:
     children = A[node]
     children = np.nonzero(children)[0].T
@@ -87,7 +82,6 @@ def neighbors(graph: Graph, node: str) -> List[str]:
     return neighbors
 
 
-@AlternativeBackend()
 def _neighbors(node: int, A: np.ndarray) -> np.ndarray:
     parents = _parents(node, A)
     children = _children(node, A)
@@ -107,7 +101,6 @@ def boundary(graph: Graph, nodes: List[str]) -> List[str]:
     return boundary
 
 
-@AlternativeBackend()
 def _boundary(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
     boundary = []
     for node in nodes:
@@ -128,7 +121,6 @@ def ancestors(graph, node: str) -> List[str]:
     return ancestors
 
 
-@AlternativeBackend()
 def _ancestors(node: int, A: np.ndarray) -> np.ndarray:
     parents = _parents(node, A)
     ancestors = _ancestors_recursive(parents, A)
@@ -156,7 +148,6 @@ def descendants(graph, node: str) -> List[str]:
     return descendants
 
 
-@AlternativeBackend()
 def _descendants(node: int, A: np.ndarray) -> np.ndarray:
     children = _children(node, A)
     descendants = _descendants_recursive(children, A)
@@ -181,7 +172,6 @@ def numbering(graph: Graph) -> np.ndarray:
     return numbering
 
 
-@AlternativeBackend()
 def _numbering(nodes: np.ndarray) -> np.ndarray:
     numbering = np.array(nodes, copy=True)
     return numbering
@@ -195,7 +185,6 @@ def perfect_numbering(graph: Graph) -> List[str]:
     return numbering
 
 
-@AlternativeBackend()
 def _perfect_numbering(node: int, A: np.ndarray) -> np.ndarray:
     n = A.shape[0]
     X = set(range(n))
@@ -221,20 +210,17 @@ def is_complete(graph: Graph) -> bool:
     return is_complete
 
 
-@AlternativeBackend()
 def _is_complete(A: np.ndarray) -> bool:
     out = A.copy()
     np.fill_diagonal(out, True)
     return out.all()
 
 
-@AlternativeBackend()
 def _is_complete_set(nodes: np.ndarray, A: np.ndarray) -> bool:
     out = _subset(nodes, A)
     return _is_complete(out)
 
 
-@AlternativeBackend()
 def _fill_in(A: np.array) -> np.ndarray:
     out = A.copy()
     np.fill_diagonal(out, True)
@@ -243,7 +229,6 @@ def _fill_in(A: np.array) -> np.ndarray:
     return indices
 
 
-@AlternativeBackend()
 def _fill_in_set(nodes: np.ndarray, A: np.array) -> np.ndarray:
     out = _subset(nodes, A)
     indices = _fill_in(out)
@@ -255,7 +240,6 @@ def _fill_in_set(nodes: np.ndarray, A: np.array) -> np.ndarray:
     return indices
 
 
-@AlternativeBackend()
 def _filter(nodes: np.ndarray, A: np.ndarray) -> np.ndarray:
     out = A.copy()
     out[:] = False

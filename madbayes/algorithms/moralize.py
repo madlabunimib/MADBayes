@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
-from ..backends import AlternativeBackend
 from ..structures import Graph
 from .nodes import _parents
 
@@ -12,7 +11,6 @@ if TYPE_CHECKING:
     from ..structures import DirectedGraph
 
 
-@AlternativeBackend()
 def moralize(graph: DirectedGraph) -> Graph:
     A = graph.adjacency_matrix()
     new_edges = np.zeros(A.shape, dtype=bool)
