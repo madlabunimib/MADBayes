@@ -43,3 +43,4 @@ macro(package_add_test_with_libraries TESTNAME FILES LIBRARIES)
 endmacro()
 
 package_add_test_with_libraries(test_graph structures/graph.cpp igraph)
+package_add_test_with_libraries(test_directed_graph structures/directed_graph.cpp igraph)
