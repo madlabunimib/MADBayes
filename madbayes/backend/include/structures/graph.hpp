@@ -3,37 +3,48 @@
 #include <igraph/igraph.h>
 
 #include <algorithm>
-#include <map>
 #include <stdexcept>
 #include <string>
+#include <unordered_map>
+#include <utility>
 #include <vector>
 
 namespace madbayes {
 
 namespace structures {
 
-using Labels = std::vector<std::string>;
+using Node = std::string;
+using Nodes = std::vector<Node>;
+using Edge = std::pair<std::string, std::string>;
+using Edges = std::vector<Edge>;
 
 class Graph {
    protected:
     igraph_t graph;
-    std::map<std::string, size_t> labels;
+    std::vector<std::string> vid2label;
+    std::unordered_map<std::string, size_t> label2vid;
+    void sync_nodes_labels();
+
+    std::string get_node_attribute(size_t id, const std::string &key) const;
+    void set_node_attribute(size_t id, const std::string &key, const std::string &value);
 
    public:
     explicit Graph(const igraph_t *other);
-    Graph(const Labels &labels, bool mode = IGRAPH_UNDIRECTED);
+    Graph(const Nodes &labels, bool mode = IGRAPH_UNDIRECTED);
     Graph(const Graph &other);
     Graph &operator=(const Graph &other);
     virtual ~Graph();
 
-    Labels get_labels() const;
-    void set_labels(const Labels &label);
+    void set_nodes(const Nodes &labels);
+    Nodes get_nodes() const;
 
-    void add_vertex(const std::string &label);
-    void remove_vertex(const std::string &label);
+    Edges get_edges() const;
 
-    void add_edge(const std::string &from, const std::string &to);
-    void remove_edge(const std::string &from, const std::string &to);
+    void add_node(const Node &label);
+    void remove_node(const Node &label);
+
+    void add_edge(const Node &from, const Node &to);
+    void remove_edge(const Node &from, const Node &to);
 
     size_t size() const;
     bool is_directed() const;

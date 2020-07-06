@@ -37,14 +37,13 @@ TEST(TestDirectedGraph, PointerContructor) {
     ASSERT_EQ(g.size(), N_SIZE);
 }
 
-TEST(TestDirectedGraph, Size) {
-    DirectedGraph g(N);
-    ASSERT_EQ(g.size(), N_SIZE);
-}
-
 TEST(TestDirectedGraph, IsDirected) {
     DirectedGraph g(N);
     ASSERT_TRUE(g.is_directed());
+}
+
+TEST(TestDirectedGraph, IsDag) {
+    FAIL();
 }
 
 TEST(TestDirectedGraph, ToUndirected) {

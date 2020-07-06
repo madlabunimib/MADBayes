@@ -9,7 +9,7 @@ namespace structures {
 class DirectedGraph : public Graph {
    public:
     explicit DirectedGraph(const igraph_t *other);
-    explicit DirectedGraph(const Labels &labels);
+    explicit DirectedGraph(const Nodes &labels);
     DirectedGraph(const DirectedGraph &other);
     DirectedGraph &operator=(const DirectedGraph &other);
     virtual ~DirectedGraph();
