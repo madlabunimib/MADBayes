@@ -24,6 +24,12 @@ DirectedGraph::~DirectedGraph() {
     igraph_destroy(&graph);
 }
 
+bool DirectedGraph::is_dag() const {
+    igraph_bool_t result;
+    igraph_is_dag(&graph, &result);
+    return result;
+}
+
 }  // namespace structures
 
 }  // namespace madbayes

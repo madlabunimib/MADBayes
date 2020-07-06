@@ -12,6 +12,8 @@ class DirectedGraph : public Graph {
     DirectedGraph(const DirectedGraph &other);
     DirectedGraph &operator=(const DirectedGraph &other);
     virtual ~DirectedGraph();
+
+    bool is_dag() const;
 };
 
 }  // namespace structures
