@@ -24,6 +24,7 @@ class Graph {
 
     size_t size() const;
     bool is_directed() const;
+    bool is_chordal() const;
 };
 
 }  // namespace structures

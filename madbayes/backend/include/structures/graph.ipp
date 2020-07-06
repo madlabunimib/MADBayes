@@ -41,6 +41,12 @@ bool Graph::is_directed() const {
     return igraph_is_directed(&graph);
 }
 
+bool Graph::is_chordal() const {
+    igraph_bool_t result;
+    igraph_is_chordal(&graph, 0, 0, &result, 0, 0);
+    return result;
+}
+
 }  // namespace structures
 
 }  // namespace madbayes
