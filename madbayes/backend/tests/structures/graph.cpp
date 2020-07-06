@@ -102,6 +102,14 @@ TEST(TestGraph, RemoveEdge) {
     ASSERT_EQ(it, edges.end());
 }
 
+TEST(TestGraph, Subgraph) {
+    Graph g(N);
+    Nodes n = g.get_nodes();
+    n.pop_back();
+    Graph s = g.subgraph(n);
+    ASSERT_EQ(s.get_nodes(), n);
+}
+
 TEST(TestGraph, Size) {
     Graph g(N);
     ASSERT_EQ(g.size(), N_SIZE);

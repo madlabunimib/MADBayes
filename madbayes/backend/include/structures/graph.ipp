@@ -127,6 +127,23 @@ void Graph::remove_edge(const Node &from, const Node &to) {
     igraph_es_destroy(&es);
 }
 
+Graph Graph::subgraph(const Nodes &labels) const {
+    igraph_t subgraph;
+    igraph_vs_t select;
+    igraph_vector_t nodes;
+    igraph_vector_init(&nodes, labels.size());
+    for (size_t i = 0; i < labels.size(); i++) {
+        VECTOR(nodes)[i] = label2vid.at(labels[i]);
+    }
+    igraph_vs_vector(&select, &nodes);
+    igraph_subgraph(&graph, &subgraph, select);
+    igraph_vs_destroy(&select);
+    igraph_vector_destroy(&nodes);
+    Graph out(&subgraph);
+    igraph_destroy(&subgraph);
+    return out;
+}
+
 size_t Graph::size() const { return igraph_vcount(&graph); }
 
 bool Graph::is_directed() const { return igraph_is_directed(&graph); }
