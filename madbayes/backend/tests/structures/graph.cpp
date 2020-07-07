@@ -136,7 +136,9 @@ TEST(TestGraph, IsDirected) {
 }
 
 TEST(TestGraph, IsChordal) {
-    FAIL();
+    Graph g0("[A|B][B|C][C|D][D|A]"), g1("[A|B][B|C][C|A]");
+    ASSERT_FALSE(g0.is_chordal());
+    ASSERT_TRUE(g1.is_chordal());
 }
 
 TEST(TestGraph, Neighbors) {
