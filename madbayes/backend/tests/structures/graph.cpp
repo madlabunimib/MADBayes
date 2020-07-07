@@ -138,3 +138,13 @@ TEST(TestGraph, IsDirected) {
 TEST(TestGraph, IsChordal) {
     FAIL();
 }
+
+TEST(TestGraph, Neighbors) {
+    Graph g("[A][B|A][C|A:B][D|A:B:C]");
+    ASSERT_EQ(g.neighbors("A"), Nodes({"B", "C", "D"}));
+}
+
+TEST(TestGraph, Boundary) {
+    Graph g("[A|B:E][B|C][C|D][D|E:G:H][E|F][F|G]");
+    ASSERT_EQ(g.boundary({"D", "E"}), Nodes({"A", "C", "F", "G", "H"}));
+}

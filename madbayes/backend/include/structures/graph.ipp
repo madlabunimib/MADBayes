@@ -82,7 +82,6 @@ Graph::Graph(const std::string &formula, bool mode) {
     sync_nodes_labels();
     for (auto e : edges) add_edge(e.first, e.second);
 }
-}
 
 void Graph::sync_nodes_labels() {
     vid2label.clear();
@@ -191,6 +190,34 @@ bool Graph::is_directed() const { return igraph_is_directed(&graph); }
 bool Graph::is_chordal() const {
     igraph_bool_t out;
     igraph_is_chordal(&graph, 0, 0, &out, 0, 0);
+    return out;
+}
+
+Nodes Graph::neighbors(const Node &label) const {
+    Nodes out;
+    igraph_vector_t neighbors;
+    igraph_vector_init(&neighbors, 1);
+    igraph_neighbors(&graph, &neighbors, label2vid.at(label), IGRAPH_ALL);
+    for (int64_t i = 0; i < igraph_vector_size(&neighbors); i++) {
+        out.push_back(vid2label[VECTOR(neighbors)[i]]);
+    }
+    igraph_vector_destroy(&neighbors);
+    return out;
+}
+
+Nodes Graph::boundary(const Nodes &labels) const {
+    Nodes out;
+    std::set<Node> boundary;
+    for (Node bound : labels)
+        for (Node neighbor : neighbors(bound))
+            boundary.insert(neighbor);
+    std::set_difference(
+        boundary.begin(),
+        boundary.end(),
+        labels.begin(),
+        labels.end(),
+        std::inserter(out, out.begin())
+    );
     return out;
 }
 
