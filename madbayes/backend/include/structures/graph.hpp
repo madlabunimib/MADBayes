@@ -3,7 +3,9 @@
 #include <igraph/igraph.h>
 
 #include <algorithm>
+#include <list>
 #include <regex>
+#include <set>
 #include <stdexcept>
 #include <string>
 #include <unordered_map>

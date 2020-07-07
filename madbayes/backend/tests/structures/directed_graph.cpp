@@ -76,3 +76,28 @@ TEST(TestDirectedGraph, ToUndirected) {
     ASSERT_EQ(g.size(), ug.size());
     ASSERT_FALSE(ug.is_directed());
 }
+
+TEST(TestDirectedGraph, Parents) {
+    DirectedGraph g("[A|B:C:D]");
+    ASSERT_EQ(g.parents("A"), Nodes({"B", "C", "D"}));
+}
+
+TEST(TestDirectedGraph, Family) {
+    DirectedGraph g("[A|B:C:D]");
+    ASSERT_EQ(g.family("A"), Nodes({"B", "C", "D", "A"}));
+}
+
+TEST(TestDirectedGraph, Children) {
+    DirectedGraph g("[A][B|A][C|A][D|A]");
+    ASSERT_EQ(g.children("A"), Nodes({"B", "C", "D"}));
+}
+
+TEST(TestDirectedGraph, Ancestrors) {
+    DirectedGraph g("[A][B|A][C|B][D|C]");
+    ASSERT_EQ(g.ancestors("D"), Nodes({"A", "B", "C"}));
+}
+
+TEST(TestDirectedGraph, Descendants) {
+    DirectedGraph g("[A][B|A][C|B][D|C]");
+    ASSERT_EQ(g.descendants("A"), Nodes({"B", "C", "D"}));
+}

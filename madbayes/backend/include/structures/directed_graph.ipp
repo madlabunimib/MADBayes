@@ -45,6 +45,62 @@ Graph DirectedGraph::to_undirected() {
     return out;
 }
 
+Nodes DirectedGraph::parents(const Node &label) const {
+    Nodes out;
+    igraph_vector_t parents;
+    igraph_vector_init(&parents, 1);
+    igraph_neighbors(&graph, &parents, label2vid.at(label), IGRAPH_IN);
+    for (int64_t i = 0; i < igraph_vector_size(&parents); i++) {
+        out.push_back(vid2label[VECTOR(parents)[i]]);
+    }
+    igraph_vector_destroy(&parents);
+    return out;
+}
+
+Nodes DirectedGraph::family(const Node &label) const {
+    Nodes out = parents(label);
+    out.push_back(label);
+    return out;
+}
+
+Nodes DirectedGraph::children(const Node &label) const {
+    Nodes out;
+    igraph_vector_t children;
+    igraph_vector_init(&children, 1);
+    igraph_neighbors(&graph, &children, label2vid.at(label), IGRAPH_OUT);
+    for (int64_t i = 0; i < igraph_vector_size(&children); i++) {
+        out.push_back(vid2label[VECTOR(children)[i]]);
+    }
+    igraph_vector_destroy(&children);
+    return out;
+}
+
+Nodes DirectedGraph::ancestors(const Node &label) const {
+    std::set<Node> ancestors;
+    std::list<Node> queue({label});
+    while (!queue.empty()) {
+        Nodes parent = parents(queue.front());
+        ancestors.insert(parent.begin(), parent.end());
+        queue.insert(queue.end(), parent.begin(), parent.end());
+        queue.pop_front();
+    }
+    Nodes out(ancestors.begin(), ancestors.end());
+    return out;
+}
+
+Nodes DirectedGraph::descendants(const Node &label) const {
+    std::set<Node> descendants;
+    std::list<Node> queue({label});
+    while (!queue.empty()) {
+        Nodes child = children(queue.front());
+        descendants.insert(child.begin(), child.end());
+        queue.insert(queue.end(), child.begin(), child.end());
+        queue.pop_front();
+    }
+    Nodes out(descendants.begin(), descendants.end());
+    return out;
+}
+
 }  // namespace structures
 
 }  // namespace madbayes

@@ -19,6 +19,12 @@ class DirectedGraph : public Graph {
     bool is_dag() const;
 
     Graph to_undirected();
+
+    Nodes parents(const Node &label) const;
+    Nodes family(const Node &label) const;
+    Nodes children(const Node &label) const;
+    Nodes ancestors(const Node &label) const;
+    Nodes descendants(const Node &label) const;
 };
 
 }  // namespace structures
