@@ -8,6 +8,8 @@ namespace structures {
 
 DirectedGraph::DirectedGraph(const igraph_t *other) : Graph(other) {}
 
+DirectedGraph::DirectedGraph(const std::string &formula) : Graph(formula, IGRAPH_DIRECTED) {}
+
 DirectedGraph::DirectedGraph(const Nodes &labels) : Graph(labels, IGRAPH_DIRECTED) {}
 
 DirectedGraph::DirectedGraph(const Graph &other) : Graph(other) {

@@ -37,6 +37,21 @@ TEST(TestDirectedGraph, PointerContructor) {
     ASSERT_EQ(g.size(), N_SIZE);
 }
 
+TEST(TestDirectedGraph, FormulaConstructor) {
+    Nodes nodes = {"A", "B", "C", "D"};
+    Edges edges = {
+        {"A", "B"},
+        {"A", "C"},
+        {"B", "C"},
+        {"A", "D"},
+        {"B", "D"},
+        {"C", "D"}
+    };
+    DirectedGraph g("[A][B|A][C|A:B][D|A:B:C]");
+    ASSERT_EQ(g.get_nodes(), nodes);
+    ASSERT_EQ(g.get_edges(), edges);
+}
+
 TEST(TestDirectedGraph, IsDirected) {
     DirectedGraph g(N);
     ASSERT_TRUE(g.is_directed());

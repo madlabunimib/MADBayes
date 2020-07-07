@@ -44,6 +44,46 @@ Graph::Graph(const igraph_t *other) {
     sync_nodes_labels();
 }
 
+Graph::Graph(const std::string &formula, bool mode) {
+    Nodes nodes;
+    Edges edges;
+
+    std::regex delim("\\[|\\]|\\||\\:");
+    std::regex regex("\\[(\\w+)\\]|\\[(\\w+)\\|(\\w+)([:\\w+]+)*\\]");
+    auto regex_begin = std::sregex_iterator(formula.begin(), formula.end(), regex);
+    auto regex_end = std::sregex_iterator();
+
+    if (regex_begin == regex_end) throw std::runtime_error("Invalid formula string.");
+
+    for (auto i = regex_begin; i != regex_end; ++i) {
+        std::string s = i->str();
+        auto match_begin = std::sregex_token_iterator(s.begin(), s.end(), delim, -1);
+        auto match_end = std::sregex_token_iterator();
+
+        std::sregex_token_iterator match_child = match_end;
+        for (auto match_current = match_begin; match_current != match_end; ++match_current) {
+            std::string parent = match_current->str();
+            if (parent.length() > 0) {
+                if (match_child == match_end) match_child = match_current;
+                if (std::find(nodes.begin(), nodes.end(), parent) == nodes.end()) {
+                    nodes.push_back(parent);
+                }
+                if (match_current != match_child) {
+                    edges.push_back({parent, match_child->str()});
+                }
+            }
+        }
+    }
+
+    igraph_empty(&graph, nodes.size(), mode);
+    for (size_t i = 0; i < nodes.size(); i++) {
+        set_node_attribute(i, "label", nodes[i]);
+    }
+    sync_nodes_labels();
+    for (auto e : edges) add_edge(e.first, e.second);
+}
+}
+
 void Graph::sync_nodes_labels() {
     vid2label.clear();
     label2vid.clear();

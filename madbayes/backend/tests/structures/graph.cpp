@@ -37,6 +37,21 @@ TEST(TestGraph, PointerContructor) {
     ASSERT_EQ(g.size(), N_SIZE);
 }
 
+TEST(TestGraph, FormulaConstructor) {
+    Nodes nodes = {"A", "B", "C", "D"};
+    Edges edges = {
+        {"A", "B"},
+        {"A", "C"},
+        {"B", "C"},
+        {"A", "D"},
+        {"B", "D"},
+        {"C", "D"}
+    };
+    Graph g("[A][B|A][C|A:B][D|A:B:C]");
+    ASSERT_EQ(g.get_nodes(), nodes);
+    ASSERT_EQ(g.get_edges(), edges);
+}
+
 TEST(TestGraph, GetNodes) {
     Graph g(N);
     ASSERT_EQ(g.get_nodes(), Nodes(N));
