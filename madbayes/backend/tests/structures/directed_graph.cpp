@@ -58,7 +58,9 @@ TEST(TestDirectedGraph, IsDirected) {
 }
 
 TEST(TestDirectedGraph, IsDag) {
-    FAIL();
+    DirectedGraph g0("[A|B][B|A]"), g1("[A|B][B|C]");
+    ASSERT_FALSE(g0.is_dag());
+    ASSERT_TRUE(g1.is_dag());
 }
 
 TEST(TestDirectedGraph, FromUndirected) {
