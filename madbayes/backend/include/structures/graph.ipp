@@ -173,7 +173,7 @@ bool Graph::has_edge(const Node &from, const Node &to) const {
 void Graph::add_edge(const Node &from, const Node &to) {
     if (label2vid.find(from) == label2vid.end()) throw std::runtime_error("Node does not exist.");
     if (label2vid.find(to) == label2vid.end()) throw std::runtime_error("Node does not exist.");
-    igraph_add_edge(&graph, label2vid[from], label2vid[to]);
+    if (!has_edge(from, to)) igraph_add_edge(&graph, label2vid[from], label2vid[to]);
 }
 
 void Graph::remove_edge(const Node &from, const Node &to) {
