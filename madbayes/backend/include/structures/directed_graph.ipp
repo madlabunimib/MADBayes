@@ -24,13 +24,13 @@ DirectedGraph &DirectedGraph::operator=(const DirectedGraph &other) {
     if (this != &other) {
         DirectedGraph tmp(other);
         std::swap(tmp.graph, graph);
+        std::swap(tmp.vid2label, vid2label);
+        std::swap(tmp.label2vid, label2vid);
     }
     return *this;
 }
 
-DirectedGraph::~DirectedGraph() {
-    igraph_destroy(&graph);
-}
+DirectedGraph::~DirectedGraph() {}
 
 DirectedGraph::DirectedGraph(const igraph_t *other) : Graph(other) {}
 

@@ -25,18 +25,24 @@ Graph::Graph(const Nodes &labels, bool mode) {
 }
 
 Graph::Graph(const Edges &edges, bool mode) {
+    if (edges.size() == 0) throw std::runtime_error("Edge list cannot be empty.");
+
     std::set<Node> nodes;
     for (Edge e : edges) {
         nodes.insert(e.first);
         nodes.insert(e.second);
     }
+
     igraph_empty(&graph, nodes.size(), mode);
+
     size_t i = 0;
     for (Node n: nodes) {
         set_node_attribute(i, "label", n);
         i++;
     }
+
     sync_nodes_labels();
+    
     for (Edge e : edges) add_edge(e.first, e.second);
 }
 

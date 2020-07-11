@@ -67,6 +67,8 @@ class Graph {
 
     Nodes neighbors(const Node &label) const;
     Nodes boundary(const Nodes &labels) const;
+
+    friend Graph chordal(const Graph &other);
 };
 
 }  // namespace structures

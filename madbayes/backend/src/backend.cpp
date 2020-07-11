@@ -53,6 +53,7 @@ PYBIND11_MODULE(backend, m) {
     
     // Algorithms
 
-    m.def("moral", &moral, py::arg("graph"));
+    m.def("chordal", &chordal, py::arg("other"));
+    m.def("moral", &moral, py::arg("other"));
 
 }
