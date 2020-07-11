@@ -53,7 +53,8 @@ PYBIND11_MODULE(backend, m) {
     
     // Algorithms
 
-    m.def("chordal", &chordal, py::arg("other"));
+    m.def("chordal", &chordal<Graph>, py::arg("other"));
+    m.def("chordal", &chordal<DirectedGraph>, py::arg("other"));
     m.def("moral", &moral, py::arg("other"));
 
 }

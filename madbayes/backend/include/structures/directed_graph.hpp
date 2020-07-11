@@ -29,6 +29,9 @@ class DirectedGraph : public Graph {
     Nodes children(const Node &label) const;
     Nodes ancestors(const Node &label) const;
     Nodes descendants(const Node &label) const;
+
+    template<typename T>
+    friend T chordal(const T &other);
 };
 
 }  // namespace structures

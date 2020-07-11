@@ -6,11 +6,12 @@ namespace madbayes {
 
 namespace structures {
 
-Graph chordal(const Graph &other) {
+template<typename T>
+T chordal(const T &other) {
     igraph_t chordal;
     igraph_bool_t is_chordal;
     igraph_is_chordal(&other.graph, 0, 0, &is_chordal, 0, &chordal);
-    Graph out(&chordal);
+    T out(&chordal);
     igraph_destroy(&chordal);
     return out;
 }
