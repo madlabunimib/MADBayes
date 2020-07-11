@@ -1,5 +1,6 @@
 .vscode
 .coverage
+*.so
 *.egg-info
 .spyproject
 .pytest_cache
