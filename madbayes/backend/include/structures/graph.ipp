@@ -14,6 +14,8 @@ void igraph_error_handler_exception(const char *reason, const char *file, int li
 static size_t igraph_error_handler = (size_t)igraph_set_error_handler(igraph_error_handler_exception);
 static size_t igraph_attribute_table = (size_t)igraph_i_set_attribute_table(&igraph_cattribute_table);
 
+Graph::Graph() { igraph_empty(&graph, 0, IGRAPH_UNDIRECTED); }
+
 Graph::Graph(const Nodes &labels, bool mode) {
     igraph_empty(&graph, labels.size(), mode);
     for (size_t i = 0; i < labels.size(); i++) {
@@ -123,12 +125,7 @@ void Graph::set_node_attribute(size_t id, const std::string &key, const std::str
 }
 
 Nodes Graph::get_nodes() const {
-    Nodes labels;
-    for (auto it = label2vid.begin(); it != label2vid.end(); ++it) {
-        labels.push_back(it->first);
-    }
-    std::sort(labels.begin(), labels.end(), std::less<std::string>());
-    return labels;
+    return vid2label;
 }
 
 void Graph::set_nodes(const Nodes &labels) {

@@ -8,8 +8,8 @@
 using namespace madbayes::structures;
 
 TEST(TestDirectedGraph, DefaultContructor) {
-    DirectedGraph g(N);
-    ASSERT_EQ(g.size(), N_SIZE);
+    DirectedGraph g0, g1(N);
+    ASSERT_EQ(g1.size(), N_SIZE);
 }
 
 TEST(TestDirectedGraph, CopyConstructor) {
@@ -28,13 +28,6 @@ TEST(TestDirectedGraph, Destructor) {
     DirectedGraph *g = new DirectedGraph(N);
     ASSERT_EQ(g->size(), N_SIZE);
     delete g;
-}
-
-TEST(TestDirectedGraph, PointerContructor) {
-    igraph_t ig;
-    igraph_empty(&ig, N_SIZE, IGRAPH_DIRECTED);
-    DirectedGraph g(&ig);
-    ASSERT_EQ(g.size(), N_SIZE);
 }
 
 TEST(TestDirectedGraph, FormulaConstructor) {

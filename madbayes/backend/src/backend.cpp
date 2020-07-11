@@ -18,18 +18,19 @@ PYBIND11_MODULE(backend, m) {
     m.doc() = "MADBayes is a Python library about Bayesian Networks - Backend";
 
     py::class_<Graph>(m, "Graph")
-        .def(py::init<const std::string &>())
-        .def(py::init<const Nodes &>())
-        .def(py::init<const Edges &>())
+        .def(py::init<>())
+        .def(py::init<const std::string &>(), py::arg("formula"))
+        .def(py::init<const Nodes &>(), py::arg("nodes"))
+        .def(py::init<const Edges &>(), py::arg("edges"))
         .def_property("nodes", &Graph::get_nodes, &Graph::set_nodes)
         .def_property_readonly("edges", &Graph::get_edges)
-        .def("add_node", &Graph::add_node)
-        .def("remove_node", &Graph::remove_node)
-        .def("add_edge", &Graph::add_edge)
-        .def("remove_edge", &Graph::remove_edge)
-        .def("subgraph", &Graph::subgraph)
+        .def("add_node", &Graph::add_node, py::arg("node"))
+        .def("remove_node", &Graph::remove_node, py::arg("node"))
+        .def("add_edge", &Graph::add_edge, py::arg("from"), py::arg("to"))
+        .def("remove_edge", &Graph::remove_edge, py::arg("from"), py::arg("to"))
+        .def("subgraph", &Graph::subgraph, py::arg("nodes"))
         .def("is_directed", &Graph::is_directed)
         .def("is_chordal", &Graph::is_chordal)
-        .def("neighbors", &Graph::neighbors)
-        .def("boundary", &Graph::boundary);
+        .def("neighbors", &Graph::neighbors, py::arg("node"))
+        .def("boundary", &Graph::boundary, py::arg("nodes"));
 }

@@ -8,8 +8,8 @@
 using namespace madbayes::structures;
 
 TEST(TestGraph, DefaultContructor) {
-    Graph g(N);
-    ASSERT_EQ(g.size(), N_SIZE);
+    Graph g0, g1(N);
+    ASSERT_EQ(g1.size(), N_SIZE);
 }
 
 TEST(TestGraph, CopyConstructor) {
@@ -28,13 +28,6 @@ TEST(TestGraph, Destructor) {
     Graph *g = new Graph(N);
     ASSERT_EQ(g->size(), N_SIZE);
     delete g;
-}
-
-TEST(TestGraph, PointerContructor) {
-    igraph_t ig;
-    igraph_empty(&ig, N_SIZE, IGRAPH_UNDIRECTED);
-    Graph g(&ig);
-    ASSERT_EQ(g.size(), N_SIZE);
 }
 
 TEST(TestGraph, FormulaConstructor) {
@@ -73,10 +66,8 @@ TEST(TestGraph, GetNodes) {
 }
 
 TEST(TestGraph, SetNodes) {
-    igraph_t ig;
-    igraph_empty(&ig, N_SIZE, IGRAPH_UNDIRECTED);
-    Graph g(&ig);
-    ASSERT_NE(g.get_nodes(), Nodes(N));
+    Graph g(N);
+    ASSERT_EQ(g.get_nodes(), Nodes(N));
     g.set_nodes(N);
     ASSERT_EQ(g.get_nodes(), Nodes(N));
 }

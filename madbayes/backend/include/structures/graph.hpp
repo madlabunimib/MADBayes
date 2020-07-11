@@ -21,7 +21,11 @@ using Nodes = std::vector<Node>;
 using Edge = std::pair<std::string, std::string>;
 using Edges = std::vector<Edge>;
 
+class DirectedGraph;
+
 class Graph {
+    friend DirectedGraph;
+
    protected:
     igraph_t graph;
     std::vector<std::string> vid2label;
@@ -31,8 +35,10 @@ class Graph {
     std::string get_node_attribute(size_t id, const std::string &key) const;
     void set_node_attribute(size_t id, const std::string &key, const std::string &value);
 
-   public:
     explicit Graph(const igraph_t *other);
+
+   public:
+    Graph();
     Graph(const std::string &formula, bool mode = IGRAPH_UNDIRECTED);
     Graph(const Nodes &labels, bool mode = IGRAPH_UNDIRECTED);
     Graph(const Edges &edges, bool mode = IGRAPH_UNDIRECTED);

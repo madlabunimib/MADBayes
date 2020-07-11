@@ -6,7 +6,7 @@ namespace madbayes {
 
 namespace structures {
 
-DirectedGraph::DirectedGraph(const igraph_t *other) : Graph(other) {}
+DirectedGraph::DirectedGraph() : Graph() { igraph_to_directed(&graph, IGRAPH_TO_DIRECTED_MUTUAL); }
 
 DirectedGraph::DirectedGraph(const std::string &formula) : Graph(formula, IGRAPH_DIRECTED) {}
 
@@ -31,6 +31,8 @@ DirectedGraph &DirectedGraph::operator=(const DirectedGraph &other) {
 DirectedGraph::~DirectedGraph() {
     igraph_destroy(&graph);
 }
+
+DirectedGraph::DirectedGraph(const igraph_t *other) : Graph(other) {}
 
 bool DirectedGraph::is_dag() const {
     igraph_bool_t out;

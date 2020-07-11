@@ -7,8 +7,11 @@ namespace madbayes {
 namespace structures {
 
 class DirectedGraph : public Graph {
-   public:
+   protected:
     explicit DirectedGraph(const igraph_t *other);
+
+   public:
+    DirectedGraph();
     explicit DirectedGraph(const std::string &formula);
     explicit DirectedGraph(const Nodes &labels);
     explicit DirectedGraph(const Edges &edges);

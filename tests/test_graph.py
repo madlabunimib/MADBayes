@@ -3,11 +3,12 @@ from . import madbayes as mb
 
 def test_graph():
     # Test base constructor
-    graph = mb.Graph()
+    graph = mb.backend.Graph()
 
     # Test costructor by nodes
     nodes = ['A', 'B', 'C']
-    graph = mb.Graph(nodes=nodes)
+    graph = mb.backend.Graph(nodes=nodes)
+    assert(graph.nodes == nodes)
 
     # Test constructor by adjacency_matrix
     N = 5
@@ -18,18 +19,18 @@ def test_graph():
 def test_graph_nodes():
     # Test node getter
     nodes = ['A', 'B', 'C']
-    graph = mb.Graph(nodes=nodes)
-    assert(graph.nodes() == nodes)
+    graph = mb.backend.Graph(nodes=nodes)
+    assert(graph.nodes == nodes)
 
     # Test node setter
     nodes = ['E', 'D', 'F']
-    graph.set_nodes(nodes)
-    assert(graph.nodes() == nodes)
+    graph.nodes = nodes
+    assert(graph.nodes == nodes)
 
     # Test adding a node
     graph.add_node('A')
-    assert(graph.nodes() == nodes + ['A'])
+    assert(graph.nodes == nodes + ['A'])
 
     # Test removing a node
     graph.remove_node('D')
-    assert(graph.nodes() == ['E', 'F', 'A'])
+    assert(graph.nodes == ['E', 'F', 'A'])
