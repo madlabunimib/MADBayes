@@ -1,6 +1,7 @@
 import numpy as np
 from . import madbayes as mb
 
+
 def test_graph():
     # Test base constructor
     graph = mb.backend.Graph()
@@ -13,8 +14,10 @@ def test_graph():
     # Test constructor by adjacency_matrix
     N = 5
     p = 0.7
-    adjacency_matrix = np.random.choice(a=[False, True], size=(N, N), p=[p, 1-p])
+    adjacency_matrix = np.random.choice(
+        a=[False, True], size=(N, N), p=[p, 1-p])
     graph = mb.Graph(adjacency_matrix=adjacency_matrix)
+
 
 def test_graph_nodes():
     # Test node getter
