@@ -12,6 +12,8 @@ DirectedGraph::DirectedGraph(const std::string &formula) : Graph(formula, IGRAPH
 
 DirectedGraph::DirectedGraph(const Nodes &labels) : Graph(labels, IGRAPH_DIRECTED) {}
 
+DirectedGraph::DirectedGraph(const Edges &edges) : Graph(edges, IGRAPH_DIRECTED) {}
+
 DirectedGraph::DirectedGraph(const Graph &other) : Graph(other) {
     igraph_to_directed(&graph, IGRAPH_TO_DIRECTED_MUTUAL);
 }

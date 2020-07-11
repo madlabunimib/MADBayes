@@ -11,6 +11,7 @@ class DirectedGraph : public Graph {
     explicit DirectedGraph(const igraph_t *other);
     explicit DirectedGraph(const std::string &formula);
     explicit DirectedGraph(const Nodes &labels);
+    explicit DirectedGraph(const Edges &edges);
     DirectedGraph(const Graph &other);
     DirectedGraph(const DirectedGraph &other);
     DirectedGraph &operator=(const DirectedGraph &other);

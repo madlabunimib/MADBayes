@@ -35,6 +35,7 @@ class Graph {
     explicit Graph(const igraph_t *other);
     Graph(const std::string &formula, bool mode = IGRAPH_UNDIRECTED);
     Graph(const Nodes &labels, bool mode = IGRAPH_UNDIRECTED);
+    Graph(const Edges &edges, bool mode = IGRAPH_UNDIRECTED);
     Graph(const Graph &other);
     Graph &operator=(const Graph &other);
     virtual ~Graph();

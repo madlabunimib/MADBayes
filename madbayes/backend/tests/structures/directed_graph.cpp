@@ -52,6 +52,21 @@ TEST(TestDirectedGraph, FormulaConstructor) {
     ASSERT_EQ(g.get_edges(), edges);
 }
 
+TEST(TestDirectedGraph, EdgesConstructor) {
+    Nodes nodes = {"A", "B", "C", "D"};
+    Edges edges = {
+        {"A", "B"},
+        {"A", "C"},
+        {"B", "C"},
+        {"A", "D"},
+        {"B", "D"},
+        {"C", "D"}
+    };
+    DirectedGraph g(edges);
+    ASSERT_EQ(g.get_nodes(), nodes);
+    ASSERT_EQ(g.get_edges(), edges);
+}
+
 TEST(TestDirectedGraph, IsDirected) {
     DirectedGraph g(N);
     ASSERT_TRUE(g.is_directed());

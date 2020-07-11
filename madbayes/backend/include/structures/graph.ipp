@@ -22,6 +22,22 @@ Graph::Graph(const Nodes &labels, bool mode) {
     sync_nodes_labels();
 }
 
+Graph::Graph(const Edges &edges, bool mode) {
+    std::set<Node> nodes;
+    for (Edge e : edges) {
+        nodes.insert(e.first);
+        nodes.insert(e.second);
+    }
+    igraph_empty(&graph, nodes.size(), mode);
+    size_t i = 0;
+    for (Node n: nodes) {
+        set_node_attribute(i, "label", n);
+        i++;
+    }
+    sync_nodes_labels();
+    for (Edge e : edges) add_edge(e.first, e.second);
+}
+
 Graph::Graph(const Graph &other) {
     igraph_copy(&graph, &other.graph);
     sync_nodes_labels();
