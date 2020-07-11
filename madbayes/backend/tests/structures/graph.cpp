@@ -86,6 +86,12 @@ TEST(TestGraph, GetEdges) {
     ASSERT_EQ(g.get_edges(), edges);
 }
 
+TEST(TestGraph, HasNode) {
+    Graph g(N);
+    ASSERT_TRUE(g.has_node(g.get_nodes()[0]));
+    ASSERT_FALSE(g.has_node(""));
+}
+
 TEST(TestGraph, AddNode) {
     Graph g(N);
     ASSERT_EQ(g.get_nodes(), Nodes(N));
@@ -102,6 +108,13 @@ TEST(TestGraph, RemoveNode) {
     g.remove_node(nodes[2]);
     nodes.erase(nodes.cbegin() + 2);
     ASSERT_EQ(g.get_nodes(), nodes);
+}
+
+TEST(TestGraph, HasEdge) {
+    Graph g("[A|B][B|C][C|D][D|A]");
+    ASSERT_TRUE(g.has_edge("A", "B"));
+    ASSERT_TRUE(g.has_edge("B", "A"));
+    ASSERT_FALSE(g.has_edge("B", "D"));
 }
 
 TEST(TestGraph, AddEdge) {

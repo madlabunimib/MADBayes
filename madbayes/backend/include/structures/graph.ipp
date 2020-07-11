@@ -145,6 +145,10 @@ Edges Graph::get_edges() const {
     return edges;
 }
 
+bool Graph::has_node(const Node &label) const {
+    return label2vid.find(label) != label2vid.end();
+}
+
 void Graph::add_node(const Node &label) {
     if (label2vid.find(label) != label2vid.end()) throw std::runtime_error("Node already exists.");
     igraph_add_vertices(&graph, 1, 0);
@@ -156,6 +160,14 @@ void Graph::remove_node(const Node &label) {
     if (label2vid.find(label) == label2vid.end()) throw std::runtime_error("Node does not exist.");
     igraph_delete_vertices(&graph, igraph_vss_1(label2vid[label]));
     sync_nodes_labels();
+}
+
+bool Graph::has_edge(const Node &from, const Node &to) const {
+    int edge;
+    if (label2vid.find(from) == label2vid.end()) throw std::runtime_error("Node does not exist.");
+    if (label2vid.find(to) == label2vid.end()) throw std::runtime_error("Node does not exist.");
+    igraph_get_eid(&graph, &edge, label2vid.at(from), label2vid.at(to), is_directed(), false);
+    return edge >= 0;
 }
 
 void Graph::add_edge(const Node &from, const Node &to) {

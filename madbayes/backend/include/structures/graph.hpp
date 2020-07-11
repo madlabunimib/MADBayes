@@ -51,9 +51,11 @@ class Graph {
 
     Edges get_edges() const;
 
+    bool has_node(const Node &label) const;
     void add_node(const Node &label);
     void remove_node(const Node &label);
 
+    bool has_edge(const Node &from, const Node &to) const;
     void add_edge(const Node &from, const Node &to);
     void remove_edge(const Node &from, const Node &to);
 
