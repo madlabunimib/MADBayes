@@ -22,7 +22,7 @@ class DirectedGraph : public Graph {
 
     bool is_dag() const;
 
-    Graph to_undirected();
+    Graph to_undirected() const;
 
     Nodes parents(const Node &label) const;
     Nodes family(const Node &label) const;

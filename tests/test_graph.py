@@ -37,3 +37,17 @@ def test_graph_nodes():
     # Test removing a node
     graph.remove_node('D')
     assert(graph.nodes == ['E', 'F', 'A'])
+
+def test_graph_edges():
+    # Test edge getter
+    edges = [('A', 'B'), ('B', 'C')]
+    graph = mb.backend.Graph(edges=edges)
+    assert(graph.edges == edges)
+
+    # Test adding an edge
+    graph.add_edge('A', 'C')
+    assert(graph.edges == edges + [('A', 'C')])
+
+    # Test removing an edge
+    graph.remove_edge('B', 'C')
+    assert(graph.edges == [('A', 'B'), ('A', 'C')])

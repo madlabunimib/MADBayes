@@ -40,7 +40,7 @@ bool DirectedGraph::is_dag() const {
     return out;
 }
 
-Graph DirectedGraph::to_undirected() {
+Graph DirectedGraph::to_undirected() const {
     igraph_t undirected;
     igraph_copy(&undirected, &graph);
     igraph_to_undirected(&undirected, IGRAPH_TO_UNDIRECTED_COLLAPSE, 0);

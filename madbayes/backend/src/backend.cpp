@@ -10,12 +10,15 @@
 
 #include <backend.hpp>
 
+using namespace madbayes::algorithms;
 using namespace madbayes::structures;
 
 namespace py = pybind11;
 
 PYBIND11_MODULE(backend, m) {
     m.doc() = "MADBayes is a Python library about Bayesian Networks - Backend";
+
+    // Stuctures
 
     py::class_<Graph>(m, "Graph")
         .def(py::init<>())
@@ -45,5 +48,9 @@ PYBIND11_MODULE(backend, m) {
         .def("children", &DirectedGraph::children, py::arg("node"))
         .def("ancestors", &DirectedGraph::ancestors, py::arg("node"))
         .def("descendants", &DirectedGraph::descendants, py::arg("node"));
+    
+    // Algorithms
+
+    m.def("moral", &moral, py::arg("graph"));
 
 }
