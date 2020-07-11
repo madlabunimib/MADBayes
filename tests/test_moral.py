@@ -14,5 +14,5 @@ def test_moralize():
         G = moral(G)
         g = mb.backend.moral(g)
 
-        edges = [tuple([str(e) for e in edge]) for edge in G.edges]
+        edges = [tuple(sorted([str(e) for e in edge])) for edge in G.edges]
         assert(sorted(edges) == sorted(g.edges))
