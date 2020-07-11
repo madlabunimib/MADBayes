@@ -33,4 +33,17 @@ PYBIND11_MODULE(backend, m) {
         .def("is_chordal", &Graph::is_chordal)
         .def("neighbors", &Graph::neighbors, py::arg("node"))
         .def("boundary", &Graph::boundary, py::arg("nodes"));
+    
+    py::class_<DirectedGraph, Graph>(m, "DirectedGraph")
+        .def(py::init<>())
+        .def(py::init<const std::string &>(), py::arg("formula"))
+        .def(py::init<const Nodes &>(), py::arg("nodes"))
+        .def(py::init<const Edges &>(), py::arg("edges"))
+        .def("is_dag", &DirectedGraph::is_dag)
+        .def("parents", &DirectedGraph::parents, py::arg("node"))
+        .def("family", &DirectedGraph::family, py::arg("node"))
+        .def("children", &DirectedGraph::children, py::arg("node"))
+        .def("ancestors", &DirectedGraph::ancestors, py::arg("node"))
+        .def("descendants", &DirectedGraph::descendants, py::arg("node"));
+
 }
