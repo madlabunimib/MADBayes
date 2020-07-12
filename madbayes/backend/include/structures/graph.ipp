@@ -7,8 +7,10 @@ namespace madbayes {
 namespace structures {
 
 void igraph_error_handler_exception(const char *reason, const char *file, int line, int igraph_errno) {
-    fprintf(stderr, "Exception at %s:%i :%s, %s\n", file, line, reason, igraph_strerror(igraph_errno));
-    throw std::runtime_error(reason);
+    std::ostringstream out;
+    out << "Exception at " << file << ":" << line << " :";
+    out << reason << ", " << igraph_strerror(igraph_errno) << "\n";
+    throw std::runtime_error(out.str());
 }
 
 static size_t igraph_error_handler = (size_t)igraph_set_error_handler(igraph_error_handler_exception);
