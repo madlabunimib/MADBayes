@@ -1,4 +1,3 @@
-import numpy as np
 import networkx as nx
 from networkx.algorithms.moral import moral_graph as moral
 from . import madbayes as mb

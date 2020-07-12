@@ -30,7 +30,7 @@ class DirectedGraph : public Graph {
     Nodes ancestors(const Node &label) const;
     Nodes descendants(const Node &label) const;
 
-    template<typename T>
+    template <typename T>
     friend T chordal(const T &other);
 };
 

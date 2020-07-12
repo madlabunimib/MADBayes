@@ -78,6 +78,8 @@ class Graph {
     template <typename T>
     friend T chordal(const T &other);
 
+    friend std::vector<Nodes> maximal_cliques(const Graph &other);
+
     std::string __repr__() const;
 };
 

@@ -1,4 +1,3 @@
-import numpy as np
 import networkx as nx
 from . import madbayes as mb
 

@@ -56,6 +56,7 @@ PYBIND11_MODULE(backend, m) {
 
     m.def("chordal", &chordal<Graph>, py::arg("other"));
     m.def("chordal", &chordal<DirectedGraph>, py::arg("other"));
+    m.def("maximal_cliques", &maximal_cliques, py::arg("other"));
     m.def("moral", &moral, py::arg("other"));
 
 }
