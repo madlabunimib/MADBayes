@@ -6,13 +6,15 @@ namespace madbayes {
 
 namespace structures {
 
-std::vector<size_t> maximum_cardinality_search(const Graph &other) {
+Nodes maximum_cardinality_search(const Graph &other) {
     igraph_vector_t alpha;
+    igraph_vector_init(&alpha, 0);
     igraph_maximum_cardinality_search(&other.graph, &alpha, 0);
-    std::vector<size_t> out;
+    Nodes out = other.vid2label;
     for (int i = 0; i < igraph_vector_size(&alpha); i++) {
-        out.push_back(VECTOR(alpha)[i]);
+        out[VECTOR(alpha)[i]] = other.vid2label[i];
     }
+    igraph_vector_destroy(&alpha);
     return out;
 }
 

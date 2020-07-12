@@ -2,29 +2,16 @@ import numpy as np
 import networkx as nx
 from . import madbayes as mb
 
+
 def test_perfect_numbering():
-    # Generate random graphs from nodes count
-    nodes = [2, 10, 25, 50]
-    graphs = [
-        nx.gnp_random_graph(n, 0.5, directed=True)
-        for n in nodes
-    ]
-    # Transform to Wi Graphs
-    graphs = [mb.Graph.from_networkx(G) for G in graphs]
-    graphs = [mb.triangulate(graph) for graph in graphs]
-    numberings = [mb.perfect_numbering(graph) for graph in graphs]
-    numberings = [
-        [
-            set(mb.boundary(graphs[i], numbering[:j])).intersection(set(numbering[:j-1]))
-            for j, _ in enumerate(numbering)
-        ]
-        for i, numbering in enumerate(numberings)
-    ]
-    numberings = [
-        all([
-            mb.is_complete(mb.subgraph(graphs[i], list(nodes)))
-            for nodes in numbering
-        ])
-        for i, numbering in enumerate(numberings)
-    ]
-    assert(all(numberings))
+    for nodes in [10, 25, 50, 100]:
+        g = mb.backend.Graph.random(nodes, 0.5)
+        g = mb.backend.chordal(g)
+        numbering = mb.backend.maximum_cardinality_search(g)
+        # A numbering is perfect iff the subset of nodes derived
+        # from boundary(alpha[i]) \cap {alpha[1], ..., alpha[i-1]}
+        # identify a complete graph.
+        for i in range(1, len(numbering), 1):
+            subgraph = set(g.boundary([numbering[i]])).intersection(set(numbering[:i]))
+            subgraph = g.subgraph(list(subgraph))
+            assert(subgraph.is_complete())
