@@ -1,6 +1,6 @@
 #pragma once
 
-#include <structures/directed_graph.ipp>
+#include <structures/graph.hpp>
 
 namespace madbayes {
 

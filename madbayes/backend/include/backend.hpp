@@ -3,6 +3,8 @@
 #include "structures/graph.ipp"
 #include "structures/directed_graph.ipp"
 
+#include "algorithms/chain_cliques.ipp"
 #include "algorithms/chordal.ipp"
 #include "algorithms/maximal_cliques.ipp"
+#include "algorithms/maximum_cardinality_search.ipp"
 #include "algorithms/moral.ipp"

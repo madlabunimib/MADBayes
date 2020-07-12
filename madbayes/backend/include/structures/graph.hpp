@@ -75,10 +75,9 @@ class Graph {
     Nodes neighbors(const Node &label) const;
     Nodes boundary(const Nodes &labels) const;
 
-    template <typename T>
-    friend T chordal(const T &other);
-
+    friend Graph chordal(const Graph &other);
     friend std::vector<Nodes> maximal_cliques(const Graph &other);
+    friend std::vector<size_t> maximum_cardinality_search(const Graph &other);
 
     std::string __repr__() const;
 
