@@ -113,10 +113,12 @@ void Graph::sync_nodes_labels() {
     vid2label.clear();
     label2vid.clear();
     for (size_t i = 0; i < size(); i++) {
-        std::string label = std::to_string(i);
+        std::string label;
         try {
             label = get_node_attribute(i, "label");
+            if (label.size() <= 0) throw std::runtime_error("Invalid node label.");
         } catch(const std::exception& e) {
+            label = std::to_string(i);
             set_node_attribute(i, "label", label);
         }
         vid2label.push_back(label);
