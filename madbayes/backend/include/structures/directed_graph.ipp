@@ -105,6 +105,20 @@ Nodes DirectedGraph::descendants(const Node &label) const {
     return out;
 }
 
+DirectedGraph DirectedGraph::random(size_t nodes, double edge_probability) {
+    igraph_t graph;
+    igraph_erdos_renyi_game(
+        &graph,
+        IGRAPH_ERDOS_RENYI_GNP,
+        nodes,
+        edge_probability,
+        IGRAPH_DIRECTED,
+        false
+    );
+    DirectedGraph out(&graph);
+    return out;
+}
+
 }  // namespace structures
 
 }  // namespace madbayes

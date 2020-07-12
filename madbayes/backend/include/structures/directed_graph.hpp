@@ -32,6 +32,8 @@ class DirectedGraph : public Graph {
 
     template <typename T>
     friend T chordal(const T &other);
+
+    static DirectedGraph random(size_t nodes, double edge_probability);
 };
 
 }  // namespace structures

@@ -38,7 +38,8 @@ PYBIND11_MODULE(backend, m) {
         .def("is_chordal", &Graph::is_chordal)
         .def("neighbors", &Graph::neighbors, py::arg("node"))
         .def("boundary", &Graph::boundary, py::arg("nodes"))
-        .def("__repr__", &Graph::__repr__);
+        .def("__repr__", &Graph::__repr__)
+        .def_static("random", &Graph::random, py::arg("nodes"), py::arg("edge_probability"));
     
     py::class_<DirectedGraph, Graph>(m, "DirectedGraph")
         .def(py::init<>())
@@ -50,7 +51,8 @@ PYBIND11_MODULE(backend, m) {
         .def("family", &DirectedGraph::family, py::arg("node"))
         .def("children", &DirectedGraph::children, py::arg("node"))
         .def("ancestors", &DirectedGraph::ancestors, py::arg("node"))
-        .def("descendants", &DirectedGraph::descendants, py::arg("node"));
+        .def("descendants", &DirectedGraph::descendants, py::arg("node"))
+        .def_static("random", &DirectedGraph::random, py::arg("nodes"), py::arg("edge_probability"));
     
     // Algorithms
 

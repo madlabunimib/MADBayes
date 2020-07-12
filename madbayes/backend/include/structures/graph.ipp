@@ -283,6 +283,20 @@ std::string Graph::__repr__() const {
     return out.str();
 }
 
+Graph Graph::random(size_t nodes, double edge_probability) {
+    igraph_t graph;
+    igraph_erdos_renyi_game(
+        &graph,
+        IGRAPH_ERDOS_RENYI_GNP,
+        nodes,
+        edge_probability,
+        IGRAPH_UNDIRECTED,
+        false
+    );
+    Graph out(&graph);
+    return out;
+}
+
 }  // namespace structures
 
 }  // namespace madbayes

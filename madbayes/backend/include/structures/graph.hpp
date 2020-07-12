@@ -81,6 +81,8 @@ class Graph {
     friend std::vector<Nodes> maximal_cliques(const Graph &other);
 
     std::string __repr__() const;
+
+    static Graph random(size_t nodes, double edge_probability);
 };
 
 }  // namespace structures
