@@ -52,7 +52,7 @@ Graph DirectedGraph::to_undirected() const {
 Nodes DirectedGraph::parents(const Node &label) const {
     Nodes out;
     igraph_vector_t parents;
-    igraph_vector_init(&parents, 1);
+    igraph_vector_init(&parents, 0);
     igraph_neighbors(&graph, &parents, label2vid.at(label), IGRAPH_IN);
     for (int64_t i = 0; i < igraph_vector_size(&parents); i++) {
         out.push_back(vid2label[VECTOR(parents)[i]]);
@@ -70,7 +70,7 @@ Nodes DirectedGraph::family(const Node &label) const {
 Nodes DirectedGraph::children(const Node &label) const {
     Nodes out;
     igraph_vector_t children;
-    igraph_vector_init(&children, 1);
+    igraph_vector_init(&children, 0);
     igraph_neighbors(&graph, &children, label2vid.at(label), IGRAPH_OUT);
     for (int64_t i = 0; i < igraph_vector_size(&children); i++) {
         out.push_back(vid2label[VECTOR(children)[i]]);

@@ -210,7 +210,7 @@ Graph Graph::subgraph(const Nodes &labels) const {
         VECTOR(nodes)[i] = label2vid.at(labels[i]);
     }
     igraph_vs_vector(&select, &nodes);
-    igraph_subgraph(&graph, &subgraph, select);
+    igraph_induced_subgraph(&graph, &subgraph, select, IGRAPH_SUBGRAPH_AUTO);
     igraph_vs_destroy(&select);
     igraph_vector_destroy(&nodes);
     Graph out(&subgraph);
@@ -238,7 +238,7 @@ bool Graph::is_complete() const {
 Nodes Graph::neighbors(const Node &label) const {
     Nodes out;
     igraph_vector_t neighbors;
-    igraph_vector_init(&neighbors, 1);
+    igraph_vector_init(&neighbors, 0);
     igraph_neighbors(&graph, &neighbors, label2vid.at(label), IGRAPH_ALL);
     for (int64_t i = 0; i < igraph_vector_size(&neighbors); i++) {
         out.push_back(vid2label[VECTOR(neighbors)[i]]);
