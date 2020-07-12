@@ -3,3 +3,4 @@ sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 51716619E084DAB9
 sudo add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran35/'
 sudo apt-get update
 sudo apt-get -y install r-base r-base-dev
+sudo apt-get -y install libigraph0-dev libgraphviz-dev graphviz
