@@ -71,6 +71,7 @@ class Graph {
     size_t size() const;
     bool is_directed() const;
     bool is_chordal() const;
+    bool is_complete() const;
 
     Nodes neighbors(const Node &label) const;
     Nodes boundary(const Nodes &labels) const;

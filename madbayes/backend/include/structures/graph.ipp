@@ -228,6 +228,13 @@ bool Graph::is_chordal() const {
     return out;
 }
 
+bool Graph::is_complete() const {
+    for (Node node : get_nodes())
+        if (neighbors(node).size() < size() - 1)
+            return false;
+    return true;
+}
+
 Nodes Graph::neighbors(const Node &label) const {
     Nodes out;
     igraph_vector_t neighbors;

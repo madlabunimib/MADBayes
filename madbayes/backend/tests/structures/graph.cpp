@@ -160,6 +160,12 @@ TEST(TestGraph, IsChordal) {
     ASSERT_TRUE(g1.is_chordal());
 }
 
+TEST(TestGraph, IsComplete) {
+    Graph g0("[A|B][B|C]"), g1("[A|B][B|C][A|C]");
+    ASSERT_FALSE(g0.is_complete());
+    ASSERT_TRUE(g1.is_complete());
+}
+
 TEST(TestGraph, Neighbors) {
     Graph g("[A][B|A][C|A:B][D|A:B:C]");
     ASSERT_EQ(g.neighbors("A"), Nodes({"B", "C", "D"}));

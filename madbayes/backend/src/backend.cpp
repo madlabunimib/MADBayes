@@ -36,6 +36,7 @@ PYBIND11_MODULE(backend, m) {
         .def("subgraph", &Graph::subgraph, py::arg("nodes"))
         .def("is_directed", &Graph::is_directed)
         .def("is_chordal", &Graph::is_chordal)
+        .def("is_complete", &Graph::is_complete)
         .def("neighbors", &Graph::neighbors, py::arg("node"))
         .def("boundary", &Graph::boundary, py::arg("nodes"))
         .def("__repr__", &Graph::__repr__)
