@@ -18,6 +18,18 @@ MADBayes is a Python library about Bayesian Networks.
 
 ## How to Install
 
+Clone the repository including submodules:
+
+  git clone --recurse-submodules -j8 https://github.com/madlabunimib/MADBayes.git
+
+Install the required system libraries:
+
+  sudo apt-get install libigraph0-dev libgraphviz-dev graphviz
+
+Build the package with C++ backend and install:
+
+  cd MADBayes && sudo python3 setup.py install
+
 ## Contents
 
 ### Legend

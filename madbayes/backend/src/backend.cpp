@@ -37,7 +37,8 @@ PYBIND11_MODULE(backend, m) {
         .def("is_directed", &Graph::is_directed)
         .def("is_chordal", &Graph::is_chordal)
         .def("neighbors", &Graph::neighbors, py::arg("node"))
-        .def("boundary", &Graph::boundary, py::arg("nodes"));
+        .def("boundary", &Graph::boundary, py::arg("nodes"))
+        .def("__repr__", &Graph::__repr__);
     
     py::class_<DirectedGraph, Graph>(m, "DirectedGraph")
         .def(py::init<>())

@@ -252,7 +252,7 @@ class DirectedGraph(Graph):
         G = self.to_networkx()
         nx.draw(
             G,
-            pos=nx.nx_pydot.graphviz_layout(G, prog='dot'),
+            pos=nx.nx_agraph.pygraphviz_layout(G, prog='dot'),
             with_labels=True
         )
         plt.show()

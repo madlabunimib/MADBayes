@@ -252,6 +252,33 @@ Nodes Graph::boundary(const Nodes &labels) const {
     return out;
 }
 
+FILE *Graph::open_dot_file() const {
+    FILE *out = std::tmpfile();
+    igraph_write_graph_dot(&graph, out);
+    rewind(out);
+    return out;
+}
+
+std::string Graph::__repr__() const {
+    size_t size;
+    char *buffer;
+    std::stringstream out;
+    FILE *tmp = open_dot_file();
+    if (tmp) {
+        fseek(tmp, 0, SEEK_END);
+        size = ftell(tmp);
+        fseek(tmp, 0, SEEK_SET);
+        buffer = (char *) malloc(size);
+        if (buffer) size = fread(buffer, 1, size, tmp);
+        fclose(tmp);
+    }
+    if (buffer) {
+        out << buffer;
+        free(buffer);
+    }
+    return out.str();
+}
+
 }  // namespace structures
 
 }  // namespace madbayes

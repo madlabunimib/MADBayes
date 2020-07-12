@@ -3,9 +3,13 @@
 #include <igraph/igraph.h>
 
 #include <algorithm>
+#include <cstdio>
+#include <cstdlib>
+#include <iostream>
 #include <list>
 #include <regex>
 #include <set>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
@@ -25,6 +29,9 @@ class DirectedGraph;
 
 class Graph {
     friend DirectedGraph;
+
+   private:
+    FILE *open_dot_file() const;
 
    protected:
     igraph_t graph;
@@ -68,8 +75,10 @@ class Graph {
     Nodes neighbors(const Node &label) const;
     Nodes boundary(const Nodes &labels) const;
 
-    template<typename T>
+    template <typename T>
     friend T chordal(const T &other);
+
+    std::string __repr__() const;
 };
 
 }  // namespace structures

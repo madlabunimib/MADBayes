@@ -92,8 +92,8 @@ setup(
     cmdclass=dict(build_ext=CMakeBuild),
     zip_safe=False,
     install_requires=[
-        'pydot',
         'matplotlib',
+        'pygraphviz',
         'networkx>=2.4',
         'numpy',
         'scipy',

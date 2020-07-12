@@ -1,5 +1,5 @@
-pydot
 matplotlib
+pygraphviz
 networkx>=2.4
 numpy
 scipy
