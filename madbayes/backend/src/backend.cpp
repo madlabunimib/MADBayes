@@ -57,6 +57,7 @@ PYBIND11_MODULE(backend, m) {
     
     // Algorithms
 
+    m.def("chain_of_cliques", &chain_of_cliques, py::arg("cliques"), py::arg("alpha"));
     m.def("chordal", &chordal, py::arg("other"));
     m.def("maximal_cliques", &maximal_cliques, py::arg("other"));
     m.def("maximum_cardinality_search", &maximum_cardinality_search, py::arg("other"));
