@@ -11,7 +11,7 @@ def test_perfect_numbering():
         # A numbering is perfect iff the subset of nodes derived
         # from boundary(alpha[i]) \cap {alpha[1], ..., alpha[i-1]}
         # identify a complete graph.
-        for i in range(1, len(numbering), 1):
-            subgraph = set(g.boundary([numbering[i]])).intersection(set(numbering[:i]))
+        for i, node in enumerate(numbering, start=1):
+            subgraph = set(g.neighbors(node)).intersection(set(numbering[:i]))
             subgraph = g.subgraph(list(subgraph))
             assert(subgraph.is_complete())
