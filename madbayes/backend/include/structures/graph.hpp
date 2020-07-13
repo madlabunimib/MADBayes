@@ -22,7 +22,7 @@ namespace structures {
 
 using Node = std::string;
 using Nodes = std::vector<Node>;
-using Edge = std::pair<std::string, std::string>;
+using Edge = std::pair<Node, Node>;
 using Edges = std::vector<Edge>;
 
 class DirectedGraph;
@@ -35,8 +35,8 @@ class Graph {
 
    protected:
     igraph_t graph;
-    std::vector<std::string> vid2label;
-    std::unordered_map<std::string, size_t> label2vid;
+    std::vector<Node> vid2label;
+    std::unordered_map<Node, size_t> label2vid;
     void sync_nodes_labels();
 
     std::string get_node_attribute(size_t id, const std::string &key) const;
