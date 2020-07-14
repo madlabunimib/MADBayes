@@ -55,6 +55,8 @@ PYBIND11_MODULE(backend, m) {
         .def("descendants", &DirectedGraph::descendants, py::arg("node"))
         .def_static("random", &DirectedGraph::random, py::arg("nodes"), py::arg("edge_probability"));
     
+    m.def("ProbabilityTable", &ProbabilityTable, py::arg("data"), py::arg("coordinates"));
+    
     // Algorithms
 
     m.def("chain_of_cliques", &chain_of_cliques, py::arg("cliques"), py::arg("alpha"));
