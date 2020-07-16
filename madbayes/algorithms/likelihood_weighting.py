@@ -25,7 +25,7 @@ def likelihood_weighting(bn: BayesianNetwork, query: Dict, n_samples: int, evide
     samples = pool.starmap(_sample, params)
     pool.close()
     pool.join()
-    
+
     return _compute_probability(query, samples)
 
 
@@ -50,8 +50,8 @@ def _sample(bn: BayesianNetwork, order: List, evidence: Dict):
             x_i = evidence[X_i]
             sample._set_value(X_i, x_i)
             u_i = parents(bn, X_i)
-            p_u_i = {par : sample[par] for par in u_i}
-            p_u_i.update({X_i : x_i})
+            p_u_i = {par: sample[par] for par in u_i}
+            p_u_i.update({X_i: x_i})
             w *= bn[X_i]["CPT"].loc[p_u_i].values
     return sample, w
 
