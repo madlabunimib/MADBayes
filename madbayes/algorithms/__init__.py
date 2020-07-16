@@ -3,6 +3,7 @@ from .breadth_first_search import BFS, is_reachable
 from .bron_kerbosh import bron_kerbosh
 from .chain_of_cliques import chain_of_cliques
 from .depth_first_search import DFS
+from .find_topological_ordering import find_topological_order
 from .hill_climbing import hill_climbing
 from .impute import impute
 from .junction_tree import junction_tree

@@ -9,6 +9,7 @@ from copy import deepcopy
 
 from ..structures import DirectedGraph, BayesianNetwork, Dataset
 from .nodes import parents, children
+from . import find_topological_order
 
 if TYPE_CHECKING:
     from typing import List, Set
@@ -16,7 +17,7 @@ if TYPE_CHECKING:
 
 
 def forward_sampling(bn: BayesianNetwork, n_samples: int):
-    order = _find_order(bn)
+    order = find_topological_order(bn)
 
     params = [
         (bn, order)
@@ -45,32 +46,3 @@ def _sample(bn: BayesianNetwork, order: List):
                 sample._set_value(var, bn[var]["CPT"].levels(var)[i])
                 break
     return sample
-
-
-def _find_order(dag: DirectedGraph) -> List:
-    tmp_dag = deepcopy(dag)
-    order = []
-    visited = set()
-    # Start with a random node
-    _find_order_rec(tmp_dag, dag.nodes()[0], order, visited)
-    return order
-
-
-def _find_order_rec(dag: DirectedGraph, node: Node, order: List, visited: Set) -> None:
-    try:
-        parents_list = parents(dag, node)
-        while len(parents_list) > 0:
-            parent = parents_list.pop()
-            _find_order_rec(dag, parent, order, visited)
-
-        if node not in visited:
-            visited.add(node)
-            order.append(node)
-            children_list = children(dag, node)
-            dag.remove_node(node)
-
-            while len(children_list) > 0:
-                child = children_list.pop()
-                _find_order_rec(dag, child, order, visited)
-    except:
-        pass
