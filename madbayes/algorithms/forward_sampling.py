@@ -5,15 +5,12 @@ from typing import TYPE_CHECKING
 import pandas as pd
 from random import uniform
 from multiprocessing import Pool, cpu_count
-from copy import deepcopy
 
-from ..structures import DirectedGraph, BayesianNetwork, Dataset
-from .nodes import parents, children
+from ..structures import BayesianNetwork, Dataset
 from . import find_topological_order
 
 if TYPE_CHECKING:
     from typing import List, Set
-    from ..structures import Node
 
 
 def forward_sampling(bn: BayesianNetwork, n_samples: int):
