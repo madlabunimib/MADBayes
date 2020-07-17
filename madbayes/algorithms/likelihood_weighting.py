@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 import pandas as pd
 from random import uniform
 from multiprocessing import Pool, cpu_count
+from itertools import product
 
 from . import find_topological_order
 from .nodes import parents
@@ -15,8 +16,9 @@ if TYPE_CHECKING:
 
 
 def likelihood_weighting(bn: BayesianNetwork, method: str, query: Dict, n_samples: int, evidence={}):
+    # Find topological order for the Bayesian Network
     order = find_topological_order(bn)
-
+    # Create samples with weights
     params = [
         (bn, order, evidence)
         for _ in range(n_samples)
@@ -25,10 +27,10 @@ def likelihood_weighting(bn: BayesianNetwork, method: str, query: Dict, n_sample
     samples = pool.starmap(_sample, params)
     pool.close()
     pool.join()
-    
+
     if method == 'marginal':
         params = [
-            ({var:query[var]}, samples)
+            (bn, [var], samples)
             for var in query
         ]
         pool = Pool(cpu_count())
@@ -38,7 +40,7 @@ def likelihood_weighting(bn: BayesianNetwork, method: str, query: Dict, n_sample
         return probs
 
     if method == 'joint':
-        return _compute_probability(query, samples)
+        return _compute_probability(bn, query, samples)
 
 
 def _sample(bn: BayesianNetwork, order: List, evidence: Dict):
@@ -68,15 +70,24 @@ def _sample(bn: BayesianNetwork, order: List, evidence: Dict):
     return sample, w
 
 
-def _compute_probability(query: Dict, samples: List):
-    numerator = denominator = 0
-    for sample in samples:
-        denominator += sample[1]
-        num = True
-        for q in query:
-            if not sample[0].loc[q] == query[q]:
-                num = False
-                break
-        if num:
-            numerator += sample[1]
-    return numerator / denominator
+def _compute_probability(bn: BayesianNetwork, query: List, samples: List):
+    queries = _my_product({X_i: bn.levels(X_i) for X_i in query})
+    probs = {}
+
+    for query in queries:
+        numerator = denominator = 0
+        for sample in samples:
+            denominator += sample[1]
+            num = True
+            for q in query:
+                if not sample[0].loc[q] == query[q]:
+                    num = False
+                    break
+            if num:
+                numerator += sample[1]
+        probs.update({str(query): numerator / denominator})
+    return probs
+
+
+def _my_product(input: Dict[Tuple]):
+    return (dict(zip(input.keys(), values)) for values in product(*input.values()))
