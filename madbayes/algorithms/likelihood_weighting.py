@@ -8,13 +8,13 @@ from multiprocessing import Pool, cpu_count
 
 from . import find_topological_order
 from .nodes import parents
-from ..structures import BayesianNetwork, Dataset
+from ..structures import BayesianNetwork
 
 if TYPE_CHECKING:
     from typing import List, Dict, Set
 
 
-def likelihood_weighting(bn: BayesianNetwork, query: Dict, n_samples: int, evidence={}):
+def likelihood_weighting(bn: BayesianNetwork, method: str, query: Dict, n_samples: int, evidence={}):
     order = find_topological_order(bn)
 
     params = [
@@ -25,8 +25,20 @@ def likelihood_weighting(bn: BayesianNetwork, query: Dict, n_samples: int, evide
     samples = pool.starmap(_sample, params)
     pool.close()
     pool.join()
+    
+    if method == 'marginal':
+        params = [
+            ({var:query[var]}, samples)
+            for var in query
+        ]
+        pool = Pool(cpu_count())
+        probs = pool.starmap(_compute_probability, params)
+        pool.close()
+        pool.join()
+        return probs
 
-    return _compute_probability(query, samples)
+    if method == 'joint':
+        return _compute_probability(query, samples)
 
 
 def _sample(bn: BayesianNetwork, order: List, evidence: Dict):
