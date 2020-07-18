@@ -58,6 +58,14 @@ PYBIND11_MODULE(backend, m) {
     
     m.def("ProbabilityTable", &ProbabilityTable<std::vector<double>>, py::arg("data"), py::arg("coordinates"));
     m.def("ProbabilityTable", &ProbabilityTable<py::array_t<double>>, py::arg("data"), py::arg("coordinates"));
+
+    py::class_<BayesianNetwork, DirectedGraph>(m, "BayesianNetwork", py::dynamic_attr())
+        .def(py::init<>())
+        .def(py::init<const std::string &, const std::map<std::string, DataArray> &>(), py::arg("formula"), py::arg("cpts"))
+        .def(py::init<const Nodes &, const std::map<std::string, DataArray> &>(), py::arg("nodes"), py::arg("cpts"))
+        .def(py::init<const Edges &, const std::map<std::string, DataArray> &>(), py::arg("edges"), py::arg("cpts"))
+        .def("__call__", &BayesianNetwork::operator(), py::arg("node"))
+        .def("set_cpt", &BayesianNetwork::set_cpt, py::arg("node"), py::arg("cpt"));
     
     // Algorithms
 

@@ -3,6 +3,7 @@
 #include "structures/graph.ipp"
 #include "structures/directed_graph.ipp"
 #include "structures/probability_table.ipp"
+#include "structures/bayesian_network.ipp"
 
 #include "algorithms/chain_cliques.ipp"
 #include "algorithms/chordal.ipp"

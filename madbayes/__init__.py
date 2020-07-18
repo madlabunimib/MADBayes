@@ -5,3 +5,7 @@ from .algorithms import (BFS, DFS, MCS, bds_score, chain_of_cliques, expectation
 from .structures import (BayesianNetwork, ConditionalProbabilityTable, Dataset,
                          DirectedGraph, Graph, JunctionTree, Node,
                          ProbabilityTable, Tree)
+
+# Experimental classmethod crossreference dynamic binding
+from .io.parser import from_file
+backend.BayesianNetwork.from_file = from_file
