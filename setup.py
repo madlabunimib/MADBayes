@@ -92,6 +92,8 @@ setup(
     cmdclass=dict(build_ext=CMakeBuild),
     zip_safe=False,
     install_requires=[
+        'cmake',
+        'pybind11',
         'matplotlib',
         'pygraphviz',
         'networkx>=2.4',

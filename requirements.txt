@@ -1,3 +1,5 @@
+cmake
+pybind11
 matplotlib
 pygraphviz
 networkx>=2.4
