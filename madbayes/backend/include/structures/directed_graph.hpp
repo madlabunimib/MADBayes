@@ -24,6 +24,9 @@ class DirectedGraph : public Graph {
 
     Graph to_undirected() const;
 
+    [[deprecated]]
+    void reverse_edge(const Node &from, const Node &to);
+
     Nodes parents(const Node &label) const;
     Nodes family(const Node &label) const;
     Nodes children(const Node &label) const;

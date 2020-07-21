@@ -8,7 +8,7 @@ from .expectation_maximization import expectation_maximization
 from .hill_climbing import hill_climbing
 from .impute import impute
 from .junction_tree import junction_tree
-from ..structures import DirectedGraph
+from ..backend import DirectedGraph, BayesianNetwork
 
 from typing import TYPE_CHECKING
 
@@ -45,6 +45,6 @@ def structural_em(
 
 def _has_converged(bn: BayesianNetwork, bn_next: BayesianNetwork, tol: float):
     return all([
-        np.sum(kl(bn[node]['CPT'].values, bn_next[node]['CPT'].values)) < tol
+        np.sum(kl(bn(node).values, bn_next(node).values)) < tol
         for node in bn_next.nodes()
     ])

@@ -1,7 +1,6 @@
 from __future__ import annotations
 from .bds import bds_score, _node_bds_score
-from .breadth_first_search import is_reachable
-from ..structures import DirectedGraph
+from ..backend import DirectedGraph
 
 from typing import TYPE_CHECKING
 
@@ -9,8 +8,9 @@ from copy import deepcopy
 from itertools import product
 
 if TYPE_CHECKING:
-    from ..structures import Dataset, BayesianNetwork
-    from typing import List
+    from ..backend import BayesianNetwork
+    from ..structures import Dataset
+    from typing import List, Tuple
 
 
 def hill_climbing(dataset: Dataset, score=bds_score, node_score=_node_bds_score, iss: float = 1) -> DirectedGraph:
@@ -21,11 +21,11 @@ def hill_climbing(dataset: Dataset, score=bds_score, node_score=_node_bds_score,
     progress = True
     while progress:
         progress = False
-        dag = deepcopy(dag_best)
+        dag = DirectedGraph(dag_best)
         score_dag = deepcopy(score_dag_best)
         operators = _hc_operators(dag)
         for operator, edge in operators:
-            dag_o = deepcopy(dag)
+            dag_o = DirectedGraph(dag)
             o = getattr(dag_o, operator)
             if _hc_legal_solution(dag_o, operator, edge):
                 o(*edge)
@@ -55,16 +55,17 @@ def _hc_score(node_score, network: BayesianNetwork, dataset: Dataset, operator: 
 
 def _hc_operators(dag: DirectedGraph) -> List[Tuple]:
     operators = ['add_edge', 'remove_edge', 'reverse_edge']
+    edges = dag.edges
     edges = [
         [
             edge
-            for edge in dag.missing_edges()
-            if edge[0] != edge[1]
+            for edge in product(dag.nodes, dag.nodes)
+            if edge[0] != edge[1] and edge not in edges
         ],
-        dag.edges(),
+        edges,
         [
             (edge[1], edge[0])
-            for edge in dag.edges()
+            for edge in edges
         ]
     ]
     operators = [
@@ -76,4 +77,10 @@ def _hc_operators(dag: DirectedGraph) -> List[Tuple]:
 
 
 def _hc_legal_solution(dag, operator, edge):
-    return operator == 'remove_edge' or not is_reachable(dag, edge)
+    has_edge = dag.has_edge(*edge)
+    if operator == 'remove_edge':
+        return has_edge
+    valid = not dag.is_reachable(*edge)
+    if operator == 'reverse_edge':
+        valid = valid and has_edge
+    return valid

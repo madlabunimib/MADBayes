@@ -189,6 +189,7 @@ void Graph::add_edge(const Node &from, const Node &to) {
 void Graph::remove_edge(const Node &from, const Node &to) {
     if (label2vid.find(from) == label2vid.end()) throw std::runtime_error("Node does not exist.");
     if (label2vid.find(to) == label2vid.end()) throw std::runtime_error("Node does not exist.");
+    if (!has_edge(from, to)) throw std::runtime_error("Edge does not exist.");
     igraph_es_t es;
     igraph_es_pairs_small(
         &es,
@@ -233,6 +234,12 @@ bool Graph::is_complete() const {
         if (neighbors(node).size() < size() - 1)
             return false;
     return true;
+}
+
+bool Graph::is_reachable(const Node &from, const Node &to) const {
+    igraph_bool_t out;
+    igraph_are_connected(&graph, label2vid.at(from), label2vid.at(to), &out);
+    return out;
 }
 
 Nodes Graph::neighbors(const Node &label) const {

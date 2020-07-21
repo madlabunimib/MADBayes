@@ -4,13 +4,13 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
+import xarray as xa
 from copy import deepcopy
 from scipy.special import rel_entr as kl
 from multiprocessing import Pool, cpu_count
 
 from .junction_tree import junction_tree
-from .nodes import parents as _parents
-from ..structures import DirectedGraph, BayesianNetwork, ConditionalProbabilityTable
+from ..backend import DirectedGraph, BayesianNetwork
 
 if TYPE_CHECKING:
     from typing import Dict, List
@@ -25,19 +25,16 @@ def expectation_maximization(
 ) -> BayesianNetwork:
     # If DAG is string, build BayesianNetwork
     if isinstance(dag, str):
-        dag = BayesianNetwork.from_structure(dag)
+        dag = BayesianNetwork(dag)
     if isinstance(dag, DirectedGraph):
-        dag = BayesianNetwork(
-            nodes=dag.nodes(),
-            adjacency_matrix=dag.adjacency_matrix()
-        )
+        dag = BayesianNetwork(dag.edges)
     # Get nodes from dag
     nodes = dag.nodes()
     # Get variables levels from dataset
     levels = dataset.levels()
     # Cache parents for each node
     parents = {
-        node: _parents(dag, node)
+        node: dag.parents(node)
         for node in nodes
     }
     # Create zeroed CPTs for each variable
@@ -45,7 +42,7 @@ def expectation_maximization(
     # Initialize CPTs of each node
     # using a uniform distribution
     for node in nodes:
-        dag[node]['CPT'] = zeros[node] + (1 / len(levels[node]))
+        dag[node] = zeros[node] + (1 / len(levels[node]))
     # Count absolute frequencies of unique
     # variables configurations in dataset
     # and transform in list of dicts by row
@@ -119,7 +116,7 @@ def _build_empty_cpts(nodes: List, levels: Dict, parents: Dict):
         dim = [node] + parents[node]
         lvs = [levels[d] for d in dim]
         dat = np.zeros([len(l) for l in lvs])
-        cpts[node] = ConditionalProbabilityTable(
+        cpts[node] = xa.DataArray(
             data=dat,
             dims=dim,
             coords=lvs
@@ -138,6 +135,6 @@ def _build_evidence(row: Dict, variables: List):
 
 def _has_converged(dag: BayesianNetwork, frequencies: Dict, tol: float):
     return all([
-        np.sum(kl(dag[node]['CPT'].values, cpt.values)) < tol
+        np.sum(kl(dag(node).values, cpt.values)) < tol
         for node, cpt in frequencies.items()
     ])

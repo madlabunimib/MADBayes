@@ -5,11 +5,11 @@ from . import madbayes as mb
 
 def test_chain_of_cliques():
     for nodes in [10, 25, 50, 100]:
-        g = mb.backend.Graph.random(nodes, 0.5)
-        g = mb.backend.chordal(g)
-        cliques = mb.backend.maximal_cliques(g)
-        alpha = mb.backend.maximum_cardinality_search(g)
-        chain = mb.backend.chain_of_cliques(cliques, alpha)
+        g = mb.Graph.random(nodes, 0.5)
+        g = mb.chordal(g)
+        cliques = mb.maximal_cliques(g)
+        alpha = mb.maximum_cardinality_search(g)
+        chain = mb.chain_of_cliques(cliques, alpha)
         chain = [set(clique) for clique in chain]
         running = [
             chain[i].intersection(

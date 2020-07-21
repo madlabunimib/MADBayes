@@ -1,6 +1,5 @@
 from __future__ import annotations
-from .nodes import parents as _parents
-from ..structures import BayesianNetwork
+from ..backend import BayesianNetwork
 from multiprocessing import Pool, cpu_count
 from math import lgamma
 
@@ -13,22 +12,12 @@ if TYPE_CHECKING:
 def bds_score(network: BayesianNetwork, dataset: Dataset, iss: float = 1, with_nodes: bool = False):
     # If network is string, buld BayesianNetwork
     if isinstance(network, str):
-        network = BayesianNetwork.from_structure(network)
+        network = BayesianNetwork(network, {})
 
-    nodes = sorted(network.nodes())
-
-    score = [
-        (node, dataset, network, iss)
-        for node in nodes
-    ]
-
-    pool = Pool(cpu_count())
-    score = pool.starmap(_node_bds_score, score)
-    pool.close()
-    pool.join()
+    nodes = sorted(network.nodes)
 
     score = {
-        node: score[i]
+        node: _node_bds_score(node, dataset, network, iss)
         for i, node in enumerate(nodes)
     }
 
@@ -42,7 +31,7 @@ def _node_bds_score(node: str, dataset: Dataset, network: BayesianNetwork, iss: 
     size = dataset.data.shape[0]
     levels = dataset.levels(node)
 
-    parents = _parents(network, node)
+    parents = network.parents(node)
     dataset = dataset.absolute_frequencies([node] + parents)
     configs = [((), size)]
     r_i = len(levels)

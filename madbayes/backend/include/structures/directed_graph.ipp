@@ -49,6 +49,11 @@ Graph DirectedGraph::to_undirected() const {
     return out;
 }
 
+void DirectedGraph::reverse_edge(const Node &from, const Node &to) {
+    remove_edge(from, to);
+    add_edge(to, from);
+}
+
 Nodes DirectedGraph::parents(const Node &label) const {
     Nodes out;
     igraph_vector_t parents;

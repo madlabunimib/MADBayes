@@ -7,8 +7,8 @@ from random import uniform
 from multiprocessing import Pool, cpu_count
 from copy import deepcopy
 
-from ..structures import DirectedGraph, BayesianNetwork, Dataset
-from .nodes import parents, children
+from ..backend import DirectedGraph, BayesianNetwork
+from ..structures import Dataset
 
 if TYPE_CHECKING:
     from typing import List, Set
@@ -58,7 +58,7 @@ def _find_order(dag: DirectedGraph) -> List:
 
 def _find_order_rec(dag: DirectedGraph, node: Node, order: List, visited: Set) -> None:
     try:
-        parents_list = parents(dag, node)
+        parents_list = dag.parents(node)
         while len(parents_list) > 0:
             parent = parents_list.pop()
             _find_order_rec(dag, parent, order, visited)
@@ -66,7 +66,7 @@ def _find_order_rec(dag: DirectedGraph, node: Node, order: List, visited: Set) -
         if node not in visited:
             visited.add(node)
             order.append(node)
-            children_list = children(dag, node)
+            children_list = dag.children(node)
             dag.remove_node(node)
 
             while len(children_list) > 0:

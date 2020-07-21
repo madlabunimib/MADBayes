@@ -3,7 +3,7 @@ import xarray as xa
 from .bif import BIF_GRAMMAR
 from .dsc import DSC_GRAMMAR
 from lark import Lark, Token, tree, Tree, Transformer, Discard
-from typing import Dict, Tuple
+from typing import Tuple
 from os.path import splitext
 
 
@@ -11,18 +11,6 @@ GRAMMARS = {
     '.bif': BIF_GRAMMAR,
     '.dsc': DSC_GRAMMAR
 }
-
-
-def parse_network_file(path: str) -> Dict:
-    with open(path, 'r') as file:
-        text = file.read()
-    _, ext = splitext(path)
-    if not ext in GRAMMARS.keys():
-        raise Exception('unknown file format.')
-    parser = Lark(GRAMMARS[ext], parser='lalr', debug=True)
-    parsed = parser.parse(text)
-    parsed = ExtractData(visit_tokens=True).transform(parsed)
-    return parsed
 
 
 class ExtractData(Transformer):
@@ -127,7 +115,7 @@ def bayesian_network_from_file(path: str) -> Tuple:
     cpts = {}
     for node, attr in parsed.items():
         variables = [node] + attr['dependencies']
-        levels = [parsed[node]['levels'] for variable in variables]
+        levels = [parsed[variable]['levels'] for variable in variables]
         if len(attr['dependencies']) == 0:
             data = [
                 ([i], v)
@@ -140,10 +128,10 @@ def bayesian_network_from_file(path: str) -> Tuple:
                 for row in attr['cpt']
                 for i, v in enumerate(row[1])
             ]
-        data = [(tuple(location), item) for location, item in data]
+        data = [(tuple(location), value) for location, value in data]
         cpt = np.zeros([len(l) for l in levels])
-        for (location, item) in data:
-            cpt[location] = item
+        for (location, value) in data:
+            cpt[location] = value
         cpts[node] = xa.DataArray(data=cpt, dims=variables, coords=levels)
     return nodes, edges, cpts
 

@@ -1,7 +1,7 @@
 from copy import deepcopy
 from typing import Dict, List
 
-from .graph import DirectedGraph
+from ..backend import DirectedGraph
 from .orderedset import OrderedSet
 
 

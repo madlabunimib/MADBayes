@@ -6,9 +6,9 @@ from typing import TYPE_CHECKING
 
 import matplotlib.pyplot as plt
 import networkx as nx
+import xarray as xa
 
 from .tree import Node, Tree
-from .probability_table import ProbabilityTable
 
 if TYPE_CHECKING:
     from typing import Dict, List, Set, Tuple
@@ -45,16 +45,16 @@ class JunctionTree(Tree):
     def query(self, method: str, variables: List[str]) -> List:
         if method == 'marginal':
             return [
-                self[variable][0]['belief'].marginalize({variable})
+                self[variable][0]['belief'].sum(set(self[variable][0]['belief'].dims) - set([variable]))
                 for variable in variables
             ]
         joint = self._query_get_joint(variables)
         if method == 'joint':
             return [joint]
-        condition = joint.marginalize(variables[1:])
+        condition = joint.sum(set(joint.dims) - set(variables[1:]))
         return [joint / condition]
 
-    def _query_get_joint(self, variables: List[str]) -> ProbabilityTable:
+    def _query_get_joint(self, variables: List[str]) -> xa.DataArray:
         # Check if variables are contained in a single clique
         joint = self._query_search_joint(variables)
         if joint is not None:
@@ -62,13 +62,13 @@ class JunctionTree(Tree):
         # If variables are not contained in a single clique
         return self._query_build_joint(variables)
 
-    def _query_search_joint(self, variables: List[str]) -> ProbabilityTable:
+    def _query_search_joint(self, variables: List[str]) -> xa.DataArray:
         clique = self._query_search_clique(
             variables[1:],
             self[variables[0]]
         )
         if clique is not None:
-            return clique['belief'].marginalize(variables)
+            return clique['belief'].sum(set(clique['belief'].dims) - set(variables))
         return None
 
     def _query_search_clique(self, variables: List[str], cliques: List[Node]) -> Node:
@@ -83,18 +83,18 @@ class JunctionTree(Tree):
         ]
         return self._query_search_clique(variables[1:], cliques)
 
-    def _query_build_joint(self, variables: List[str]) -> ProbabilityTable:
+    def _query_build_joint(self, variables: List[str]) -> xa.DataArray:
         joint = self._query_build_joint_visit(variables[::], self.root())
-        return joint.marginalize(variables)
+        return joint.sum(set(joint.dims) - set(variables))
 
-    def _query_build_joint_visit(self, variables: List[str], target: Node) -> ProbabilityTable:
+    def _query_build_joint_visit(self, variables: List[str], target: Node) -> xa.DataArray:
         if target['type'] == 'separator':
             clique = target.children()[0]
             message = self._query_build_joint_visit(variables, clique)
             # If the returning value is not one, this means that there
             # are variables of the query in the subtree under this separator,
             # so we need to divide the returning belief by the sepset belief
-            if isinstance(message, ProbabilityTable):
+            if isinstance(message, xa.DataArray):
                 message = message / target['belief']
             return message
         # Deafult returning value
@@ -113,7 +113,7 @@ class JunctionTree(Tree):
                     self._query_build_joint_visit(variables, separator)
        # If the returning message is not one or a variable is found,
        # then multiply the message by the clique belief
-        if isinstance(message, ProbabilityTable) or found:
+        if isinstance(message, xa.DataArray) or found:
             message = message * target['belief']
         return message
 
@@ -126,7 +126,7 @@ class JunctionTree(Tree):
     def _absorb_evidence(self, variable: str, value: str) -> None:
         # Select the first clique that constains variable
         clique = self[variable][0]
-        old_margin = clique['belief'].marginalize([variable])
+        old_margin = clique['belief'].sum(set(clique['belief'].dims) - set([variable]))
         new_margin = old_margin.copy()
         new_margin.loc[:] = 0
         new_margin.loc[value] = 1
@@ -140,7 +140,7 @@ class JunctionTree(Tree):
         # Downward phase
         self._calibrate_downward(None, root, 1)
 
-    def _calibrate_upward(self, source: Node, target: Node) -> ProbabilityTable:
+    def _calibrate_upward(self, source: Node, target: Node) -> xa.DataArray:
         if target['type'] == 'separator':
             # Pass the message down in the tree
             clique = target.neighbors().difference({source})[0]
@@ -156,16 +156,17 @@ class JunctionTree(Tree):
         # Compute the clique belief
         message = reduce(lambda a, b: a * b, message, 1)
         target['belief'] = target['potential'] * message
+        if isinstance(target['belief'], int):
+            return target['belief']
         # Compute the message
         marginal = target['nodes']
         if source is not None:
             marginal = source['nodes']
-        return target['belief'].marginalize(marginal)
+        return target['belief'].sum(set(target['belief'].dims) - set(marginal))
 
-    def _calibrate_downward(self, source: Node, target: Node, message: ProbabilityTable) -> None:
+    def _calibrate_downward(self, source: Node, target: Node, message: xa.DataArray) -> None:
         if target['type'] == 'separator':
-            # Compute message using belief
-            message = message.marginalize(target['nodes']) / target['belief']
+            message = message.sum(set(message.dims) - set(target['nodes'])) / target['belief']
             # Compute sepset belief
             target['belief'] = target['belief'] * message
             # Pass the message down in the tree

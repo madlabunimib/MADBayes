@@ -25,6 +25,9 @@ class BayesianNetwork : public DirectedGraph {
 
     CPT operator()(const Node &label) const;
     void set_cpt(const Node &label, const CPT &cpt);
+
+    [[deprecated]]
+    std::vector<std::string> get_levels(const Node &label) const;
 };
 
 }  // namespace structures

@@ -7,20 +7,19 @@ import matplotlib.pyplot as plt
 import networkx as nx
 
 from ..structures import JunctionTree, Node, OrderedSet
-from .chain_of_cliques import chain_of_cliques
-from .moralize import moralize
-from .nodes import family
-from .triangulate import triangulate
+from ..backend import moral, chordal, maximal_cliques, maximum_cardinality_search, chain_of_cliques
 
 if TYPE_CHECKING:
     from typing import Dict, List, Tuple
-    from ..structures import BayesianNetwork
+    from ..backend import BayesianNetwork
 
 
 def junction_tree(network: BayesianNetwork) -> JunctionTree:
-    moralized = moralize(network)
-    triangulated = triangulate(moralized)
-    chain = chain_of_cliques(triangulated)
+    moralized = moral(network)
+    triangulated = chordal(moralized)
+    cliques = maximal_cliques(triangulated)
+    alpha = maximum_cardinality_search(triangulated)
+    chain = chain_of_cliques(cliques, alpha)
     root = _build_junction_tree(network, chain)
     jt = JunctionTree(root)
     return jt
@@ -46,15 +45,15 @@ def _build_junction_tree(network: BayesianNetwork, chain: List) -> Node:
 
 def _assign_cpts(network: BayesianNetwork, chain: List) -> Dict:
     cpts = {}
-    nodes = set(network.nodes())
+    nodes = set(network.nodes)
     for clique in chain:
         assigned = {
             node
             for node in nodes
-            if set(family(network, node)).issubset(clique)
+            if set(network.family(node)).issubset(clique)
         }
         cpts[clique] = [
-            network[node]['CPT']
+            network(node)
             for node in assigned
         ]
         nodes = nodes.difference(assigned)

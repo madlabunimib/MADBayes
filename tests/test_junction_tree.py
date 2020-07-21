@@ -31,11 +31,11 @@ def test_junction_tree_query():
     for name, path in networks.items():
         jt_0 = getattr(mb.data.network, name)
         # Nodes of the bayesian network
-        nodes = list(jt_0.nodes())
+        nodes = list(jt_0.nodes)
         levels = {
             node: [
                 str(level)
-                for level in jt_0.levels(node)
+                for level in jt_0.get_levels(node)
             ]
             for node in nodes
         }

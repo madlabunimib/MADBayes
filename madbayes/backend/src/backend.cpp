@@ -26,6 +26,7 @@ PYBIND11_MODULE(backend, m) {
         .def(py::init<const std::string &>(), py::arg("formula"))
         .def(py::init<const Nodes &>(), py::arg("nodes"))
         .def(py::init<const Edges &>(), py::arg("edges"))
+        .def(py::init<const Graph &>(), py::arg("other"))
         .def_property("nodes", &Graph::get_nodes, &Graph::set_nodes)
         .def_property_readonly("edges", &Graph::get_edges)
         .def("has_node", &Graph::has_node, py::arg("node"))
@@ -38,6 +39,7 @@ PYBIND11_MODULE(backend, m) {
         .def("is_directed", &Graph::is_directed)
         .def("is_chordal", &Graph::is_chordal)
         .def("is_complete", &Graph::is_complete)
+        .def("is_reachable", &Graph::is_reachable, py::arg("from"), py::arg("to"))
         .def("neighbors", &Graph::neighbors, py::arg("node"))
         .def("boundary", &Graph::boundary, py::arg("nodes"))
         .def("__repr__", &Graph::__repr__)
@@ -48,7 +50,9 @@ PYBIND11_MODULE(backend, m) {
         .def(py::init<const std::string &>(), py::arg("formula"))
         .def(py::init<const Nodes &>(), py::arg("nodes"))
         .def(py::init<const Edges &>(), py::arg("edges"))
+        .def(py::init<const DirectedGraph &>(), py::arg("other"))
         .def("is_dag", &DirectedGraph::is_dag)
+        .def("reverse_edge", &DirectedGraph::reverse_edge, py::arg("from"), py::arg("to"))
         .def("parents", &DirectedGraph::parents, py::arg("node"))
         .def("family", &DirectedGraph::family, py::arg("node"))
         .def("children", &DirectedGraph::children, py::arg("node"))
@@ -64,8 +68,10 @@ PYBIND11_MODULE(backend, m) {
         .def(py::init<const std::string &, const std::map<std::string, DataArray> &>(), py::arg("formula"), py::arg("cpts"))
         .def(py::init<const Nodes &, const std::map<std::string, DataArray> &>(), py::arg("nodes"), py::arg("cpts"))
         .def(py::init<const Edges &, const std::map<std::string, DataArray> &>(), py::arg("edges"), py::arg("cpts"))
+        .def(py::init<const BayesianNetwork &>(), py::arg("other"))
         .def("__call__", &BayesianNetwork::operator(), py::arg("node"))
-        .def("set_cpt", &BayesianNetwork::set_cpt, py::arg("node"), py::arg("cpt"));
+        .def("set_cpt", &BayesianNetwork::set_cpt, py::arg("node"), py::arg("cpt"))
+        .def("get_levels", &BayesianNetwork::get_levels, py::arg("node"));
     
     // Algorithms
 

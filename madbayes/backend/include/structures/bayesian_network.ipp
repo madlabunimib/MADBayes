@@ -37,6 +37,22 @@ void BayesianNetwork::set_cpt(const Node &label, const CPT &cpt) {
     cpts[label] = cpt;
 }
 
+std::vector<std::string> BayesianNetwork::get_levels(const Node &label) const {
+    std::vector<std::string> coord;
+    auto _coord = cpts.at(label).coordinates();
+    for (auto i = _coord.begin(); i != _coord.end(); ++i) {
+        if (i->first == label) {
+            size_t end = i->second.labels().size();
+            auto _labels = i->second.labels().data();
+            for (auto j = _labels; j < _labels + end; ++j) {
+                coord.push_back(*j);
+            }
+            return coord;
+        }
+    }
+    return coord;
+}
+
 }  // namespace structures
 
 }  // namespace madbayes

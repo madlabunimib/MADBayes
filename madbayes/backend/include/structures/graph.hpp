@@ -72,6 +72,9 @@ class Graph {
     bool is_directed() const;
     bool is_chordal() const;
     bool is_complete() const;
+    
+    [[deprecated]]
+    bool is_reachable(const Node &from, const Node &to) const;
 
     Nodes neighbors(const Node &label) const;
     Nodes boundary(const Nodes &labels) const;
