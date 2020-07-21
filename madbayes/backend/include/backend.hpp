@@ -5,8 +5,8 @@
 #include "structures/probability_table.ipp"
 #include "structures/bayesian_network.ipp"
 
-#include "algorithms/chain_cliques.ipp"
-#include "algorithms/chordal.ipp"
-#include "algorithms/maximal_cliques.ipp"
-#include "algorithms/maximum_cardinality_search.ipp"
-#include "algorithms/moral.ipp"
+#include "algorithms/structure/chain_cliques.ipp"
+#include "algorithms/structure/chordal.ipp"
+#include "algorithms/structure/maximal_cliques.ipp"
+#include "algorithms/structure/maximum_cardinality_search.ipp"
+#include "algorithms/structure/moral.ipp"
