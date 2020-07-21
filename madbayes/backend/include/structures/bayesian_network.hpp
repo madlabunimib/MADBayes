@@ -9,6 +9,8 @@ namespace structures {
 
 using CPT = DataArray;
 using CPTs = std::map<Node, CPT>;
+using Level = std::string;
+using Levels = std::vector<Level>;
 
 class BayesianNetwork : public DirectedGraph {
    private:
@@ -27,7 +29,7 @@ class BayesianNetwork : public DirectedGraph {
     void set_cpt(const Node &label, const CPT &cpt);
 
     [[deprecated]]
-    std::vector<std::string> get_levels(const Node &label) const;
+    Levels get_levels(const Node &label) const;
 };
 
 }  // namespace structures
