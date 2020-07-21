@@ -2,7 +2,7 @@ import numpy as np
 from . import madbayes as mb
 
 
-def test_impute():
+def test_learning_impute():
     datasets = mb.data.dataset.DATASETS
     networks = mb.data.network.NETWORKS
     datasets_networks = [

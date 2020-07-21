@@ -3,7 +3,7 @@ from functools import reduce
 from . import madbayes as mb
 
 
-def test_chain_of_cliques():
+def test_structure_chain_of_cliques():
     for nodes in [10, 25, 50, 100]:
         g = mb.Graph.random(nodes, 0.5)
         g = mb.chordal(g)

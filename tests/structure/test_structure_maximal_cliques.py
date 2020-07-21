@@ -2,7 +2,7 @@ import networkx as nx
 from . import madbayes as mb
 
 
-def test_maximal_cilques():
+def test_structure_maximal_cilques():
     for nodes in [2, 10, 25, 50]:
         G = nx.gnp_random_graph(nodes, 0.3, directed=False)
         G = nx.Graph([(u, v) for (u, v) in G.edges if u < v])

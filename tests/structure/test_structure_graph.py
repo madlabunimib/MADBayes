@@ -1,7 +1,7 @@
 from . import madbayes as mb
 
 
-def test_graph():
+def test_structure_graph():
     # Test base constructor
     graph = mb.Graph()
 
@@ -11,7 +11,7 @@ def test_graph():
     assert(graph.nodes == nodes)
 
 
-def test_graph_nodes():
+def test_structure_graph_nodes():
     # Test node getter
     nodes = ['A', 'B', 'C']
     graph = mb.Graph(nodes=nodes)
@@ -30,7 +30,7 @@ def test_graph_nodes():
     graph.remove_node('D')
     assert(graph.nodes == ['E', 'F', 'A'])
 
-def test_graph_edges():
+def test_structure_graph_edges():
     # Test edge getter
     edges = [('A', 'B'), ('B', 'C')]
     graph = mb.Graph(edges=edges)

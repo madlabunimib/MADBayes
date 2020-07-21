@@ -2,7 +2,7 @@ import networkx as nx
 from . import madbayes as mb
 
 
-def test_undirected_graph():
+def test_structure_undirected_graph():
     for nodes in [2, 10, 25, 50, 75, 100, 250]:
         G = nx.gnp_random_graph(nodes, 0.3, directed=False)
         g = mb.Graph([
@@ -16,7 +16,7 @@ def test_undirected_graph():
         assert(sorted(boundary) == sorted(g.boundary(g.nodes)))
 
 
-def test_directed_graph():
+def test_structure_directed_graph():
     for nodes in [2, 10, 25, 50]:
         G = nx.gnp_random_graph(nodes, 0.3, directed=False)
         G = nx.DiGraph([(u, v) for (u, v) in G.edges if u < v])

@@ -3,7 +3,7 @@ from . import madbayes as mb
 OrderedSet = mb.structures.OrderedSet
 
 
-def test_orderedset():
+def test_structure_orderedset():
     # Create empty OrderedSet
     orderedset = OrderedSet()
     # Test empty OrderedSet

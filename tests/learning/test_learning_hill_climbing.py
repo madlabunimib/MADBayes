@@ -3,7 +3,7 @@ from math import isclose
 from . import madbayes as mb
 
 
-def test_hc():
+def test_learning_hill_climbing():
     mb.utils.rpy2_init()
     datasets = mb.data.dataset.DATASETS
     datasets_networks = [

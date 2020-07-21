@@ -4,7 +4,7 @@ from os.path import abspath, dirname, join
 from math import log, isclose
 from . import madbayes as mb
 
-def test_bds_score():
+def test_score_bds():
     mb.utils.rpy2_init()
     datasets = mb.data.dataset.DATASETS
     networks = mb.data.network.NETWORKS
@@ -27,10 +27,10 @@ def test_bds_score():
             assert(isclose(v, bds_r[k]))
 
 
-def test_bds_score_suzuki_2016():
+def test_score_bds_suzuki_2016():
     refs = [
-        'data/suzuki_2016_1.csv',
-        'data/suzuki_2016_2.csv'
+        '../data/suzuki_2016_1.csv',
+        '../data/suzuki_2016_2.csv'
     ]
     refs = [abspath(join(dirname(__file__), ref)) for ref in refs]
     refs = [mb.Dataset.from_csv(ref) for ref in refs]
