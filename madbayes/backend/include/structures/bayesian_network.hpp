@@ -5,12 +5,12 @@
 
 namespace madbayes {
 
-namespace structures {
-
 using CPT = DataArray;
 using CPTs = std::map<Node, CPT>;
 using Level = std::string;
 using Levels = std::vector<Level>;
+
+namespace structures {
 
 class BayesianNetwork : public DirectedGraph {
    private:

@@ -2,6 +2,7 @@
 
 #include "structures/probability_table.ipp"
 
+using namespace madbayes;
 using namespace madbayes::structures;
 
 TEST(TestProbabilityTable, ProbabilityTable) {

@@ -7,6 +7,7 @@
 
 #include <backend.hpp>
 
+using namespace madbayes;
 using namespace madbayes::structures;
 
 namespace py = pybind11;

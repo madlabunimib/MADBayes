@@ -5,6 +5,7 @@
 #define N {"1", "2", "3", "4", "5"}
 #define N_SIZE 5
 
+using namespace madbayes;
 using namespace madbayes::structures;
 
 TEST(TestDirectedGraph, DefaultContructor) {

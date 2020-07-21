@@ -18,12 +18,12 @@
 
 namespace madbayes {
 
-namespace structures {
-
 using Node = std::string;
 using Nodes = std::vector<Node>;
 using Edge = std::pair<Node, Node>;
 using Edges = std::vector<Edge>;
+
+namespace structures {
 
 class DirectedGraph;
 

@@ -10,12 +10,12 @@
 
 namespace madbayes {
 
-namespace structures {
-
 using Axis = xf::xaxis<std::string>;
 using Coordinate = xf::xcoordinate<std::string, xtl::mpl::vector<std::string>>;
 using Dimension = xf::xdimension<std::string>;
 using DataArray = xf::xvariable<double, Coordinate>;
+
+namespace structures {
 
 using Mapper = std::map<std::string, std::vector<std::string>>;
 

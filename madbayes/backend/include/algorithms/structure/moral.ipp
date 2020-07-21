@@ -6,8 +6,6 @@ namespace madbayes {
 
 namespace algorithms {
 
-using Node = madbayes::structures::Node;
-using Nodes = madbayes::structures::Nodes;
 using Graph = madbayes::structures::Graph;
 using DirectedGraph = madbayes::structures::DirectedGraph;
 

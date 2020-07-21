@@ -6,9 +6,6 @@ namespace madbayes {
 
 namespace algorithms {
 
-using Node = madbayes::structures::Node;
-using Nodes = madbayes::structures::Nodes;
-
 std::vector<Nodes> chain_of_cliques(const std::vector<Nodes> &cliques, const Nodes &alpha) {
     std::vector<Nodes> out;
     std::vector<std::pair<size_t, Nodes>> chain;

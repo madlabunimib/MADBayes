@@ -11,6 +11,7 @@
 #include <backend.hpp>
 #include "pybind11_cast_xarray.ipp"
 
+using namespace madbayes;
 using namespace madbayes::algorithms;
 using namespace madbayes::structures;
 
