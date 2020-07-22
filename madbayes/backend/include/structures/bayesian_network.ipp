@@ -33,6 +33,10 @@ CPT BayesianNetwork::operator()(const Node &label) const {
     return cpts.at(label);
 }
 
+CPT BayesianNetwork::get_cpt(const Node &label) const {
+    return cpts.at(label);
+}
+
 void BayesianNetwork::set_cpt(const Node &label, const CPT &cpt) {
     cpts[label] = cpt;
 }

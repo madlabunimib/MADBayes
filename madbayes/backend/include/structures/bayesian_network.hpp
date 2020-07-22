@@ -26,6 +26,7 @@ class BayesianNetwork : public DirectedGraph {
     virtual ~BayesianNetwork();
 
     CPT operator()(const Node &label) const;
+    CPT get_cpt(const Node &label) const;
     void set_cpt(const Node &label, const CPT &cpt);
 
     [[deprecated]]
