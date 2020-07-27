@@ -6,8 +6,7 @@ namespace madbayes {
 
 namespace algorithms {
 
-using Graph = madbayes::structures::Graph;
-using DirectedGraph = madbayes::structures::DirectedGraph;
+using namespace madbayes::structures;
 
 Graph moral(const DirectedGraph &other) {
     Graph out = other.to_undirected();

@@ -16,7 +16,7 @@ std::vector<Nodes> chain_of_cliques(const std::vector<Nodes> &cliques, const Nod
                 alpha.begin(),
                 std::find(alpha.begin(), alpha.end(), node)
             );
-            if (max < value) max = value;
+            if (value > max) max = value;
         }
         chain.push_back({max, clique});
     }

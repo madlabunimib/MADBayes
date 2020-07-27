@@ -77,6 +77,13 @@ PYBIND11_MODULE(backend, m) {
     
     // Algorithms
 
+    // Algorithms - Inference
+    py::class_<CliqueTree, Graph>(m, "CliqueTree")
+        .def(py::init<const BayesianNetwork &>(), py::arg("bn"))
+        .def(py::init<const CliqueTree &>(), py::arg("other"));
+        // .def("__call__", &CliqueTree::operator(), py::arg("query", py::arg("evidence")));
+
+    // Algorithms - Structure
     m.def("chain_of_cliques", &chain_of_cliques, py::arg("cliques"), py::arg("alpha"));
     m.def("chordal", &chordal, py::arg("other"));
     m.def("maximal_cliques", &maximal_cliques, py::arg("other"));
