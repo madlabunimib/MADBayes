@@ -155,8 +155,8 @@ CliqueTree::CliqueTree(const BayesianNetwork &bn) : Graph() {
     build_clique_tree(cliques);
 
     Node root = get_nodes()[0];
-    calibrate_upward("", root);
-    calibrate_downward("", root, {});
+    calibrate_upward(Node(), root);
+    calibrate_downward(Node(), root, {});
 }
 
 CliqueTree::CliqueTree(const CliqueTree &other) : Graph(other), label2clique(other.label2clique) {}
