@@ -78,10 +78,18 @@ PYBIND11_MODULE(backend, m) {
     // Algorithms
 
     // Algorithms - Inference
+    py::class_<Clique>(m, "Clique")
+        .def("__str__", &Clique::operator std::string)
+        .def_readwrite("is_separator", &Clique::is_separator)
+        .def_readwrite("nodes", &Clique::nodes)
+        .def_readwrite("belief", &Clique::belief);
+
     py::class_<CliqueTree, Graph>(m, "CliqueTree")
         .def(py::init<const BayesianNetwork &>(), py::arg("bn"))
-        .def(py::init<const CliqueTree &>(), py::arg("other"));
+        .def(py::init<const CliqueTree &>(), py::arg("other"))
         // .def("__call__", &CliqueTree::operator(), py::arg("query", py::arg("evidence")));
+        .def("get_clique", &CliqueTree::get_clique, py::arg("label"))
+        .def("set_clique", &CliqueTree::set_clique, py::arg("clique"));
 
     // Algorithms - Structure
     m.def("chain_of_cliques", &chain_of_cliques, py::arg("cliques"), py::arg("alpha"));

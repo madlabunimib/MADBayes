@@ -7,6 +7,7 @@
 #include <xframe/xvariable.hpp>
 #include <xtensor/xadapt.hpp>
 #include <xtensor/xarray.hpp>
+#include <xtensor/xmath.hpp>
 
 namespace madbayes {
 
