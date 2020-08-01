@@ -107,7 +107,7 @@ Factor CliqueTree::calibrate_upward(const Node &prev, const Node &curr) {
     if (!clique->is_separator) {
         Nodes margin;
         Nodes sepset = clique->nodes;
-        if (prev != "") sepset = label2clique[prev].nodes;
+        if (prev != Node()) sepset = label2clique[prev].nodes;
         std::set_difference(
             clique->nodes.begin(),
             clique->nodes.end(),
