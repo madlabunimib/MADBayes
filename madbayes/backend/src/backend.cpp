@@ -64,7 +64,7 @@ PYBIND11_MODULE(backend, m) {
     m.def("ProbabilityTable", &ProbabilityTable<std::vector<double>>, py::arg("data"), py::arg("coordinates"));
     m.def("ProbabilityTable", &ProbabilityTable<py::array_t<double>>, py::arg("data"), py::arg("coordinates"));
 
-    py::class_<BayesianNetwork, DirectedGraph>(m, "BayesianNetwork", py::dynamic_attr())
+    py::class_<BayesianNetwork, DirectedGraph>(m, "BayesianNetwork")
         .def(py::init<>())
         .def(py::init<const std::string &, const std::map<std::string, DataArray> &>(), py::arg("formula"), py::arg("cpts"))
         .def(py::init<const Nodes &, const std::map<std::string, DataArray> &>(), py::arg("nodes"), py::arg("cpts"))
@@ -72,8 +72,15 @@ PYBIND11_MODULE(backend, m) {
         .def(py::init<const BayesianNetwork &>(), py::arg("other"))
         .def("__call__", &BayesianNetwork::operator(), py::arg("node"))
         .def("get_cpt", &BayesianNetwork::get_cpt, py::arg("node"))
-        .def("set_cpt", &BayesianNetwork::set_cpt, py::arg("node"), py::arg("cpt"))
-        .def("get_levels", &BayesianNetwork::get_levels, py::arg("node"));
+        .def("set_cpt", &BayesianNetwork::set_cpt, py::arg("node"), py::arg("cpt"));
+
+    py::class_<DiscreteBayesianNetwork, BayesianNetwork>(m, "DiscreteBayesianNetwork", py::dynamic_attr())
+        .def(py::init<>())
+        .def(py::init<const std::string &, const std::map<std::string, DataArray> &>(), py::arg("formula"), py::arg("cpts"))
+        .def(py::init<const Nodes &, const std::map<std::string, DataArray> &>(), py::arg("nodes"), py::arg("cpts"))
+        .def(py::init<const Edges &, const std::map<std::string, DataArray> &>(), py::arg("edges"), py::arg("cpts"))
+        .def(py::init<const DiscreteBayesianNetwork &>(), py::arg("other"))
+        .def("get_levels", &DiscreteBayesianNetwork::get_levels, py::arg("node"));
     
     // Algorithms
 
@@ -85,7 +92,7 @@ PYBIND11_MODULE(backend, m) {
         .def_readwrite("belief", &Clique::belief);
 
     py::class_<CliqueTree, Graph>(m, "CliqueTree")
-        .def(py::init<const BayesianNetwork &>(), py::arg("bn"))
+        .def(py::init<const DiscreteBayesianNetwork &>(), py::arg("bn"))
         .def(py::init<const CliqueTree &>(), py::arg("other"))
         // .def("__call__", &CliqueTree::operator(), py::arg("query", py::arg("evidence")));
         .def("get_clique", &CliqueTree::get_clique, py::arg("label"))

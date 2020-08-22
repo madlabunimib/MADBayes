@@ -12,7 +12,8 @@ namespace madbayes {
 
 namespace algorithms {
 
-Cliques CliqueTree::build_cliques(const BayesianNetwork &bn) {
+template <typename T>
+Cliques CliqueTree::build_cliques(const T &bn) {
     Graph moral_graph = moral(bn);
     Graph chordal_graph = chordal(moral_graph);
     std::vector<Nodes> cliques = maximal_cliques(chordal_graph);
@@ -149,7 +150,8 @@ void CliqueTree::calibrate_downward(const Node &prev, const Node &curr, const Fa
     }
 }
 
-CliqueTree::CliqueTree(const BayesianNetwork &bn) : Graph() {
+template <typename T>
+CliqueTree::CliqueTree(const T &bn) : Graph() {
     Cliques cliques = build_cliques(bn);
     build_clique_tree(cliques);
 

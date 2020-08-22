@@ -41,7 +41,7 @@ Build the package with C++ backend and install:
 ### Structural Properties
 
 | Name                 | Python | C/C++ |
-| -------------------- |:------:|:-----:|
+| -------------------- | :----: | :---: |
 | Independence Map     |        |       |
 | U-Separation         |        |       |
 | D-Separation         |        |       |
@@ -51,24 +51,24 @@ Build the package with C++ backend and install:
 
 ### Types of Bayesian Networks
 
-| Name              |       Python       | C/C++ |
-| ----------------- |:------------------:|:-----:|
-| Discrete Networks | :heavy_check_mark: |       |
-| Gaussian Networks |                    |       |
-| CLG Networks      |                    |       |
-| Mixed Networks    |                    |       |
+| Name              |       Python       |       C/C++        |
+| ----------------- | :----------------: | :----------------: |
+| Discrete Networks | :heavy_check_mark: | :heavy_check_mark: |
+| Gaussian Networks |                    |                    |
+| CLG Networks      |                    |                    |
+| Mixed Networks    |                    |                    |
 
 ### Classifiers
 
 | Name                       | Python | C/C++ |
-| -------------------------- |:------:|:-----:|
+| -------------------------- | :----: | :---: |
 | Naive Bayes                |        |       |
 | Tree-Augmented Naive Bayes |        |       |
 
 ### Exact Inference
 
 | Type        | Name                          |       Python       | C/C++ |
-| ----------- | ----------------------------- |:------------------:|:-----:|
+| ----------- | ----------------------------- | :----------------: | :---: |
 | Exact       | Variable Elimination          |                    |       |
 |             | Junction Tree                 | :heavy_check_mark: |       |
 |             |                               |                    |       |
@@ -80,7 +80,7 @@ Build the package with C++ backend and install:
 ### Structural Learning
 
 | Type            | Name                       |       Python       | C/C++ |
-| --------------- |:-------------------------- |:------------------:|:-----:|
+| --------------- | :------------------------- | :----------------: | :---: |
 | Costraint-based | Inductive Causation        |                    |       |
 |                 | Peter & Clark              |                    |       |
 |                 | Grow-Shrink                |                    |       |
@@ -100,7 +100,7 @@ Build the package with C++ backend and install:
 ### Structure Score
 
 | Name                                         |       Python       | C/C++ |
-| -------------------------------------------- |:------------------:|:-----:|
+| -------------------------------------------- | :----------------: | :---: |
 | Bayesian Information Criterion (BIC)         |                    |       |
 | Akaike’s Information Criterion (AIC)         |                    |       |
 | Bayesian Dirichlet Equivalent Uniform (BDeu) |                    |       |
@@ -110,7 +110,7 @@ Build the package with C++ backend and install:
 ### Missing Data
 
 | Name                     |       Python       | C/C++ |
-| ------------------------ |:------------------:|:-----:|
+| ------------------------ | :----------------: | :---: |
 | Expectation-Maximisation | :heavy_check_mark: |       |
 | Structural EM            | :heavy_check_mark: |       |
 | Data Augmentation        |                    |       |
@@ -119,7 +119,7 @@ Build the package with C++ backend and install:
 ### Causal Models - Effects of Interventions
 
 | Name                              | Python | C/C++ |
-| --------------------------------- |:------:|:-----:|
+| --------------------------------- | :----: | :---: |
 | Interventions                     |        |       |
 | Adjustement Formula               |        |       |
 | Backdoor Criterion                |        |       |
@@ -129,7 +129,7 @@ Build the package with C++ backend and install:
 ### Causal Models - Counterfactuals
 
 | Name                              | Python | C/C++ |
-| --------------------------------- |:------:|:-----:|
+| --------------------------------- | :----: | :---: |
 | Counterfactuals                   |        |       |
 | Probabilistic Counterfactuals     |        |       |
 | Counterfactuals in Linear Systems |        |       |

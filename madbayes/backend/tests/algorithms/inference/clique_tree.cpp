@@ -14,6 +14,6 @@ TEST(TestCliqueTree, DefaultContructor) {
     std::vector<double> vB = {0.1, 0.9, 0.5, 0.5};
     Mapper mB = {{"A", {"1", "2"}}, {"B", {"3", "4"}}};
     cpts.insert({"B", ProbabilityTable(vB, mB)});
-    BayesianNetwork bn("[A][B|A]", cpts);
+    DiscreteBayesianNetwork bn("[A][B|A]", cpts);
     CliqueTree jt(bn);
 }

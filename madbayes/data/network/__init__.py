@@ -3,7 +3,7 @@ from os import listdir
 from os.path import abspath, basename, dirname, isfile, join, splitext
 from typing import Dict
 
-from ...backend import BayesianNetwork
+from ...backend import DiscreteBayesianNetwork
 
 NETWORKS = abspath(dirname(__file__))
 NETWORKS = [join(NETWORKS, network) for network in listdir(NETWORKS)]
@@ -20,7 +20,7 @@ NETWORKS = {
 
 def load_networks_from_disk() -> Dict:
     return {
-        key: BayesianNetwork.from_file(value)
+        key: DiscreteBayesianNetwork.from_file(value)
         for key, value in NETWORKS.items()
     }
 

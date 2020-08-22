@@ -1,6 +1,6 @@
 #pragma once
 
-#include <structures/bayesian_network.ipp>
+#include <structures/discrete_bayesian_network.ipp>
 
 namespace madbayes {
 
@@ -32,13 +32,15 @@ class CliqueTree : public Graph {
    private:
     std::map<Node, Clique> label2clique;
 
-    Cliques build_cliques(const BayesianNetwork &bn);
+    template <typename T>
+    Cliques build_cliques(const T &bn);
     void build_clique_tree(const Cliques &cliques);
     Factor calibrate_upward(const Node &prev, const Node &curr);
     void calibrate_downward(const Node &prev, const Node &curr, const Factor &message);
 
    public:
-    CliqueTree(const BayesianNetwork &bn);
+    template <typename T>
+    CliqueTree(const T &bn);
     CliqueTree(const CliqueTree &other);
     CliqueTree &operator=(const CliqueTree &other);
     ~CliqueTree();

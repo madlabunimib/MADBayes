@@ -4,6 +4,7 @@
 #include "structures/directed_graph.ipp"
 #include "structures/probability_table.ipp"
 #include "structures/bayesian_network.ipp"
+#include "structures/discrete_bayesian_network.ipp"
 
 #include "algorithms/inference/clique_tree.ipp"
 #include "algorithms/structure/chain_cliques.ipp"

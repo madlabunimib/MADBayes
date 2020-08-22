@@ -7,13 +7,11 @@ namespace madbayes {
 
 using CPT = DataArray;
 using CPTs = std::map<Node, CPT>;
-using Level = std::string;
-using Levels = std::vector<Level>;
 
 namespace structures {
 
 class BayesianNetwork : public DirectedGraph {
-   private:
+   protected:
     CPTs cpts;
 
    public:
@@ -28,9 +26,6 @@ class BayesianNetwork : public DirectedGraph {
     CPT operator()(const Node &label) const;
     CPT get_cpt(const Node &label) const;
     void set_cpt(const Node &label, const CPT &cpt);
-
-    [[deprecated]]
-    Levels get_levels(const Node &label) const;
 };
 
 }  // namespace structures
