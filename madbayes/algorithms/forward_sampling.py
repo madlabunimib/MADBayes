@@ -6,8 +6,9 @@ import pandas as pd
 from random import uniform
 from multiprocessing import Pool, cpu_count
 
-from ..structures import BayesianNetwork, Dataset
-from . import find_topological_order
+from ..backend import BayesianNetwork
+from ..structures import Dataset
+from .find_topological_ordering import find_topological_order
 
 if TYPE_CHECKING:
     from typing import List, Set

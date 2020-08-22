@@ -18,6 +18,18 @@ MADBayes is a Python library about Bayesian Networks.
 
 ## How to Install
 
+Clone the repository including submodules:
+
+    git clone --recurse-submodules -j8 https://github.com/madlabunimib/MADBayes.git
+
+Install the required system libraries:
+
+    sudo apt-get install libigraph0-dev libgraphviz-dev graphviz
+
+Build the package with C++ backend and install:
+
+    cd MADBayes && sudo python3 setup.py install
+
 ## Contents
 
 ### Legend
@@ -29,7 +41,7 @@ MADBayes is a Python library about Bayesian Networks.
 ### Structural Properties
 
 | Name                 | Python | C/C++ |
-| -------------------- |:------:|:-----:|
+| -------------------- | :----: | :---: |
 | Independence Map     |        |       |
 | U-Separation         |        |       |
 | D-Separation         |        |       |
@@ -39,24 +51,24 @@ MADBayes is a Python library about Bayesian Networks.
 
 ### Types of Bayesian Networks
 
-| Name              |       Python       | C/C++ |
-| ----------------- |:------------------:|:-----:|
-| Discrete Networks | :heavy_check_mark: |       |
-| Gaussian Networks |                    |       |
-| CLG Networks      |                    |       |
-| Mixed Networks    |                    |       |
+| Name              |       Python       |       C/C++        |
+| ----------------- | :----------------: | :----------------: |
+| Discrete Networks | :heavy_check_mark: | :heavy_check_mark: |
+| Gaussian Networks |                    |                    |
+| CLG Networks      |                    |                    |
+| Mixed Networks    |                    |                    |
 
 ### Classifiers
 
 | Name                       | Python | C/C++ |
-| -------------------------- |:------:|:-----:|
+| -------------------------- | :----: | :---: |
 | Naive Bayes                |        |       |
 | Tree-Augmented Naive Bayes |        |       |
 
 ### Exact Inference
 
 | Type        | Name                          |       Python       | C/C++ |
-| ----------- | ----------------------------- |:------------------:|:-----:|
+| ----------- | ----------------------------- | :----------------: | :---: |
 | Exact       | Variable Elimination          |                    |       |
 |             | Junction Tree                 | :heavy_check_mark: |       |
 |             |                               |                    |       |
@@ -68,7 +80,7 @@ MADBayes is a Python library about Bayesian Networks.
 ### Structural Learning
 
 | Type            | Name                       |       Python       | C/C++ |
-| --------------- |:-------------------------- |:------------------:|:-----:|
+| --------------- | :------------------------- | :----------------: | :---: |
 | Costraint-based | Inductive Causation        |                    |       |
 |                 | Peter & Clark              |                    |       |
 |                 | Grow-Shrink                |                    |       |
@@ -88,7 +100,7 @@ MADBayes is a Python library about Bayesian Networks.
 ### Structure Score
 
 | Name                                         |       Python       | C/C++ |
-| -------------------------------------------- |:------------------:|:-----:|
+| -------------------------------------------- | :----------------: | :---: |
 | Bayesian Information Criterion (BIC)         |                    |       |
 | Akaike’s Information Criterion (AIC)         |                    |       |
 | Bayesian Dirichlet Equivalent Uniform (BDeu) |                    |       |
@@ -98,7 +110,7 @@ MADBayes is a Python library about Bayesian Networks.
 ### Missing Data
 
 | Name                     |       Python       | C/C++ |
-| ------------------------ |:------------------:|:-----:|
+| ------------------------ | :----------------: | :---: |
 | Expectation-Maximisation | :heavy_check_mark: |       |
 | Structural EM            | :heavy_check_mark: |       |
 | Data Augmentation        |                    |       |
@@ -107,7 +119,7 @@ MADBayes is a Python library about Bayesian Networks.
 ### Causal Models - Effects of Interventions
 
 | Name                              | Python | C/C++ |
-| --------------------------------- |:------:|:-----:|
+| --------------------------------- | :----: | :---: |
 | Interventions                     |        |       |
 | Adjustement Formula               |        |       |
 | Backdoor Criterion                |        |       |
@@ -117,7 +129,7 @@ MADBayes is a Python library about Bayesian Networks.
 ### Causal Models - Counterfactuals
 
 | Name                              | Python | C/C++ |
-| --------------------------------- |:------:|:-----:|
+| --------------------------------- | :----: | :---: |
 | Counterfactuals                   |        |       |
 | Probabilistic Counterfactuals     |        |       |
 | Counterfactuals in Linear Systems |        |       |

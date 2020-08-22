@@ -1,11 +1,12 @@
 .vscode
 .coverage
+*.so
+*.egg-info
 .spyproject
 .pytest_cache
 .ipynb_checkpoints
 __pycache__
+build
 htmlcov
 demo.py
-demo.ipynb
-debug*.png
 coverage.xml

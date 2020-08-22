@@ -1,1 +1,1 @@
-from .parser import parse_network_file
+from . import parser

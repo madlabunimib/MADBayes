@@ -7,12 +7,11 @@ from random import uniform
 from multiprocessing import Pool, cpu_count
 from itertools import product
 
-from . import find_topological_order
-from .nodes import parents
-from ..structures import BayesianNetwork
+from ..backend import BayesianNetwork
+from .find_topological_ordering import find_topological_order
 
 if TYPE_CHECKING:
-    from typing import List, Dict, Set
+    from typing import List, Dict, Set, Tuple
 
 
 def likelihood_weighting(bn: BayesianNetwork, method: str, query: Dict, n_samples: int, evidence={}):
@@ -63,7 +62,7 @@ def _sample(bn: BayesianNetwork, order: List, evidence: Dict):
         else:
             x_i = evidence[X_i]
             sample._set_value(X_i, x_i)
-            u_i = parents(bn, X_i)
+            u_i = bn.parents(X_i)
             p_u_i = {par: sample[par] for par in u_i}
             p_u_i.update({X_i: x_i})
             w *= bn[X_i]["CPT"].loc[p_u_i].values

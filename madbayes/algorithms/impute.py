@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from typing import Dict, List
-    from ..structures import BayesianNetwork
+    from ..backend import BayesianNetwork
 
 
 def impute(network: BayesianNetwork, dataset: Dataset) -> Dataset:
@@ -29,8 +29,8 @@ def impute(network: BayesianNetwork, dataset: Dataset) -> Dataset:
             jte = jt.set_evidence(**evidence)
             query = jte.query('joint', query)[0]
             query = [
-                query.marginalize([variable])
-                for variable in query.variables()
+                query.sum(set(query.dims) - set([variable]))
+                for variable in query.dims
             ]
             query = {
                 q.dims[0]: q.coords[q.dims[0]].values[q.argmax()]

@@ -1,0 +1,21 @@
+[submodule "madbayes/backend/extern/googletest"]
+	path = madbayes/backend/extern/googletest
+	url = https://github.com/google/googletest.git
+[submodule "madbayes/backend/extern/pybind11"]
+	path = madbayes/backend/extern/pybind11
+	url = https://github.com/pybind/pybind11.git
+[submodule "madbayes/backend/extern/xtl"]
+	path = madbayes/backend/extern/xtl
+	url = https://github.com/xtensor-stack/xtl.git
+[submodule "madbayes/backend/extern/xsimd"]
+	path = madbayes/backend/extern/xsimd
+	url = https://github.com/xtensor-stack/xsimd.git
+[submodule "madbayes/backend/extern/xtensor"]
+	path = madbayes/backend/extern/xtensor
+	url = https://github.com/xtensor-stack/xtensor.git
+[submodule "madbayes/backend/extern/xtensor-python"]
+	path = madbayes/backend/extern/xtensor-python
+	url = https://github.com/xtensor-stack/xtensor-python.git
+[submodule "madbayes/backend/extern/xframe"]
+	path = madbayes/backend/extern/xframe
+	url = https://github.com/xtensor-stack/xframe.git

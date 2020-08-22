@@ -1,8 +1,9 @@
 import numpy as np
+import xarray as xa
 from .bif import BIF_GRAMMAR
 from .dsc import DSC_GRAMMAR
 from lark import Lark, Token, tree, Tree, Transformer, Discard
-from typing import Dict, Tuple
+from typing import Tuple
 from os.path import splitext
 
 
@@ -10,18 +11,6 @@ GRAMMARS = {
     '.bif': BIF_GRAMMAR,
     '.dsc': DSC_GRAMMAR
 }
-
-
-def parse_network_file(path: str) -> Dict:
-    with open(path, 'r') as file:
-        text = file.read()
-    _, ext = splitext(path)
-    if not ext in GRAMMARS.keys():
-        raise Exception('unknown file format.')
-    parser = Lark(GRAMMARS[ext], parser='lalr', debug=True)
-    parsed = parser.parse(text)
-    parsed = ExtractData(visit_tokens=True).transform(parsed)
-    return parsed
 
 
 class ExtractData(Transformer):
@@ -106,3 +95,51 @@ class ExtractData(Transformer):
 
     def start(self, args):
         return args[0].value
+
+
+def bayesian_network_from_file(path: str) -> Tuple:
+    with open(path, 'r') as file:
+        text = file.read()
+    _, ext = splitext(path)
+    if not ext in GRAMMARS.keys():
+        raise Exception('Unknown file format.')
+    parser = Lark(GRAMMARS[ext], parser='lalr', debug=True)
+    parsed = parser.parse(text)
+    parsed = ExtractData(visit_tokens=True).transform(parsed)
+    nodes = list(parsed.keys())
+    edges = [
+        (parent, child)
+        for child, attr in parsed.items()
+        for parent in attr['dependencies']
+    ]
+    cpts = {}
+    for node, attr in parsed.items():
+        variables = [node] + attr['dependencies']
+        levels = [parsed[variable]['levels'] for variable in variables]
+        if len(attr['dependencies']) == 0:
+            data = [
+                ([i], v)
+                for i, v in enumerate(attr['cpt'][0])
+            ]
+        else:
+            data = [
+                ([i] + [levels[j + 1].index(w)
+                        for j, w in enumerate(row[0])], v)
+                for row in attr['cpt']
+                for i, v in enumerate(row[1])
+            ]
+        data = [(tuple(location), value) for location, value in data]
+        cpt = np.zeros([len(l) for l in levels])
+        for (location, value) in data:
+            cpt[location] = value
+        cpts[node] = xa.DataArray(data=cpt, dims=variables, coords=levels)
+    return nodes, edges, cpts
+
+
+@classmethod
+def from_file(cls, path: str) -> None:
+    nodes, edges, cpts = bayesian_network_from_file(path)
+    bayesian_network = cls(nodes, cpts)
+    for (parent, child) in edges:
+        bayesian_network.add_edge(parent, child)
+    return bayesian_network
