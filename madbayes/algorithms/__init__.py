@@ -2,7 +2,7 @@ from .bds import bds_score
 from .find_topological_ordering import find_topological_order
 from .hill_climbing import hill_climbing
 from .impute import impute
-from .junction_tree import junction_tree
+from .junction_tree import JunctionTree
 from .expectation_maximization import expectation_maximization
 from .forward_sampling import forward_sampling
 from .likelihood_weighting import likelihood_weighting

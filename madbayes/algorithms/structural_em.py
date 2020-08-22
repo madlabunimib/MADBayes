@@ -7,7 +7,6 @@ from scipy.special import rel_entr as kl
 from .expectation_maximization import expectation_maximization
 from .hill_climbing import hill_climbing
 from .impute import impute
-from .junction_tree import junction_tree
 from ..backend import DirectedGraph, BayesianNetwork
 
 from typing import TYPE_CHECKING

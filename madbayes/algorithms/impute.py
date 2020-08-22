@@ -1,5 +1,5 @@
 from __future__ import annotations
-from .junction_tree import junction_tree
+from .junction_tree import JunctionTree
 from ..structures import Dataset
 from copy import deepcopy
 import pandas as pd
@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 
 def impute(network: BayesianNetwork, dataset: Dataset) -> Dataset:
-    jt = junction_tree(network)
+    jt = JunctionTree(network)
     data = deepcopy(dataset.data)
     nans = data[data.isnull().any(axis=1)]
     cache = {}
@@ -26,8 +26,7 @@ def impute(network: BayesianNetwork, dataset: Dataset) -> Dataset:
         key = str(evidence)
         if key not in cache.keys():
             query = sorted(query.keys() - evidence.keys())
-            jte = jt.set_evidence(**evidence)
-            query = jte.query('joint', query)[0]
+            query = jt.query(query, evidence, 'joint')[0]
             query = [
                 query.sum(set(query.dims) - set([variable]))
                 for variable in query.dims

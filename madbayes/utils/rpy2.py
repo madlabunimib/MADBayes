@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 import xarray as xa
 
 if TYPE_CHECKING:
-    from typing import List
+    from typing import Any, List
 
 bnlearn = None
 gRain = None
@@ -65,13 +65,10 @@ class gRainJunctionTree():
     def __init__(self, network: 'BNLearnNetwork' = None) -> None:
         self._network = network
 
-    def set_evidence(self, **kwargs) -> 'gRainJunctionTree':
-        return type(self)(self._network.mutilated(**kwargs))
-
-    def query(self, method: str, variables: List[str]) -> List:
+    def query(self, variables: List[str], evidence: Any, method: str) -> Any:
         from rpy2.robjects.vectors import StrVector
         out = gRain.querygrain(
-            self._network.as_grain(),
+            self._network.mutilated(**evidence).as_grain(),
             nodes=StrVector(variables),
             type=method,
             result='data.frame'

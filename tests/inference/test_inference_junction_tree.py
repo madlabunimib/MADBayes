@@ -16,7 +16,7 @@ def test_inference_junction_tree():
     ]
     assert(len(networks) > 0)
     jts = [
-        mb.junction_tree(network)
+        mb.JunctionTree(network)
         for network in networks
     ]
 
@@ -40,7 +40,7 @@ def test_inference_junction_tree_query():
             for node in nodes
         }
         # Build junction tree
-        jt_0 = mb.junction_tree(jt_0)
+        jt_0 = mb.JunctionTree(jt_0)
         # Load bnlearn and grain
         jt_1 = mb.utils.BNLearnNetwork.from_bif(path)
         jt_1 = mb.utils.gRainJunctionTree(jt_1)
@@ -79,9 +79,7 @@ def test_inference_junction_tree_query():
         # Execute the query
         for i, query in enumerate(queries):
             evidence = evidences[i]
-            jte_0 = jt_0.set_evidence(**evidence)
-            jte_1 = jt_1.set_evidence(**evidence)
-            out_0 = jte_0.query(query['method'], query['variables'])
-            out_1 = jte_0.query(query['method'], query['variables'])
+            out_0 = jt_0.query(query['variables'], evidence, query['method'])
+            out_1 = jt_1.query(query['variables'], evidence, query['method'])
             for j, _ in enumerate(out_0):
                 assert_allclose(out_0[j], out_1[j])

@@ -9,7 +9,7 @@ from copy import deepcopy
 from scipy.special import rel_entr as kl
 from multiprocessing import Pool, cpu_count
 
-from .junction_tree import junction_tree
+from .junction_tree import JunctionTree
 from ..backend import DirectedGraph, BayesianNetwork
 
 if TYPE_CHECKING:
@@ -55,7 +55,7 @@ def expectation_maximization(
         ### Expectation Step ###
 
         # Compute the Junction Tree for exact inference
-        jt = junction_tree(dag)
+        jt = JunctionTree(dag)
         # Initialize list of parameters
         frequencies = [
             (node, parents[node], dataset, zeros[node].copy(), jt)
@@ -102,9 +102,8 @@ def _expectation_maximization_node(node, parents, dataset, counter, jt):
         if (any_nan):
             # Set evidence
             evidence = _build_evidence(row, variables)
-            jte = jt.set_evidence(**evidence)
             # Execute query
-            query = jte.query('joint', variables)[0]
+            query = jt.query(variables, evidence, 'joint')[0]
         # Update values
         counter.loc[values] += query * row['count']
     return counter
