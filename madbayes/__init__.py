@@ -6,5 +6,5 @@ DiscreteBayesianNetwork.from_file = from_file
 
 from . import data, utils
 from .algorithms import (bds_score, expectation_maximization, forward_sampling,
-                         hill_climbing, impute, likelihood_weighting, structural_em, JunctionTree)
+                         hill_climbing, impute, LikelihoodWeighting, structural_em, JunctionTree)
 from .structures import (Dataset)

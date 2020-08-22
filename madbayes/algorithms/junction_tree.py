@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 class JunctionTree(Tree, InferenceSystem):
 
-    def __init__(self, network: BayesianNetwork) -> None:
+    def __init__(self, network: BayesianNetwork, *args, **kwargs) -> None:
         self._nodes = {}
         self._cliques = []
         moralized = moral(network)

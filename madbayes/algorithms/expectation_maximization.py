@@ -9,19 +9,21 @@ from copy import deepcopy
 from scipy.special import rel_entr as kl
 from multiprocessing import Pool, cpu_count
 
-from .junction_tree import JunctionTree
 from ..backend import DirectedGraph, BayesianNetwork
 
 if TYPE_CHECKING:
-    from typing import Dict, List
+    from typing import Any, Dict, List
     from ..structures import Dataset
 
 
 def expectation_maximization(
     dag: DirectedGraph,
     dataset: Dataset,
+    inference: Any,
     max_iter: int = 50,
-    tol: float = 1e-08
+    tol: float = 1e-08,
+    *args,
+    **kwargs
 ) -> BayesianNetwork:
     # If DAG is string, build BayesianNetwork
     if isinstance(dag, str):
@@ -55,10 +57,10 @@ def expectation_maximization(
         ### Expectation Step ###
 
         # Compute the Junction Tree for exact inference
-        jt = JunctionTree(dag)
+        engine = inference(dag, *args, **kwargs)
         # Initialize list of parameters
         frequencies = [
-            (node, parents[node], dataset, zeros[node].copy(), jt)
+            (node, parents[node], dataset, zeros[node].copy(), engine)
             for node in nodes
         ]
         # For each node, for each row compute absolute
@@ -86,7 +88,7 @@ def expectation_maximization(
     return dag
 
 
-def _expectation_maximization_node(node, parents, dataset, counter, jt):
+def _expectation_maximization_node(node, parents, dataset, counter, engine):
     for row in dataset:
         # Init query
         query = 1
@@ -103,7 +105,7 @@ def _expectation_maximization_node(node, parents, dataset, counter, jt):
             # Set evidence
             evidence = _build_evidence(row, variables)
             # Execute query
-            query = jt.query(variables, evidence, 'joint')[0]
+            query = engine.query(variables, evidence, 'joint')[0]
         # Update values
         counter.loc[values] += query * row['count']
     return counter

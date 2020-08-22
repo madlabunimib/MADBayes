@@ -14,7 +14,7 @@ def test_learning_impute():
         if dataset in ['asia', 'cancer', 'earthquake', 'sachs', 'survey']
     ]
     for (dataset, network) in datasets_networks:
-        imputed = mb.impute(network, dataset.random_nan())
+        imputed = mb.impute(network, dataset.random_nan(), mb.LikelihoodWeighting, n_samples = 1000)
         tot = np.prod(dataset.data.shape)
         err = np.count_nonzero(
             dataset.data.values == imputed.data.values

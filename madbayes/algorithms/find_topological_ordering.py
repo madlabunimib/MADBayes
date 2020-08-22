@@ -16,7 +16,7 @@ def find_topological_order(dag: DirectedGraph) -> List:
     order = []
     visited = set()
     # Start with a random node
-    _find_order_rec(tmp_dag, dag.nodes()[0], order, visited)
+    _find_order_rec(tmp_dag, dag.nodes[0], order, visited)
     return order
 
 
