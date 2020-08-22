@@ -34,7 +34,6 @@ Cliques CliqueTree::build_cliques(const BayesianNetwork &bn) {
                 family.begin(),
                 family.end()
             )) {
-                // TODO: Look for invariant factor
                 Factor factor = bn.get_cpt(node);
                 clique.belief = (clique.belief.size() != 1) ? factor * clique.belief : factor;
             }
