@@ -6,16 +6,15 @@ import pandas as pd
 from random import uniform
 from multiprocessing import Pool, cpu_count
 
-from ..backend import BayesianNetwork
+from ..backend import BayesianNetwork, topological_sorting
 from ..structures import Dataset
-from .find_topological_ordering import find_topological_order
 
 if TYPE_CHECKING:
     from typing import List, Set
 
 
 def forward_sampling(bn: BayesianNetwork, n_samples: int):
-    order = find_topological_order(bn)
+    order = topological_sorting(bn)
 
     params = [
         (bn, order)

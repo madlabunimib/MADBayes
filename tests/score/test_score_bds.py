@@ -35,6 +35,10 @@ def test_score_bds_suzuki_2016():
     refs = [abspath(join(dirname(__file__), ref)) for ref in refs]
     refs = [mb.Dataset.from_csv(ref) for ref in refs]
     dags = ['[X|Z:W][Z][W][Y]', '[X|Z:W:Y][Z][W][Y]']
+    dags = [
+        mb.DiscreteBayesianNetwork(dag)
+        for dag in dags
+    ]
     outs = [log(0.03262539), log(3.90625e-07)]
 
     for i, ref in enumerate(refs):

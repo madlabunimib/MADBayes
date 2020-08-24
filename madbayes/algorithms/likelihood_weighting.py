@@ -7,9 +7,8 @@ from random import uniform
 from multiprocessing import Pool, cpu_count
 from itertools import product
 
-from ..backend import BayesianNetwork
+from ..backend import BayesianNetwork, topological_sorting
 from .inference_system import InferenceSystem
-from .find_topological_ordering import find_topological_order
 
 if TYPE_CHECKING:
     from typing import Any, List, Dict, Set, Tuple
@@ -19,11 +18,13 @@ class LikelihoodWeighting(InferenceSystem):
 
     def __init__(self, network: BayesianNetwork, *args, **kwargs) -> None:
         self.bn = network
+        if 'n_samples' not in kwargs:
+            raise ValueError('Missing "n_samples" keyword parameter.')
         self.n_samples = kwargs['n_samples']
 
     def query(self, variables: List, evidence: Any, method: str) -> Any:
         # Find topological order for the Bayesian Network
-        order = find_topological_order(self.bn)
+        order = topological_sorting(self.bn)
         # Create samples with weights
         params = [
             (self.bn, order, evidence)

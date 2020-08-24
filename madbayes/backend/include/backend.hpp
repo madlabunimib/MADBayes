@@ -12,3 +12,4 @@
 #include "algorithms/structure/maximal_cliques.ipp"
 #include "algorithms/structure/maximum_cardinality_search.ipp"
 #include "algorithms/structure/moral.ipp"
+#include "algorithms/structure/topological_sorting.ipp"

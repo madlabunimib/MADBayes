@@ -25,9 +25,6 @@ def expectation_maximization(
     *args,
     **kwargs
 ) -> BayesianNetwork:
-    # If DAG is string, build BayesianNetwork
-    if isinstance(dag, str):
-        dag = BayesianNetwork(dag)
     if isinstance(dag, DirectedGraph):
         dag = BayesianNetwork(dag.edges)
     # Get nodes from dag

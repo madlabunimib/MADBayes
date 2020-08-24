@@ -104,5 +104,6 @@ PYBIND11_MODULE(backend, m) {
     m.def("maximal_cliques", &maximal_cliques, py::arg("other"));
     m.def("maximum_cardinality_search", &maximum_cardinality_search, py::arg("other"));
     m.def("moral", &moral, py::arg("other"));
+    m.def("topological_sorting", &topological_sorting, py::arg("other"));
 
 }

@@ -33,6 +33,8 @@ class DirectedGraph : public Graph {
     Nodes ancestors(const Node &label) const;
     Nodes descendants(const Node &label) const;
 
+    friend Nodes topological_sorting(const DirectedGraph &other);
+
     static DirectedGraph random(size_t nodes, double edge_probability);
 };
 

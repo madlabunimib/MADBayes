@@ -10,10 +10,6 @@ if TYPE_CHECKING:
 
 
 def bds_score(network: BayesianNetwork, dataset: Dataset, iss: float = 1, with_nodes: bool = False):
-    # If network is string, buld BayesianNetwork
-    if isinstance(network, str):
-        network = BayesianNetwork(network, {})
-
     nodes = sorted(network.nodes)
 
     score = {

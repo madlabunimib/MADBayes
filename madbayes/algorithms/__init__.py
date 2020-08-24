@@ -1,5 +1,4 @@
 from .bds import bds_score
-from .find_topological_ordering import find_topological_order
 from .hill_climbing import hill_climbing
 from .impute import impute
 from .junction_tree import JunctionTree
