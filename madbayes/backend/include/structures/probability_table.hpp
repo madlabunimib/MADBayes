@@ -5,6 +5,7 @@
 #include <vector>
 #include <xframe/xio.hpp>
 #include <xframe/xvariable.hpp>
+#include <xframe/xvariable_view.hpp>
 #include <xtensor/xadapt.hpp>
 #include <xtensor/xarray.hpp>
 #include <xtensor/xmath.hpp>

@@ -7,6 +7,7 @@ namespace madbayes {
 
 using CPT = DataArray;
 using CPTs = std::map<Node, CPT>;
+using Evidence = std::map<Node, std::string>;
 
 namespace structures {
 

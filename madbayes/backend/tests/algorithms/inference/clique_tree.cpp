@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "algorithms/inference/clique_tree.ipp"
+#include "structures/discrete_bayesian_network.ipp"
 
 using namespace madbayes;
 using namespace madbayes::algorithms;

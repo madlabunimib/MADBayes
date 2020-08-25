@@ -1,6 +1,6 @@
 #pragma once
 
-#include <structures/discrete_bayesian_network.ipp>
+#include <structures/probability_table.ipp>
 
 namespace madbayes {
 
