@@ -33,14 +33,14 @@ class CliqueTree : public Graph {
     std::map<Node, Clique> label2clique;
 
     template <typename T>
-    Cliques build_cliques(const T &bn);
+    Cliques build_cliques(const T &other);
     void build_clique_tree(const Cliques &cliques);
     Factor calibrate_upward(const Node &prev, const Node &curr);
     void calibrate_downward(const Node &prev, const Node &curr, const Factor &message);
 
    public:
     template <typename T>
-    CliqueTree(const T &bn);
+    CliqueTree(const T &other);
     CliqueTree(const CliqueTree &other);
     CliqueTree &operator=(const CliqueTree &other);
     ~CliqueTree();

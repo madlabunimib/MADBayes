@@ -13,8 +13,8 @@ namespace madbayes {
 namespace algorithms {
 
 template <typename T>
-Cliques CliqueTree::build_cliques(const T &bn) {
-    Graph moral_graph = moral(bn);
+Cliques CliqueTree::build_cliques(const T &other) {
+    Graph moral_graph = moral(other);
     Graph chordal_graph = chordal(moral_graph);
     std::vector<Nodes> cliques = maximal_cliques(chordal_graph);
     Nodes alpha = maximum_cardinality_search(chordal_graph);
@@ -22,12 +22,12 @@ Cliques CliqueTree::build_cliques(const T &bn) {
 
     // Assign CPTs to clique
     Cliques out;
-    Nodes nodes = bn.get_nodes();
+    Nodes nodes = other.get_nodes();
     for (size_t i = 0; i < chain.size(); i++) {
         std::sort(chain[i].begin(), chain[i].end());
         Clique clique {false, chain[i], {}};
         for (Node node : nodes) {
-            Nodes family = bn.family(node);
+            Nodes family = other.family(node);
             std::sort(family.begin(), family.end());
             if (std::includes(
                 clique.nodes.begin(),
@@ -35,7 +35,7 @@ Cliques CliqueTree::build_cliques(const T &bn) {
                 family.begin(),
                 family.end()
             )) {
-                Factor factor = bn.get_cpt(node);
+                Factor factor = other.get_cpt(node);
                 clique.belief = (clique.belief.size() != 1) ? factor * clique.belief : factor;
             }
         }
@@ -151,8 +151,8 @@ void CliqueTree::calibrate_downward(const Node &prev, const Node &curr, const Fa
 }
 
 template <typename T>
-CliqueTree::CliqueTree(const T &bn) : Graph() {
-    Cliques cliques = build_cliques(bn);
+CliqueTree::CliqueTree(const T &other) : Graph() {
+    Cliques cliques = build_cliques(other);
     build_clique_tree(cliques);
 
     Node root = get_nodes()[0];
