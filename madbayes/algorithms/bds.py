@@ -1,6 +1,5 @@
 from __future__ import annotations
 from ..backend import BayesianNetwork
-from multiprocessing import Pool, cpu_count
 from math import lgamma
 
 from typing import TYPE_CHECKING
