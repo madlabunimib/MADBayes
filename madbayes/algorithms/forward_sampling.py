@@ -32,4 +32,4 @@ def forward_sampling(bn: BayesianNetwork, size: int):
         
         samples.append(sample)
 
-    return Dataset(pd.DataFrame(samples))
+    return Dataset(samples)

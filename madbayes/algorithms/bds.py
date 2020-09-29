@@ -23,7 +23,7 @@ def bds_score(network: BayesianNetwork, dataset: Dataset, iss: float = 1, with_n
 
 
 def _node_bds_score(node: str, dataset: Dataset, network: BayesianNetwork, iss: float) -> float:
-    size = dataset.data.shape[0]
+    size = dataset.shape[0]
     levels = dataset.levels(node)
 
     parents = network.parents(node)

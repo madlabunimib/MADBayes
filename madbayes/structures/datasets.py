@@ -1,40 +1,32 @@
 import numpy as np
 import pandas as pd
 
-from random import sample
 
-
-class Dataset:
-
-    def __init__(self, dataset: pd.DataFrame):
-        self.data = dataset
+class Dataset(pd.DataFrame):
 
     def absolute_frequencies(self, columns=None):
         if columns is None or len(columns) == 0:
-            columns = list(self.data.columns)
-        return self.data.groupby(columns).size().to_frame('count')
-
-    def columns(self):
-        return list(self.data.columns)
+            columns = self.columns
+        return self.groupby(columns).size().to_frame('count')
 
     def levels(self, variable=None):
         if variable is None:
             return {
-                column: sorted(self.data[column].dropna().unique())
-                for column in self.data.columns
+                column: sorted(self[column].dropna().unique())
+                for column in self.columns
             }
-        return sorted(self.data[variable].dropna().unique())
+        return sorted(self[variable].dropna().unique())
     
     def count_nan(self) -> int:
-        return self.data.size - self.data.count().sum()
+        return self.size - self.count().sum()
 
     def random_nan(self, ratio: float = 0.20):
-        data = self.data.copy()
+        data = self.copy()
         data = data.mask(np.random.random(data.shape) < ratio)
         return type(self)(data)
 
     def to_dict(self):
-        return self.data.to_dict('records')
+        return super().to_dict('records')
 
     @classmethod
     def from_csv(cls, path: str):
@@ -45,6 +37,3 @@ class Dataset:
             dtype=str
         )
         return cls(dataset)
-
-    def __repr__(self):
-        return super().__repr__()

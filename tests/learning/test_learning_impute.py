@@ -15,9 +15,9 @@ def test_learning_impute():
     ]
     for (dataset, network) in datasets_networks:
         imputed = mb.impute(network, dataset.random_nan(), mb.JunctionTree)
-        tot = np.prod(dataset.data.shape)
+        tot = np.prod(dataset.shape)
         err = np.count_nonzero(
-            dataset.data.values == imputed.data.values
+            dataset.values == imputed.values
         )
         err = 1 - (err / tot)
         assert(err < 0.10)

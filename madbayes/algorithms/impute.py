@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 def impute(network: BayesianNetwork, dataset: Dataset, inference: Any, *args, **kwargs) -> Dataset:
     engine = inference(network, *args, **kwargs)
-    data = deepcopy(dataset.data)
+    data = deepcopy(dataset)
     nans = data[data.isnull().any(axis=1)]
     cache = {}
     for index, row in nans.iterrows():
@@ -38,4 +38,4 @@ def impute(network: BayesianNetwork, dataset: Dataset, inference: Any, *args, **
         query = cache[key]
         for key, value in query.items():
             data.loc[[index], [key]] = value
-    return Dataset(data)
+    return data
