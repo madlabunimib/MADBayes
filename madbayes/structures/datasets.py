@@ -4,10 +4,10 @@ import pandas as pd
 
 class Dataset(pd.DataFrame):
 
-    def absolute_frequencies(self, columns=None):
+    def absolute_frequency(self, columns=None):
         if columns is None or len(columns) == 0:
-            columns = self.columns
-        return self.groupby(columns).size().to_frame('count')
+            columns = list(self.columns)
+        return self.groupby(columns, dropna=False).size().to_frame('count')
 
     def levels(self, variable=None):
         if variable is None:

@@ -27,7 +27,7 @@ def _node_bds_score(node: str, dataset: Dataset, network: BayesianNetwork, iss: 
     levels = dataset.levels(node)
 
     parents = network.parents(node)
-    dataset = dataset.absolute_frequencies([node] + parents)
+    dataset = dataset.absolute_frequency([node] + parents)
     configs = [((), size)]
     r_i = len(levels)
 

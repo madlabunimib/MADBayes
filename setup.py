@@ -99,7 +99,7 @@ setup(
         'networkx>=2.4',
         'numpy',
         'scipy',
-        'pandas',
+        'pandas>=1.1',
         'xarray',
         'rpy2',
         'lark-parser',

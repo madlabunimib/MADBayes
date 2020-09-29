@@ -45,7 +45,7 @@ def expectation_maximization(
     # Count absolute frequencies of unique
     # variables configurations in dataset
     # and transform in list of dicts by row
-    dataset = dataset.absolute_frequencies()
+    dataset = dataset.absolute_frequency()
     dataset = dataset.reset_index().to_dict('records')
     # Repeat until convergence or max iterations reached
     iteration = 0
