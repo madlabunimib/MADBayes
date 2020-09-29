@@ -21,7 +21,7 @@ def structural_em(
     tol: float = 1e-08
 ) -> BayesianNetwork:
     imputed = dataset
-    dag = DirectedGraph(dataset.columns())
+    dag = DirectedGraph(dataset.columns)
     bn = expectation_maximization(dag, imputed)
 
     iteration = 0

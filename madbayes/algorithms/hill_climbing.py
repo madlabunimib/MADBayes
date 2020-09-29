@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 
 def hill_climbing(dataset: Dataset, score=bds_score, node_score=_node_bds_score, iss: float = 1) -> DirectedGraph:
-    nodes = dataset.columns()
+    nodes = dataset.columns
     dag_best = DirectedGraph(nodes=nodes)
     score_dag_best = score(dag_best, dataset, iss=iss, with_nodes=True)
 
