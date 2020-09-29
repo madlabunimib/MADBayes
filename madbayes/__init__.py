@@ -1,6 +1,8 @@
 from .backend import *
 
 # Experimental classmethod crossreference dynamic binding
+from .utils.plot import plot
+Graph.plot = plot
 from .io.parser import from_file
 DiscreteBayesianNetwork.from_file = from_file
 

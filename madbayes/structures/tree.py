@@ -118,7 +118,7 @@ class Tree():
         graph = DirectedGraph()
         root = self.root()
         graph.add_node(root.label())
-        graph[root.label()] = deepcopy(root._attributes)
+        # graph[root.label()] = deepcopy(root._attributes)
         self._to_directed_graph_recursive(graph, root)
         return graph
 
@@ -129,7 +129,7 @@ class Tree():
                 parent.label(),
                 child.label()
             )
-            graph[child.label()] = deepcopy(child._attributes)
+            # graph[child.label()] = deepcopy(child._attributes)
             self._to_directed_graph_recursive(graph, child)
 
     def plot(self) -> None:

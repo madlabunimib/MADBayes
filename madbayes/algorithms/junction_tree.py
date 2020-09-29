@@ -243,25 +243,3 @@ class JunctionTree(Tree, InferenceSystem):
         child.set_parent(separator)
         separator['type'] = 'separator'
         separator['nodes'] = OrderedSet(separator_nodes)
-    
-    def plot(self) -> None:
-        plt.figure(1, figsize=(15, 15))
-        G = self.to_directed_graph().to_networkx()
-        try:
-            layout = nx.nx_agraph.pygraphviz_layout(G, prog='dot')
-        except IndexError:
-            # TODO: Fix large tree
-            layout = nx.spring_layout(G)
-        shapes = {
-            'clique': 'o',      # Circle
-            'separator': 's'    # Square
-        }
-        for node in G.nodes:
-            shape = shapes[nx.get_node_attributes(G, 'type')[node]]
-            nx.draw_networkx_nodes(G, layout, nodelist=[
-                                   node], node_shape=shape, node_color='red')
-            nx.draw_networkx_edges(G, layout)
-        lables = nx.draw_networkx_labels(G, layout)
-        for _, label in lables.items():
-            label.set_rotation(30)
-        plt.show()

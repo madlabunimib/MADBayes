@@ -22,7 +22,7 @@ PYBIND11_MODULE(backend, m) {
 
     // Stuctures
 
-    py::class_<Graph>(m, "Graph")
+    py::class_<Graph>(m, "Graph", py::dynamic_attr())
         .def(py::init<>())
         .def(py::init<const std::string &>(), py::arg("formula"))
         .def(py::init<const Nodes &>(), py::arg("nodes"))
@@ -46,7 +46,7 @@ PYBIND11_MODULE(backend, m) {
         .def("__repr__", &Graph::__repr__)
         .def_static("random", &Graph::random, py::arg("nodes"), py::arg("edge_probability"));
     
-    py::class_<DirectedGraph, Graph>(m, "DirectedGraph")
+    py::class_<DirectedGraph, Graph>(m, "DirectedGraph", py::dynamic_attr())
         .def(py::init<>())
         .def(py::init<const std::string &>(), py::arg("formula"))
         .def(py::init<const Nodes &>(), py::arg("nodes"))
@@ -64,7 +64,7 @@ PYBIND11_MODULE(backend, m) {
     m.def("ProbabilityTable", &ProbabilityTable<std::vector<double>>, py::arg("data"), py::arg("coordinates"));
     m.def("ProbabilityTable", &ProbabilityTable<py::array_t<double>>, py::arg("data"), py::arg("coordinates"));
 
-    py::class_<BayesianNetwork, DirectedGraph>(m, "BayesianNetwork")
+    py::class_<BayesianNetwork, DirectedGraph>(m, "BayesianNetwork", py::dynamic_attr())
         .def(py::init<>())
         .def(py::init<const std::string &, const std::map<std::string, DataArray> &>(), py::arg("formula"), py::arg("cpts"))
         .def(py::init<const Nodes &, const std::map<std::string, DataArray> &>(), py::arg("nodes"), py::arg("cpts"))
