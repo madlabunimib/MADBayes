@@ -160,9 +160,8 @@ BIF_GRAMMAR = r"""
   %ignore ","
   %ignore "|"
 
-  WORD: LETTER (LETTER | DIGIT)*
-  LETTER: /[a-zA-Z_-]/
-  DIGIT:  /[0-9]/
+  WORD: (/\w/ | OTHER)+
+  OTHER: /(\.|\+|-|=|<|>|\/)/
 
   DECIMAL_LITERAL: /[0-9][1-9]*/
   FLOATING_POINT_LITERAL: /[0-9]+\.[0-9]*/ (EXPONENT)?
