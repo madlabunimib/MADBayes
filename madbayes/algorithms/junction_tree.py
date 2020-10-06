@@ -134,10 +134,10 @@ class JunctionTree(Tree, InferenceSystem):
         clique = self[variable][0]
         old_margin = clique['belief'].sum(
             set(clique['belief'].dims) - set([variable]))
-        new_margin = old_margin.copy()
-        new_margin.loc[:] = 0
+        new_margin = xa.zeros_like(old_margin)
         new_margin.loc[value] = 1
         clique['belief'] = clique['belief'] / old_margin * new_margin
+        clique['belief'].fillna(0)
         self._calibrate_downward(None, clique, 1)
 
     def _calibrate(self) -> None:
