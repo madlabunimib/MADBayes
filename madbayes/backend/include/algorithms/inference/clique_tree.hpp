@@ -47,6 +47,9 @@ class CliqueTree : public Graph {
 
     Clique get_clique(const Node &label) const;
     void set_clique(const Clique &clique);
+
+    Clique get_clique_given_variables(const Nodes &variables) const;
+    Factor get_joint_query(const Node &prev, const Node &curr, Nodes *variables) const;
 };
 
 }  // namespace algorithms

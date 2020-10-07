@@ -96,7 +96,9 @@ PYBIND11_MODULE(backend, m) {
         .def(py::init<const CliqueTree &>(), py::arg("other"))
         // .def("__call__", &CliqueTree::operator(), py::arg("query", py::arg("evidence")));
         .def("get_clique", &CliqueTree::get_clique, py::arg("label"))
-        .def("set_clique", &CliqueTree::set_clique, py::arg("clique"));
+        .def("set_clique", &CliqueTree::set_clique, py::arg("clique"))
+        .def("get_clique_given_variables", &CliqueTree::get_clique_given_variables, py::arg("variables"))
+        .def("get_joint_query", &CliqueTree::get_joint_query, py::arg("prev"), py::arg("curr"), py::arg("variables"));
 
     // Algorithms - Structure
     m.def("chain_of_cliques", &chain_of_cliques, py::arg("cliques"), py::arg("alpha"));

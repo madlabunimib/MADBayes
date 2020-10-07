@@ -97,16 +97,16 @@ Factor CliqueTree::calibrate_upward(const Node &prev, const Node &curr) {
         }
     }
 
-    Clique *clique = &label2clique[curr];
-    if (message.size() > 1) clique->belief *= message;
+    Clique &clique = label2clique.at(curr);
+    if (message.size() > 1) clique.belief *= message;
     
-    if (!clique->is_separator) {
+    if (!clique.is_separator) {
         Nodes margin;
-        Nodes sepset = clique->nodes;
-        if (prev != Node()) sepset = label2clique[prev].nodes;
+        Nodes sepset = clique.nodes;
+        if (prev != Node()) sepset = label2clique.at(prev).nodes;
         std::set_difference(
-            clique->nodes.begin(),
-            clique->nodes.end(),
+            clique.nodes.begin(),
+            clique.nodes.end(),
             sepset.begin(),
             sepset.end(),
             std::back_inserter(margin)
@@ -119,24 +119,24 @@ Factor CliqueTree::calibrate_upward(const Node &prev, const Node &curr) {
 }
 
 void CliqueTree::calibrate_downward(const Node &prev, const Node &curr, const Factor &message) {
-    Clique *clique = &label2clique[curr];
+    Clique &clique = label2clique.at(curr);
 
-    if (clique->is_separator) {
+    if (clique.is_separator) {
         Nodes margin;
         Nodes dims = message.dimension_labels();
         std::sort(dims.begin(), dims.end());
         std::set_difference(
             dims.begin(),
             dims.end(),
-            clique->nodes.begin(),
-            clique->nodes.end(),
+            clique.nodes.begin(),
+            clique.nodes.end(),
             std::back_inserter(margin)
         );
         // TODO: Fix sum over axes
         // message = xt::sum(clique->belief, margin);
     }
 
-    if (message.size() > 1) clique->belief *= message;
+    if (message.size() > 1) clique.belief *= message;
 
     for (Node next : neighbors(curr)) {
         if (next != prev) {
@@ -179,6 +179,73 @@ Clique CliqueTree::get_clique(const Node &label) const {
 
 void CliqueTree::set_clique(const Clique &clique) {
     label2clique[clique] = clique;
+}
+
+Clique CliqueTree::get_clique_given_variables(const Nodes &variables) const {
+    Nodes nodes = variables;
+    std::sort(nodes.begin(), nodes.end());
+    auto iterator = label2clique.cbegin();
+    while (iterator != label2clique.cend()) {
+        const Clique *clique = &iterator->second;
+        if (std::includes(
+            clique->nodes.begin(),
+            clique->nodes.end(),
+            nodes.begin(),
+            nodes.end()
+        )) {
+            return *clique;
+        }
+        iterator++;
+    }
+    throw std::runtime_error("No clique found with given variables.");
+}
+
+Factor CliqueTree::get_joint_query(const Node &prev, const Node &curr, Nodes *variables) const {
+    Factor message;
+    const Clique &clique = label2clique.at(curr);
+
+    if (clique.is_separator) {
+        for (Node next : neighbors(curr)) {
+            if (next != prev) {
+                message = get_joint_query(curr, next, variables);
+            }
+        }
+        // If the returning value is not empty, this means that there
+        // are variables of the query in the subtree under this separator,
+        // so we need to divide the returning belief by the sepset belief. 
+        if (message.size() > 1) message /= clique.belief;
+        return message;
+    }
+
+    // Check if the current clique contains any variable of the query.
+    bool found = false;
+    auto node = clique.nodes.begin();
+    for (; node != clique.nodes.end(); node++) {
+        auto variable = std::find(
+            variables->begin(),
+            variables->end(),
+            *node
+        );
+        if (variable != variables->end()) {
+            variables->erase(variable);
+            found = true;
+        }
+    }
+
+    // If there are variables left to be found,
+    // make a recursive call over children.
+    for (Node next : neighbors(curr)) {
+        if (next != prev && variables->size() > 0) {
+            Factor factor = get_joint_query(curr, next, variables);
+            message = (message.size() > 1) ? factor * message : factor; 
+        }
+    }
+
+    // If message is not empty or a variable is found,
+    // then multiply the message by the clique belief.
+    if (found || message.size() > 1) message *= clique.belief;
+    
+    return message;
 }
 
 }  // namespace algorithms
