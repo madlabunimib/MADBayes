@@ -19,7 +19,7 @@ using DataArray = xf::xvariable<double, Coordinate>;
 
 namespace structures {
 
-using Mapper = std::map<std::string, std::vector<std::string>>;
+using Mapper = std::vector<std::pair<std::string, std::vector<std::string>>>;
 
 template <typename T>
 DataArray ProbabilityTable(const T &data, const Mapper &coordinates);

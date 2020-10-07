@@ -39,7 +39,7 @@ struct type_caster<DataArray> {
             std::string dim = (i->first).cast<py::str>();
             py::dict value = (i->second).cast<py::dict>();
             std::vector<std::string> coord = (value[py::str("data")]).cast<std::vector<std::string>>();
-            mapper.insert({dim, coord});
+            mapper.push_back({dim, coord});
         }
         py::array_t<double> data = obj.attr("get")("data");
         // Object constructor
@@ -71,18 +71,21 @@ struct type_caster<DataArray> {
         for (auto i = _storage.begin(); i != _storage.end(); ++i) data.push_back(i->value());
 
         // Extract dims and coords
-        std::vector<std::string> _dims;
+        std::vector<std::string> _dims = src.dimension_labels();
         std::vector<std::vector<std::string>> coords;
         auto _coord = src.coordinates();
-        for (auto i = _coord.begin(); i != _coord.end(); ++i) {
-            std::vector<std::string> coord;
-            _dims.push_back(i->first);
-            size_t end = i->second.labels().size();
-            auto _labels = i->second.labels().data();
-            for (auto j = _labels; j < _labels + end; ++j) {
-                coord.push_back(*j);
+        for (auto i = _dims.begin(); i != _dims.end(); ++i) {
+            for (auto j = _coord.begin(); j != _coord.end(); ++j) {
+                if (*i == j->first) {
+                    std::vector<std::string> coord;
+                    size_t end = j->second.labels().size();
+                    auto _labels = j->second.labels().data();
+                    for (auto k = _labels; k < _labels + end; ++k) {
+                        coord.push_back(*k);
+                    }
+                    coords.push_back(coord);
+                }
             }
-            coords.push_back(coord);
         }
         // We need to freeze the dims
         py::tuple dims = py::cast(_dims);
