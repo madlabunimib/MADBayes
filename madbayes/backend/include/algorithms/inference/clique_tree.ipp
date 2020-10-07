@@ -26,8 +26,8 @@ Cliques CliqueTree::build_cliques(const T &other) {
     for (size_t i = 0; i < chain.size(); i++) {
         std::sort(chain[i].begin(), chain[i].end());
         Clique clique {false, chain[i], {}};
-        for (Node node : nodes) {
-            Nodes family = other.family(node);
+        for (auto node = nodes.begin(); node != nodes.end(); node++) {
+            Nodes family = other.family(*node);
             std::sort(family.begin(), family.end());
             if (std::includes(
                 clique.nodes.begin(),
@@ -35,14 +35,10 @@ Cliques CliqueTree::build_cliques(const T &other) {
                 family.begin(),
                 family.end()
             )) {
-                Factor factor = other.get_cpt(node);
-                clique.belief = (clique.belief.size() != 1) ? factor * clique.belief : factor;
+                Factor factor = other.get_cpt(*node);
+                clique.belief = (clique.belief.size() > 1) ? factor * clique.belief : factor;
+                nodes.erase(node--);
             }
-        }
-        // TODO: Refactor using set_difference or incremental removal
-        for (Node node : clique.nodes) {
-            auto remove = std::find(nodes.begin(), nodes.end(), node);
-            if (remove != nodes.end()) nodes.erase(remove);
         }
         out.push_back(clique);
     }
@@ -155,9 +151,11 @@ CliqueTree::CliqueTree(const T &other) : Graph() {
     Cliques cliques = build_cliques(other);
     build_clique_tree(cliques);
 
+    /*
     Node root = get_nodes()[0];
     calibrate_upward(Node(), root);
     calibrate_downward(Node(), root, {});
+    */
 }
 
 CliqueTree::CliqueTree(const CliqueTree &other) : Graph(other), label2clique(other.label2clique) {}
