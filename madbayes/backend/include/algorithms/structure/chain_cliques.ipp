@@ -22,6 +22,7 @@ std::vector<Nodes> chain_of_cliques(const std::vector<Nodes> &cliques, const Nod
     }
     std::sort(chain.begin(), chain.end());
     for (auto pair : chain) out.push_back(pair.second);
+    std::reverse(out.begin(), out.end());
     return out;
 }
 
