@@ -4,13 +4,7 @@ import matplotlib.pyplot as plt
 
 
 def plot(dot: str):
-    while not isinstance(dot, str):
-        try:
-            string = str(dot)
-            dot = string
-        except UnicodeDecodeError:
-            pass
-    graph = pygraphviz.AGraph(string=dot)
+    graph = pygraphviz.AGraph(string=str(dot))
     mapper = {
         n.get_name(): n.attr['label']
         for n in graph.iternodes()

@@ -30,9 +30,6 @@ class DirectedGraph;
 class Graph {
     friend DirectedGraph;
 
-   private:
-    FILE *open_dot_file() const;
-
    protected:
     igraph_t graph;
     std::vector<Node> vid2label;
