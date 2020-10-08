@@ -4,6 +4,8 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 #include <pybind11/stl.h>
+#define FORCE_IMPORT_ARRAY
+#include <xtensor-python/pyarray.hpp>
 
 #include <backend.hpp>
 
@@ -60,40 +62,21 @@ struct type_caster<DataArray> {
         py::object numpy = py::module::import("numpy");
         py::object xarray = py::module::import("xarray");
 
-        // Get shape
-        std::vector<size_t> shape;
-        auto _shape = src.data().shape();
-        for (auto i = _shape.begin(); i != _shape.end(); ++i) shape.push_back(*i);
-
-        // Extract data
-        std::vector<double> data;
-        auto _storage = src.data().storage();
-        for (auto i = _storage.begin(); i != _storage.end(); ++i) data.push_back(i->value());
-
         // Extract dims and coords
-        std::vector<std::string> _dims = src.dimension_labels();
-        std::vector<std::vector<std::string>> coords;
-        auto _coord = src.coordinates();
-        for (auto i = _dims.begin(); i != _dims.end(); ++i) {
-            for (auto j = _coord.begin(); j != _coord.end(); ++j) {
-                if (*i == j->first) {
-                    std::vector<std::string> coord;
-                    size_t end = j->second.labels().size();
-                    auto _labels = j->second.labels().data();
-                    for (auto k = _labels; k < _labels + end; ++k) {
-                        coord.push_back(*k);
-                    }
-                    coords.push_back(coord);
-                }
+        std::vector<std::string> dims = src.dimension_labels();
+        std::vector<std::vector<std::string>> coords(dims.size());
+        auto coord = src.coordinates();
+        for (auto i = coord.begin(); i != coord.end(); i++) {
+            size_t idx = std::distance(dims.begin(), std::find(dims.begin(), dims.end(), i->first));
+            size_t end = i->second.labels().size();
+            auto begin = i->second.labels().data();
+            for (auto j = begin; j < begin + end; j++) {
+                coords[idx].push_back(*j);
             }
         }
-        // We need to freeze the dims
-        py::tuple dims = py::cast(_dims);
 
         // Build ndarray
-        py::object ndarray = numpy.attr("array")(data);
-        ndarray = numpy.attr("reshape")(ndarray, shape);
-        py::object out = xarray.attr("DataArray")(ndarray, coords, dims);
+        py::object out = xarray.attr("DataArray")(src.data().value(), coords, dims);
 
         return out.release();
     }
