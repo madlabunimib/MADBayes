@@ -4,7 +4,7 @@ from xarray.testing import assert_allclose
 from . import madbayes as mb
 
 def test_inference_junction_tree():
-    networks = dir(mb.data.network)
+    networks = ['asia', 'cancer', 'earthquake', 'survey']
     networks = [
         getattr(mb.data.network, network)
         for network in networks
@@ -22,7 +22,7 @@ def test_inference_junction_tree():
 
 def test_inference_junction_tree_query():
     mb.utils.rpy2_init()
-    networks = ['asia', 'cancer', 'earthquake', 'sachs', 'survey']
+    networks = ['asia', 'cancer', 'earthquake', 'survey']
     networks = {
         name: path
         for name, path in mb.data.network.NETWORKS.items()
