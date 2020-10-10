@@ -36,7 +36,7 @@ class CliqueTree : public Graph {
     Cliques build_cliques(const T &other);
     void build_clique_tree(const Cliques &cliques);
     Factor calibrate_upward(const Node &prev, const Node &curr);
-    void calibrate_downward(const Node &prev, const Node &curr, const Factor &message);
+    void calibrate_downward(const Node &prev, const Node &curr, Factor message);
 
    public:
     template <typename T>

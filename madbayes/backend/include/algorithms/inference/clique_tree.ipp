@@ -97,50 +97,55 @@ Factor CliqueTree::calibrate_upward(const Node &prev, const Node &curr) {
         }
     }
 
-    Clique &clique = label2clique.at(curr);
-    if (message.size() > 1) clique.belief *= message;
+    Clique *clique = &label2clique.at(curr);
     
-    if (!clique.is_separator) {
+    if (!clique->is_separator || !(message.size() > 1)) {
+        clique->belief = message;
+        return message;
+    }
+
+    clique->belief *= message;
+
+    if (prev != Node()) {
         Nodes margin;
-        Nodes sepset = clique.nodes;
-        if (prev != Node()) sepset = label2clique.at(prev).nodes;
         std::set_difference(
-            clique.nodes.begin(),
-            clique.nodes.end(),
-            sepset.begin(),
-            sepset.end(),
+            clique->nodes.begin(),
+            clique->nodes.end(),
+            label2clique[prev].nodes.begin(),
+            label2clique[prev].nodes.end(),
             std::back_inserter(margin)
         );
         // TODO: Fix sum over axes
-        // message = xt::sum(clique->belief, margin);
+        // message = xf::sum(clique->belief, margin);
     }
 
     return message;
 }
 
-void CliqueTree::calibrate_downward(const Node &prev, const Node &curr, const Factor &message) {
-    Clique &clique = label2clique.at(curr);
+void CliqueTree::calibrate_downward(const Node &prev, const Node &curr, Factor message) {
+    Clique *clique = &label2clique.at(curr);
 
-    if (clique.is_separator) {
+    if (clique->is_separator) {
         Nodes margin;
         Nodes dims = message.dimension_labels();
         std::sort(dims.begin(), dims.end());
         std::set_difference(
             dims.begin(),
             dims.end(),
-            clique.nodes.begin(),
-            clique.nodes.end(),
+            clique->nodes.begin(),
+            clique->nodes.end(),
             std::back_inserter(margin)
         );
         // TODO: Fix sum over axes
-        // message = xt::sum(clique->belief, margin);
+        // message = xf::sum(message, margin) / clique->belief;
     }
 
-    if (message.size() > 1) clique.belief *= message;
+    if (message.size() > 1) clique->belief *= message;
+
+    if (!clique->is_separator) message = clique->belief;
 
     for (Node next : neighbors(curr)) {
         if (next != prev) {
-            // TODO: Check if third parameter is message or clique->belief
             calibrate_downward(curr, next, message);
         }
     }
@@ -202,12 +207,13 @@ Clique CliqueTree::get_clique_given_variables(const Nodes &variables) const {
 
 Factor CliqueTree::get_joint_query(const Node &prev, const Node &curr, Nodes *variables) const {
     Factor message;
-    const Clique &clique = label2clique.at(curr);
+    Clique clique = get_clique(curr);
 
     if (clique.is_separator) {
         for (Node next : neighbors(curr)) {
             if (next != prev) {
-                message = get_joint_query(curr, next, variables);
+                Factor factor = get_joint_query(curr, next, variables);
+                message = (message.size() > 1) ? factor * message : factor;
             }
         }
         // If the returning value is not empty, this means that there
@@ -218,17 +224,14 @@ Factor CliqueTree::get_joint_query(const Node &prev, const Node &curr, Nodes *va
     }
 
     // Check if the current clique contains any variable of the query.
-    bool found = false;
-    auto node = clique.nodes.begin();
-    for (; node != clique.nodes.end(); node++) {
+    for (Node node : clique.nodes) {
         auto variable = std::find(
             variables->begin(),
             variables->end(),
-            *node
+            node
         );
         if (variable != variables->end()) {
             variables->erase(variable);
-            found = true;
         }
     }
 
@@ -237,13 +240,13 @@ Factor CliqueTree::get_joint_query(const Node &prev, const Node &curr, Nodes *va
     for (Node next : neighbors(curr)) {
         if (next != prev && variables->size() > 0) {
             Factor factor = get_joint_query(curr, next, variables);
-            message = (message.size() > 1) ? factor * message : factor; 
+            message = (message.size() > 1) ? factor * message : factor;
         }
     }
 
     // If message is not empty or a variable is found,
     // then multiply the message by the clique belief.
-    if (found || message.size() > 1) message *= clique.belief;
+    message = (message.size() > 1) ? clique.belief * message : clique.belief;
     
     return message;
 }
