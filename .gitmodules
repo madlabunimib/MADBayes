@@ -16,6 +16,3 @@
 [submodule "madbayes/backend/extern/xtensor-python"]
 	path = madbayes/backend/extern/xtensor-python
 	url = https://github.com/xtensor-stack/xtensor-python.git
-[submodule "madbayes/backend/extern/xframe"]
-	path = madbayes/backend/extern/xframe
-	url = https://github.com/xtensor-stack/xframe.git
