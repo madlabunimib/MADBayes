@@ -149,7 +149,7 @@ DataArray DataArray::operator/(const DataArray &other) const {
     out.coordinates = a.coordinates;
     out.values = a.values / b.values;
     // As for CPT, the case 0/0 is defined as 0
-    // out.values[xt::isnan(out.values)] = 0;
+    out.values = xt::nan_to_num(out.values);
     return out;
 }
 
@@ -191,7 +191,7 @@ DataArray &DataArray::operator/=(const DataArray &other) {
     coordinates = a.coordinates;
     values = a.values / b.values;
     // As for CPT, the case 0/0 is defined as 0
-    // values[xt::isnan(values)] = 0;
+    values = xt::nan_to_num(values);
     return *this;
 }
 
