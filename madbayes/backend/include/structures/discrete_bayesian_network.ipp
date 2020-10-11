@@ -30,19 +30,13 @@ DiscreteBayesianNetwork &DiscreteBayesianNetwork::operator=(const DiscreteBayesi
 DiscreteBayesianNetwork::~DiscreteBayesianNetwork() {}
 
 Levels DiscreteBayesianNetwork::get_levels(const Node &label) const {
-    Levels coord;
-    auto _coord = cpts.at(label).coordinates();
-    for (auto i = _coord.begin(); i != _coord.end(); ++i) {
-        if (i->first == label) {
-            size_t end = i->second.labels().size();
-            auto _labels = i->second.labels().data();
-            for (auto j = _labels; j < _labels + end; ++j) {
-                coord.push_back(*j);
-            }
-            return coord;
-        }
-    }
-    return coord;
+    Coordinates axes = cpts.at(label).get_coordinates();
+    auto found = std::find_if(
+        axes.begin(),
+        axes.end(),
+        [&](const Axis &other) { return other.first == label; }
+    );
+    return found->second;
 }
 
 }  // namespace structures

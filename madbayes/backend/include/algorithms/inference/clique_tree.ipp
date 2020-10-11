@@ -35,8 +35,7 @@ Cliques CliqueTree::build_cliques(const T &other) {
                 family.begin(),
                 family.end()
             )) {
-                Factor factor = other.get_cpt(*node);
-                clique.belief = (clique.belief.size() > 1) ? factor * clique.belief : factor;
+                clique.belief *= other.get_cpt(*node);
                 nodes.erase(node--);
             }
         }
@@ -88,18 +87,17 @@ void CliqueTree::build_clique_tree(const Cliques &cliques) {
     }
 }
 
-Factor CliqueTree::calibrate_upward(const Node &prev, const Node &curr) {
-    Factor message;
+DataArray CliqueTree::calibrate_upward(const Node &prev, const Node &curr) {
+    DataArray message;
     for (Node next : neighbors(curr)) {
         if (next != prev) {
-            Factor factor = calibrate_upward(curr, next);
-            message = (message.size() > 1) ? factor * message : factor;
+            message *= calibrate_upward(curr, next);
         }
     }
 
     Clique *clique = &label2clique.at(curr);
     
-    if (!clique->is_separator || !(message.size() > 1)) {
+    if (clique->is_separator) {
         clique->belief = message;
         return message;
     }
@@ -115,19 +113,20 @@ Factor CliqueTree::calibrate_upward(const Node &prev, const Node &curr) {
             label2clique[prev].nodes.end(),
             std::back_inserter(margin)
         );
-        // TODO: Fix sum over axes
-        // message = xf::sum(clique->belief, margin);
+        message = clique->belief.sum(margin);
     }
 
     return message;
 }
 
-void CliqueTree::calibrate_downward(const Node &prev, const Node &curr, Factor message) {
+void CliqueTree::calibrate_downward(const Node &prev, const Node &curr, DataArray message) {
     Clique *clique = &label2clique.at(curr);
 
     if (clique->is_separator) {
-        Nodes margin;
-        Nodes dims = message.dimension_labels();
+        Nodes dims, margin;
+        for (Axis axis : message.get_coordinates()) {
+            dims.push_back(axis.first);
+        }
         std::sort(dims.begin(), dims.end());
         std::set_difference(
             dims.begin(),
@@ -136,11 +135,11 @@ void CliqueTree::calibrate_downward(const Node &prev, const Node &curr, Factor m
             clique->nodes.end(),
             std::back_inserter(margin)
         );
-        // TODO: Fix sum over axes
-        // message = xf::sum(message, margin) / clique->belief;
+        message = message.sum(margin);
+        message /= clique->belief;
     }
 
-    if (message.size() > 1) clique->belief *= message;
+    clique->belief *= message;
 
     if (!clique->is_separator) message = clique->belief;
 
@@ -156,11 +155,9 @@ CliqueTree::CliqueTree(const T &other) : Graph() {
     Cliques cliques = build_cliques(other);
     build_clique_tree(cliques);
 
-    /*
     Node root = get_nodes()[0];
     calibrate_upward(Node(), root);
     calibrate_downward(Node(), root, {});
-    */
 }
 
 CliqueTree::CliqueTree(const CliqueTree &other) : Graph(other), label2clique(other.label2clique) {}
@@ -205,21 +202,21 @@ Clique CliqueTree::get_clique_given_variables(const Nodes &variables) const {
     throw std::runtime_error("No clique found with given variables.");
 }
 
-Factor CliqueTree::get_joint_query(const Node &prev, const Node &curr, Nodes *variables) const {
-    Factor message;
+DataArray CliqueTree::get_joint_query(const Node &prev, const Node &curr, Nodes *variables) const {
+    DataArray message;
     Clique clique = get_clique(curr);
 
     if (clique.is_separator) {
         for (Node next : neighbors(curr)) {
             if (next != prev) {
-                Factor factor = get_joint_query(curr, next, variables);
-                message = (message.size() > 1) ? factor * message : factor;
+                message *= get_joint_query(curr, next, variables);
             }
         }
         // If the returning value is not empty, this means that there
         // are variables of the query in the subtree under this separator,
         // so we need to divide the returning belief by the sepset belief. 
-        if (message.size() > 1) message /= clique.belief;
+        message /= clique.belief;
+
         return message;
     }
 
@@ -239,14 +236,13 @@ Factor CliqueTree::get_joint_query(const Node &prev, const Node &curr, Nodes *va
     // make a recursive call over children.
     for (Node next : neighbors(curr)) {
         if (next != prev && variables->size() > 0) {
-            Factor factor = get_joint_query(curr, next, variables);
-            message = (message.size() > 1) ? factor * message : factor;
+            message *= get_joint_query(curr, next, variables);
         }
     }
 
     // If message is not empty or a variable is found,
     // then multiply the message by the clique belief.
-    message = (message.size() > 1) ? clique.belief * message : clique.belief;
+    message *= clique.belief;
     
     return message;
 }

@@ -1,15 +1,15 @@
 #pragma once
 
 #include "directed_graph.ipp"
-#include "probability_table.ipp"
+#include "data_array.ipp"
 
 namespace madbayes {
+
+namespace structures {
 
 using CPT = DataArray;
 using CPTs = std::map<Node, CPT>;
 using Evidence = std::map<Node, std::string>;
-
-namespace structures {
 
 class BayesianNetwork : public DirectedGraph {
    protected:

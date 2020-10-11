@@ -1,13 +1,3 @@
-#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
-#include <pybind11/pybind11.h>
-#include <pybind11/numpy.h>
-#include <pybind11/stl.h>
-
-#include <iostream>
-#include <numeric>
-#include <string>
-#include <sstream>
-
 #include <backend.hpp>
 #include "pybind11_cast_xarray.ipp"
 
@@ -61,8 +51,12 @@ PYBIND11_MODULE(backend, m) {
         .def("descendants", &DirectedGraph::descendants, py::arg("node"))
         .def_static("random", &DirectedGraph::random, py::arg("nodes"), py::arg("edge_probability"));
     
-    m.def("ProbabilityTable", &ProbabilityTable<std::vector<double>>, py::arg("data"), py::arg("coordinates"));
-    m.def("ProbabilityTable", &ProbabilityTable<py::array_t<double>>, py::arg("data"), py::arg("coordinates"));
+    m.def("DataArray", [](const std::vector<double> &data, const Coordinates &coordinates) {
+        return DataArray(data, coordinates);
+    }, py::arg("data"), py::arg("coordinates"));
+    m.def("DataArray", [](const py::array_t<double> &data, const Coordinates &coordinates) {
+        return DataArray(data, coordinates);
+    }, py::arg("data"), py::arg("coordinates"));
 
     py::class_<BayesianNetwork, DirectedGraph>(m, "BayesianNetwork", py::dynamic_attr())
         .def(py::init<>())
@@ -98,7 +92,9 @@ PYBIND11_MODULE(backend, m) {
         .def("get_clique", &CliqueTree::get_clique, py::arg("label"))
         .def("set_clique", &CliqueTree::set_clique, py::arg("clique"))
         .def("get_clique_given_variables", &CliqueTree::get_clique_given_variables, py::arg("variables"))
-        .def("get_joint_query", &CliqueTree::get_joint_query, py::arg("prev"), py::arg("curr"), py::arg("variables"));
+        .def("get_joint_query", &CliqueTree::get_joint_query, py::arg("prev"), py::arg("curr"), py::arg("variables"))
+        .def("calibrate_upward", &CliqueTree::calibrate_upward)
+        .def("calibrate_downward", &CliqueTree::calibrate_downward);
 
     // Algorithms - Structure
     m.def("chain_of_cliques", &chain_of_cliques, py::arg("cliques"), py::arg("alpha"));

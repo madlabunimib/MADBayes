@@ -1,12 +1,5 @@
 #pragma once
 
-#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
-#include <pybind11/pybind11.h>
-#include <pybind11/numpy.h>
-#include <pybind11/stl.h>
-#define FORCE_IMPORT_ARRAY
-#include <xtensor-python/pyarray.hpp>
-
 #include <backend.hpp>
 
 using namespace madbayes;
@@ -35,17 +28,17 @@ struct type_caster<DataArray> {
         // Extract object from handle
         py::object obj = reinterpret_borrow<py::object>(src).attr("to_dict")();
         // Extract members from dict
-        Mapper mapper;
+        Coordinates axes;
         py::dict coords = obj.attr("get")("coords").cast<py::dict>();
         for (auto i = coords.begin(); i != coords.end(); i++) {
             std::string dim = (i->first).cast<py::str>();
             py::dict value = (i->second).cast<py::dict>();
             std::vector<std::string> coord = (value[py::str("data")]).cast<std::vector<std::string>>();
-            mapper.push_back({dim, coord});
+            axes.push_back({dim, coord});
         }
         py::array_t<double> data = obj.attr("get")("data");
         // Object constructor
-        value = ProbabilityTable(data, mapper);
+        value = DataArray(data, axes);
         // Check conversion
         return !PyErr_Occurred();
     }
@@ -62,21 +55,8 @@ struct type_caster<DataArray> {
         py::object numpy = py::module::import("numpy");
         py::object xarray = py::module::import("xarray");
 
-        // Extract dims and coords
-        std::vector<std::string> dims = src.dimension_labels();
-        std::vector<std::vector<std::string>> coords(dims.size());
-        auto coord = src.coordinates();
-        for (auto i = coord.begin(); i != coord.end(); i++) {
-            size_t idx = std::distance(dims.begin(), std::find(dims.begin(), dims.end(), i->first));
-            size_t end = i->second.labels().size();
-            auto begin = i->second.labels().data();
-            for (auto j = begin; j < begin + end; j++) {
-                coords[idx].push_back(*j);
-            }
-        }
-
         // Build ndarray
-        py::object out = xarray.attr("DataArray")(src.data().value(), coords, dims);
+        py::object out = xarray.attr("DataArray")(src.get_values(), src.get_coordinates());
 
         return out.release();
     }

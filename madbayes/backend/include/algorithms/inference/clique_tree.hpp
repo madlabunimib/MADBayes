@@ -1,15 +1,17 @@
 #pragma once
 
-#include <structures/probability_table.ipp>
+#include <structures/data_array.ipp>
 
 namespace madbayes {
 
-using Factor = DataArray;
+namespace algorithms {
+
+using namespace madbayes::structures;
 
 struct Clique {
     bool is_separator;
     Nodes nodes;
-    Factor belief;
+    DataArray belief;
 
     operator std::string() const {
         std::stringstream out;
@@ -24,10 +26,6 @@ struct Clique {
 
 using Cliques = std::vector<Clique>;
 
-namespace algorithms {
-
-using namespace madbayes::structures;
-
 class CliqueTree : public Graph {
    private:
     std::map<Node, Clique> label2clique;
@@ -35,8 +33,6 @@ class CliqueTree : public Graph {
     template <typename T>
     Cliques build_cliques(const T &other);
     void build_clique_tree(const Cliques &cliques);
-    Factor calibrate_upward(const Node &prev, const Node &curr);
-    void calibrate_downward(const Node &prev, const Node &curr, Factor message);
 
    public:
     template <typename T>
@@ -49,7 +45,10 @@ class CliqueTree : public Graph {
     void set_clique(const Clique &clique);
 
     Clique get_clique_given_variables(const Nodes &variables) const;
-    Factor get_joint_query(const Node &prev, const Node &curr, Nodes *variables) const;
+    DataArray get_joint_query(const Node &prev, const Node &curr, Nodes *variables) const;
+
+    DataArray calibrate_upward(const Node &prev, const Node &curr);
+    void calibrate_downward(const Node &prev, const Node &curr, DataArray message);
 };
 
 }  // namespace algorithms

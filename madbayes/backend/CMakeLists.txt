@@ -26,10 +26,6 @@ include_directories(extern/xtensor/include)
 add_subdirectory(extern/xtensor)
 set(xtensor_DIR "${CMAKE_CURRENT_BINARY_DIR}/extern/xtensor" CACHE STRING "" FORCE)
 
-include_directories(extern/xframe/include)
-add_subdirectory(extern/xframe)
-set(xframe_DIR "${CMAKE_CURRENT_BINARY_DIR}/extern/xframe" CACHE STRING "" FORCE)
-
 set(PYBIND11_CPP_STANDARD -std=c++14)
 include_directories(extern/pybind11/include)
 add_subdirectory(extern/pybind11)

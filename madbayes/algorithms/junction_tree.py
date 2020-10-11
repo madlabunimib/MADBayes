@@ -22,9 +22,6 @@ class JunctionTree(CliqueTree):
     def __init__(self, network: BayesianNetwork, *args, **kwargs) -> None:
         super().__init__(network)
         self.root = self.nodes[0]
-        if isinstance(network, BayesianNetwork):
-            self._calibrate_upward(None, self.root)
-            self._calibrate_downward(None, self.root, xa.DataArray(1))
 
     def query(self, variables: List[str], evidence: Any = None, method: str = "marginal") -> Any:
         if method not in ["marginal", "joint", "conditional"]:
@@ -73,46 +70,4 @@ class JunctionTree(CliqueTree):
         clique.belief = clique.belief / old_margin * new_margin
         clique.belief.fillna(0)
         self.set_clique(clique)
-        self._calibrate_downward(None, str(clique), xa.DataArray(1))
-
-    def _calibrate_upward(self, _prev: str, _curr: str) -> xa.DataArray:
-        message = reduce(mul, [
-            self._calibrate_upward(_curr, _next)
-            for _next in self.neighbors(_curr)
-            if _next != _prev
-        ], xa.DataArray(1))
-
-        clique = self.get_clique(_curr)
-
-        if clique.is_separator or not clique.belief.dims:
-            clique.belief = message
-            self.set_clique(clique)
-            return message
-
-        clique.belief = clique.belief * message
-        self.set_clique(clique)
-
-        margin = frozenset()
-        if _prev is not None:
-            margin = frozenset(self.get_clique(_prev).nodes)
-            margin = frozenset(clique.nodes).difference(margin)
-        
-        return clique.belief.sum(margin)
-
-    def _calibrate_downward(self, _prev: str, _curr: str, message: xa.DataArray) -> None:
-        clique = self.get_clique(_curr)
-
-        if clique.is_separator:
-            margin = frozenset(clique.nodes)
-            margin = frozenset(message.dims).difference(margin)
-            message = message.sum(margin) / clique.belief
-
-        clique.belief = clique.belief * message
-        self.set_clique(clique)
-
-        if not clique.is_separator:
-            message = clique.belief
-
-        for _next in self.neighbors(_curr):
-            if _next != _prev:
-                self._calibrate_downward(_curr, _next, message)
+        super().calibrate_downward("", str(clique), xa.DataArray(1))

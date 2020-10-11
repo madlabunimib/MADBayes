@@ -44,5 +44,5 @@ endmacro()
 
 package_add_test_with_libraries(test_graph structures/graph.cpp igraph)
 package_add_test_with_libraries(test_directed_graph structures/directed_graph.cpp igraph)
-package_add_test_with_libraries(test_probability_table structures/probability_table.cpp igraph)
+package_add_test_with_libraries(test_probability_table structures/data_array.cpp igraph)
 package_add_test_with_libraries(test_clique_tree algorithms/inference/clique_tree.cpp igraph)
