@@ -12,8 +12,7 @@ using Evidence = std::map<Node, std::string>;
 
 namespace structures {
 
-using CPT = DataArray;
-using CPTs = std::map<Node, CPT>;
+using CPTs = std::map<Node, DataArray>;
 
 class DiscreteBayesianNetwork : public BayesianNetwork {
    protected:
@@ -28,9 +27,9 @@ class DiscreteBayesianNetwork : public BayesianNetwork {
     DiscreteBayesianNetwork &operator=(const DiscreteBayesianNetwork &other);
     virtual ~DiscreteBayesianNetwork();
 
-    CPT operator()(const Node &label) const;
-    CPT get_cpt(const Node &label) const;
-    void set_cpt(const Node &label, const CPT &cpt);
+    DataArray operator()(const Node &label) const;
+    DataArray get_cpt(const Node &label) const;
+    void set_cpt(const Node &label, const DataArray &cpt);
 
     [[deprecated]]
     Levels get_levels(const Node &label) const;

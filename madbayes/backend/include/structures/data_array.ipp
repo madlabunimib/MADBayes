@@ -144,7 +144,7 @@ DataArray DataArray::operator/(const DataArray &other) const {
     b = other.adapt(*this).rearrange(a);
     out.coordinates = a.coordinates;
     out.data = a.data / b.data;
-    // As for CPT, the case 0/0 is defined as 0
+    // As for DataArray, the case 0/0 is defined as 0
     out.data = xt::nan_to_num(out.data);
     return out;
 }
@@ -182,7 +182,7 @@ DataArray &DataArray::operator/=(const DataArray &other) {
     b = other.adapt(*this).rearrange(a);
     coordinates = a.coordinates;
     data = a.data / b.data;
-    // As for CPT, the case 0/0 is defined as 0
+    // As for DataArray, the case 0/0 is defined as 0
     data = xt::nan_to_num(data);
     return *this;
 }

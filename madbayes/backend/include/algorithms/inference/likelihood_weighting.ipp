@@ -50,7 +50,7 @@ std::vector<DataArray> LikelihoodWeighting::query(const Nodes &variables, const 
         double weight = 1;
         for (Node Xi : sorting) {
             // TODO: Refactor xf::select to use std::map as index
-            CPT table = other->get_cpt(Xi);
+            DataArray table = other->get_cpt(Xi);
             for (auto it = sample.begin(); it != sample.end(); i++) {
                 auto dims = table.dimension_labels();
                 if (std::find(dims.begin(), dims.end(), it->first) != dims.end()) {
