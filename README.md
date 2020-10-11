@@ -40,14 +40,14 @@ Build the package with C++ backend and install:
 
 ### Structural Properties
 
-| Name                 | Python | C/C++ |
-| -------------------- | :----: | :---: |
-| Independence Map     |        |       |
-| U-Separation         |        |       |
-| D-Separation         |        |       |
-| Markov Blanket       |        |       |
-| Equivalence Classes  |        |       |
-| Topological Ordering |        |       |
+| Name                 |       Python       |       C/C++        |
+| -------------------- | :----------------: | :----------------: |
+| Independence Map     |                    |                    |
+| U-Separation         |                    |                    |
+| D-Separation         |                    |                    |
+| Markov Blanket       |                    |                    |
+| Equivalence Classes  |                    |                    |
+| Topological Ordering | :heavy_check_mark: | :heavy_check_mark: |
 
 ### Types of Bayesian Networks
 
@@ -67,15 +67,15 @@ Build the package with C++ backend and install:
 
 ### Exact Inference
 
-| Type        | Name                          |       Python       | C/C++ |
-| ----------- | ----------------------------- | :----------------: | :---: |
-| Exact       | Variable Elimination          |                    |       |
-|             | Junction Tree                 | :heavy_check_mark: |       |
-|             |                               |                    |       |
-| Approximate | Prior Sampling                |                    |       |
-|             | Rejection Sampling            |                    |       |
-|             | Likelihood Weighting Sampling |                    |       |
-|             | Monte Carlo Chain Sampling    |                    |       |
+| Type        | Name                          |       Python       |       C/C++        |
+| ----------- | ----------------------------- | :----------------: | :----------------: |
+| Exact       | Variable Elimination          |                    |                    |
+|             | Junction Tree                 | :heavy_check_mark: | :heavy_check_mark: |
+|             |                               |                    |                    |
+| Approximate | Prior Sampling                |                    |                    |
+|             | Rejection Sampling            |                    |                    |
+|             | Likelihood Weighting Sampling |                    |                    |
+|             | Monte Carlo Chain Sampling    |                    |                    |
 
 ### Structural Learning
 
