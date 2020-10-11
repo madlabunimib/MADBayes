@@ -114,7 +114,8 @@ DataArray &DataArray::rearrange(const DataArray &other) {
 DataArray DataArray::operator+(const DataArray &other) const {
     DataArray a, b, out;
     a = adapt(other);
-    b = other.adapt(*this).rearrange(a);
+    b = other.adapt(*this);
+    b.rearrange(a);
     out.coordinates = a.coordinates;
     out.values = a.values + b.values;
     return out;
@@ -123,7 +124,8 @@ DataArray DataArray::operator+(const DataArray &other) const {
 DataArray DataArray::operator-(const DataArray &other) const {
     DataArray a, b, out;
     a = adapt(other);
-    b = other.adapt(*this).rearrange(a);
+    b = other.adapt(*this);
+    b.rearrange(a);
     out.coordinates = a.coordinates;
     out.values = a.values - b.values;
     return out;
@@ -132,7 +134,8 @@ DataArray DataArray::operator-(const DataArray &other) const {
 DataArray DataArray::operator*(const DataArray &other) const {
     DataArray a, b, out;
     a = adapt(other);
-    b = other.adapt(*this).rearrange(a);
+    b = other.adapt(*this);
+    b.rearrange(a);
     out.coordinates = a.coordinates;
     out.values = a.values * b.values;
     return out;
@@ -141,49 +144,54 @@ DataArray DataArray::operator*(const DataArray &other) const {
 DataArray DataArray::operator/(const DataArray &other) const {
     DataArray a, b, out;
     a = adapt(other);
-    b = other.adapt(*this).rearrange(a);
+    b = other.adapt(*this);
+    b.rearrange(a);
     out.coordinates = a.coordinates;
     out.values = a.values / b.values;
     // As for CPT, the case 0/0 is defined as 0
-    out.values[xt::isnan(out.values)] = 0;
+    // out.values[xt::isnan(out.values)] = 0;
     return out;
 }
 
 DataArray &DataArray::operator+=(const DataArray &other) {
-    DataArray a, b;
+    DataArray a, b, out;
     a = adapt(other);
-    b = other.adapt(*this).rearrange(a);
+    b = other.adapt(*this);
+    b.rearrange(a);
     coordinates = a.coordinates;
     values = a.values + b.values;
     return *this;
 }
 
 DataArray &DataArray::operator-=(const DataArray &other) {
-    DataArray a, b;
+    DataArray a, b, out;
     a = adapt(other);
-    b = other.adapt(*this).rearrange(a);
+    b = other.adapt(*this);
+    b.rearrange(a);
     coordinates = a.coordinates;
     values = a.values - b.values;
     return *this;
 }
 
 DataArray &DataArray::operator*=(const DataArray &other) {
-    DataArray a, b;
+    DataArray a, b, out;
     a = adapt(other);
-    b = other.adapt(*this).rearrange(a);
+    b = other.adapt(*this);
+    b.rearrange(a);
     coordinates = a.coordinates;
     values = a.values * b.values;
     return *this;
 }
 
 DataArray &DataArray::operator/=(const DataArray &other) {
-    DataArray a, b;
+    DataArray a, b, out;
     a = adapt(other);
-    b = other.adapt(*this).rearrange(a);
+    b = other.adapt(*this);
+    b.rearrange(a);
     coordinates = a.coordinates;
     values = a.values / b.values;
     // As for CPT, the case 0/0 is defined as 0
-    values[xt::isnan(values)] = 0;
+    // values[xt::isnan(values)] = 0;
     return *this;
 }
 
