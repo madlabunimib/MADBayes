@@ -29,7 +29,6 @@ class DataArray {
    public:
     DataArray();
     explicit DataArray(const Coordinates &coordinates);
-    // explicit DataArray(const xt::xarray<double> &data, const Coordinates &coordinates);
 
     template <typename T>
     DataArray(const T &data, const Coordinates &coordinates);
