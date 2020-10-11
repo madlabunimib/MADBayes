@@ -8,11 +8,11 @@ namespace structures {
 
 DiscreteBayesianNetwork::DiscreteBayesianNetwork() : BayesianNetwork() {}
 
-DiscreteBayesianNetwork::DiscreteBayesianNetwork(const std::string &formula, const CPTs &cpts) : BayesianNetwork(formula, cpts) {}
+DiscreteBayesianNetwork::DiscreteBayesianNetwork(const std::string &formula, const CPTs &cpts) : BayesianNetwork(formula), cpts(cpts) {}
 
-DiscreteBayesianNetwork::DiscreteBayesianNetwork(const Nodes &labels, const CPTs &cpts) : BayesianNetwork(labels, cpts) {}
+DiscreteBayesianNetwork::DiscreteBayesianNetwork(const Nodes &labels, const CPTs &cpts) : BayesianNetwork(labels), cpts(cpts) {}
 
-DiscreteBayesianNetwork::DiscreteBayesianNetwork(const Edges &edges, const CPTs &cpts) : BayesianNetwork(edges, cpts) {}
+DiscreteBayesianNetwork::DiscreteBayesianNetwork(const Edges &edges, const CPTs &cpts) : BayesianNetwork(edges), cpts(cpts) {}
 
 DiscreteBayesianNetwork::DiscreteBayesianNetwork(const DiscreteBayesianNetwork &other) : BayesianNetwork(other) {}
 
@@ -28,6 +28,18 @@ DiscreteBayesianNetwork &DiscreteBayesianNetwork::operator=(const DiscreteBayesi
 }
 
 DiscreteBayesianNetwork::~DiscreteBayesianNetwork() {}
+
+CPT DiscreteBayesianNetwork::operator()(const Node &label) const {
+    return cpts.at(label);
+}
+
+CPT DiscreteBayesianNetwork::get_cpt(const Node &label) const {
+    return cpts.at(label);
+}
+
+void DiscreteBayesianNetwork::set_cpt(const Node &label, const CPT &cpt) {
+    cpts[label] = cpt;
+}
 
 Levels DiscreteBayesianNetwork::get_levels(const Node &label) const {
     Coordinates axes = cpts.at(label).get_coordinates();
