@@ -99,15 +99,8 @@ DataArray CliqueTree::calibrate_upward(const Node &prev, const Node &curr) {
     clique->belief *= message;
 
     if (prev != Node()) {
-        Nodes margin;
-        std::set_difference(
-            clique->nodes.begin(),
-            clique->nodes.end(),
-            label2clique[prev].nodes.begin(),
-            label2clique[prev].nodes.end(),
-            std::back_inserter(margin)
-        );
-        message = clique->belief.sum(margin);
+        Nodes scope = label2clique[prev].nodes;
+        message = clique->belief.marginalize(scope);
     }
 
     return message;
@@ -117,19 +110,7 @@ void CliqueTree::calibrate_downward(const Node &prev, const Node &curr, DataArra
     Clique *clique = &label2clique.at(curr);
 
     if (clique->is_separator) {
-        Nodes dims, margin;
-        for (Axis axis : message.get_coordinates()) {
-            dims.push_back(axis.first);
-        }
-        std::sort(dims.begin(), dims.end());
-        std::set_difference(
-            dims.begin(),
-            dims.end(),
-            clique->nodes.begin(),
-            clique->nodes.end(),
-            std::back_inserter(margin)
-        );
-        message = message.sum(margin);
+        message = message.marginalize(clique->nodes);
         message /= clique->belief;
     }
 
