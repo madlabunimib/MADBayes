@@ -56,7 +56,7 @@ struct type_caster<DataArray> {
         py::object xarray = py::module::import("xarray");
 
         // Build ndarray
-        py::object out = xarray.attr("DataArray")(src.get_values(), src.get_coordinates());
+        py::object out = xarray.attr("DataArray")(src.get_data(), src.get_coordinates());
 
         return out.release();
     }

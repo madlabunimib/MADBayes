@@ -6,24 +6,24 @@ namespace madbayes {
 
 namespace structures {
 
-DataArray::DataArray() : values(1) {}
+DataArray::DataArray() : data(1) {}
 
-DataArray::DataArray(const Coordinates &coordinates) : coordinates(coordinates) {}
+DataArray::DataArray(const Coordinates &coordinates) : data(1), coordinates(coordinates) {}
 
 template <typename T>
-DataArray::DataArray(const T &data, const Coordinates &coordinates) : coordinates(coordinates) {
+DataArray::DataArray(const T &_data, const Coordinates &_coordinates) : coordinates(_coordinates) {
     std::vector<size_t> shape;
-    for (Axis axis : coordinates) shape.push_back(axis.second.size());
-    values = xt::adapt(data.data(), shape);
+    for (Axis axis : _coordinates) shape.push_back(axis.second.size());
+    data = xt::adapt(_data.data(), shape);
 }
 
-DataArray::DataArray(const DataArray &other) : coordinates(other.coordinates), values(other.values) {}
+DataArray::DataArray(const DataArray &other) : data(other.data), coordinates(other.coordinates) {}
 
 DataArray &DataArray::operator=(const DataArray &other) {
     if (this != &other) {
         DataArray tmp(other);
+        std::swap(tmp.data, data);
         std::swap(tmp.coordinates, coordinates);
-        std::swap(tmp.values, values);
     }
     return *this;
 }
@@ -32,13 +32,13 @@ DataArray::~DataArray() {}
 
 bool DataArray::operator==(const DataArray &other) const {
     if (coordinates != other.coordinates) return false;
-    if (xt::any(xt::not_equal(values, other.values))) return false;
+    if (xt::any(xt::not_equal(data, other.data))) return false;
     return true;
 }
 
 Coordinates DataArray::get_coordinates() const { return coordinates; }
 
-xt::xarray<double> DataArray::get_values() const { return values; }
+xt::xarray<double> DataArray::get_data() const { return data; }
 
 void DataArray::set_value(const Locations locations, double value) {
     xt::xstrided_slice_vector idx;
@@ -63,7 +63,7 @@ void DataArray::set_value(const Locations locations, double value) {
         }
     }
 
-    auto view = xt::strided_view(values, idx);
+    auto view = xt::strided_view(data, idx);
     view = value;
 }
 
@@ -85,7 +85,7 @@ DataArray DataArray::adapt(const DataArray &other) const {
         }
     }
 
-    out.values = xt::strided_view(values, extra);
+    out.data = xt::strided_view(data, extra);
 
     return out;
 }
@@ -106,7 +106,7 @@ DataArray &DataArray::rearrange(const DataArray &other) {
     }
 
     // Rearrange data using transpose
-    values = xt::transpose(values, order);
+    data = xt::transpose(data, order);
 
     return *this;
 }
@@ -117,7 +117,7 @@ DataArray DataArray::operator+(const DataArray &other) const {
     b = other.adapt(*this);
     b.rearrange(a);
     out.coordinates = a.coordinates;
-    out.values = a.values + b.values;
+    out.data = a.data + b.data;
     return out;
 }
 
@@ -127,7 +127,7 @@ DataArray DataArray::operator-(const DataArray &other) const {
     b = other.adapt(*this);
     b.rearrange(a);
     out.coordinates = a.coordinates;
-    out.values = a.values - b.values;
+    out.data = a.data - b.data;
     return out;
 }
 
@@ -137,7 +137,7 @@ DataArray DataArray::operator*(const DataArray &other) const {
     b = other.adapt(*this);
     b.rearrange(a);
     out.coordinates = a.coordinates;
-    out.values = a.values * b.values;
+    out.data = a.data * b.data;
     return out;
 }
 
@@ -147,9 +147,9 @@ DataArray DataArray::operator/(const DataArray &other) const {
     b = other.adapt(*this);
     b.rearrange(a);
     out.coordinates = a.coordinates;
-    out.values = a.values / b.values;
+    out.data = a.data / b.data;
     // As for CPT, the case 0/0 is defined as 0
-    out.values = xt::nan_to_num(out.values);
+    out.data = xt::nan_to_num(out.data);
     return out;
 }
 
@@ -159,7 +159,7 @@ DataArray &DataArray::operator+=(const DataArray &other) {
     b = other.adapt(*this);
     b.rearrange(a);
     coordinates = a.coordinates;
-    values = a.values + b.values;
+    data = a.data + b.data;
     return *this;
 }
 
@@ -169,7 +169,7 @@ DataArray &DataArray::operator-=(const DataArray &other) {
     b = other.adapt(*this);
     b.rearrange(a);
     coordinates = a.coordinates;
-    values = a.values - b.values;
+    data = a.data - b.data;
     return *this;
 }
 
@@ -179,7 +179,7 @@ DataArray &DataArray::operator*=(const DataArray &other) {
     b = other.adapt(*this);
     b.rearrange(a);
     coordinates = a.coordinates;
-    values = a.values * b.values;
+    data = a.data * b.data;
     return *this;
 }
 
@@ -189,9 +189,9 @@ DataArray &DataArray::operator/=(const DataArray &other) {
     b = other.adapt(*this);
     b.rearrange(a);
     coordinates = a.coordinates;
-    values = a.values / b.values;
+    data = a.data / b.data;
     // As for CPT, the case 0/0 is defined as 0
-    values = xt::nan_to_num(values);
+    data = xt::nan_to_num(data);
     return *this;
 }
 
@@ -213,7 +213,7 @@ DataArray DataArray::sum(const std::vector<std::string> &axes) const {
         }
     }
 
-    out.values = xt::sum(values, idx);
+    out.data = xt::sum(data, idx);
 
     return out;
 }
@@ -236,14 +236,14 @@ DataArray DataArray::marginalize(const std::vector<std::string> &axes) const {
         }
     }
 
-    out.values = xt::sum(values, idx);
+    out.data = xt::sum(data, idx);
 
     return out;
 }
 
 DataArray DataArray::zeros_like(const DataArray &other) {
     DataArray out {other.coordinates};
-    out.values = xt::zeros_like(other.values);
+    out.data = xt::zeros_like(other.data);
     return out;
 }
 

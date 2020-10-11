@@ -20,8 +20,8 @@ namespace structures {
 
 class DataArray {
    private:
+    xt::xarray<double> data;
     Coordinates coordinates;
-    xt::xarray<double> values;
 
     DataArray adapt(const DataArray &other) const;
     DataArray &rearrange(const DataArray &other);
@@ -29,7 +29,7 @@ class DataArray {
    public:
     DataArray();
     explicit DataArray(const Coordinates &coordinates);
-    explicit DataArray(const xt::xarray<double> &data, const Coordinates &coordinates);
+    // explicit DataArray(const xt::xarray<double> &data, const Coordinates &coordinates);
 
     template <typename T>
     DataArray(const T &data, const Coordinates &coordinates);
@@ -40,7 +40,7 @@ class DataArray {
     bool operator==(const DataArray &other) const;
 
     Coordinates get_coordinates() const;
-    xt::xarray<double> get_values() const;
+    xt::xarray<double> get_data() const;
     void set_value(const Locations locations, double value);
 
     DataArray operator+(const DataArray &other) const;
