@@ -10,17 +10,17 @@ namespace py = pybind11;
 namespace pybind11 {
 namespace detail {
 template <>
-struct type_caster<DataArray> {
+struct type_caster<DiscreteFactor> {
    public:
     /**
-     * This macro establishes the name 'DataArray' in
+     * This macro establishes the name 'DiscreteFactor' in
      * function signatures and declares a local variable
-     * 'value' of type DataArray
+     * 'value' of type DiscreteFactor
      */
-    PYBIND11_TYPE_CASTER(DataArray, _("DataArray"));
+    PYBIND11_TYPE_CASTER(DiscreteFactor, _("DiscreteFactor"));
 
     /**
-     * Conversion part 1 (Python->C++): convert a PyObject into a DataArray
+     * Conversion part 1 (Python->C++): convert a PyObject into a DiscreteFactor
      * instance or return false upon failure. The second argument
      * indicates whether implicit conversions should be applied.
      */
@@ -38,26 +38,21 @@ struct type_caster<DataArray> {
         }
         py::array_t<double> data = obj.attr("get")("data");
         // Object constructor
-        value = DataArray(data, axes);
+        value = DiscreteFactor(data, axes);
         // Check conversion
         return !PyErr_Occurred();
     }
 
     /**
-     * Conversion part 2 (C++ -> Python): convert an DataArray instance into
+     * Conversion part 2 (C++ -> Python): convert an DiscreteFactor instance into
      * a Python object. The second and third arguments are used to
      * indicate the return value policy and parent object (for
      * ``return_value_policy::reference_internal``) and are generally
      * ignored by implicit casters.
      */
-    static handle cast(const DataArray &src, return_value_policy /* policy */, handle /* parent */) {
-        // Import modules
-        py::object numpy = py::module::import("numpy");
+    static handle cast(const DiscreteFactor &src, return_value_policy /* policy */, handle /* parent */) {
         py::object xarray = py::module::import("xarray");
-
-        // Build ndarray
         py::object out = xarray.attr("DataArray")(src.get_data(), src.get_coordinates());
-
         return out.release();
     }
 };

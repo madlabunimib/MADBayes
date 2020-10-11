@@ -25,7 +25,7 @@ class LikelihoodWeighting {
     LikelihoodWeighting &operator=(const LikelihoodWeighting &other);
     ~LikelihoodWeighting();
 
-    std::vector<DataArray> query(const Nodes &variables, const Evidence &evidence, const std::string &method);
+    std::vector<DiscreteFactor> query(const Nodes &variables, const Evidence &evidence, const std::string &method);
 };
 
 }  // namespace algorithms

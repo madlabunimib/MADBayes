@@ -6,7 +6,6 @@
 #include <algorithms/structure/maximum_cardinality_search.ipp>
 #include <algorithms/structure/moral.ipp>
 #include <structures/discrete_bayesian_network.hpp>
-#include <structures/data_array.hpp>
 
 namespace madbayes {
 
@@ -17,7 +16,7 @@ using namespace madbayes::structures;
 struct Clique {
     bool is_separator;
     Nodes nodes;
-    DataArray belief;
+    DiscreteFactor belief;
 
     operator std::string() const {
         std::stringstream out;
@@ -40,12 +39,12 @@ class CliqueTree : public Graph {
     Cliques build_cliques(const T &other) const;
     void build_clique_tree(const Cliques &cliques);
 
-    DataArray calibrate_upward(const Node &prev, const Node &curr);
-    void calibrate_downward(const Node &prev, const Node &curr, DataArray message);
+    DiscreteFactor calibrate_upward(const Node &prev, const Node &curr);
+    void calibrate_downward(const Node &prev, const Node &curr, DiscreteFactor message);
     void absorb_evidence(const Evidence &evidence);
 
     Clique get_clique_given_variables(const Nodes &variables) const;
-    DataArray get_joint_query(const Node &prev, const Node &curr, Nodes *variables) const;
+    DiscreteFactor get_joint_query(const Node &prev, const Node &curr, Nodes *variables) const;
 
    public:
     template <typename T>
@@ -57,7 +56,7 @@ class CliqueTree : public Graph {
     Clique get_clique(const Node &label) const;
     void set_clique(const Clique &clique);
 
-    std::vector<DataArray> query(const Nodes &variables, const Evidence &evidence, const std::string &method) const;
+    std::vector<DiscreteFactor> query(const Nodes &variables, const Evidence &evidence, const std::string &method) const;
 };
 
 }  // namespace algorithms

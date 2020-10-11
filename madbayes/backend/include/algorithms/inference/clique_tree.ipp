@@ -82,8 +82,8 @@ void CliqueTree::build_clique_tree(const Cliques &cliques) {
     }
 }
 
-DataArray CliqueTree::calibrate_upward(const Node &prev, const Node &curr) {
-    DataArray message;
+DiscreteFactor CliqueTree::calibrate_upward(const Node &prev, const Node &curr) {
+    DiscreteFactor message;
     for (Node next : neighbors(curr)) {
         if (next != prev) {
             message *= calibrate_upward(curr, next);
@@ -107,7 +107,7 @@ DataArray CliqueTree::calibrate_upward(const Node &prev, const Node &curr) {
     return message;
 }
 
-void CliqueTree::calibrate_downward(const Node &prev, const Node &curr, DataArray message) {
+void CliqueTree::calibrate_downward(const Node &prev, const Node &curr, DiscreteFactor message) {
     Clique *clique = &label2clique.at(curr);
 
     if (clique->is_separator) {
@@ -155,8 +155,8 @@ void CliqueTree::absorb_evidence(const Evidence &evidence) {
     auto i = evidence.begin();
     for (; i != evidence.end(); i++) {
         Clique clique = get_clique_given_variables({i->first});
-        DataArray old_margin = clique.belief.marginalize({i->first});
-        DataArray new_margin = DataArray::zeros_like(old_margin);
+        DiscreteFactor old_margin = clique.belief.marginalize({i->first});
+        DiscreteFactor new_margin = DiscreteFactor::zeros_like(old_margin);
         new_margin.set_value({*i}, 1);
         clique.belief /= old_margin;
         clique.belief *= new_margin;
@@ -165,21 +165,21 @@ void CliqueTree::absorb_evidence(const Evidence &evidence) {
     }
 }
 
-std::vector<DataArray> CliqueTree::query(const Nodes &variables, const Evidence &evidence, const std::string &method) const {
+std::vector<DiscreteFactor> CliqueTree::query(const Nodes &variables, const Evidence &evidence, const std::string &method) const {
     CliqueTree copy = CliqueTree(*this);
     copy.absorb_evidence(evidence);
 
-    std::vector<DataArray> out;
+    std::vector<DiscreteFactor> out;
 
     if (method == "marginal") {
         for (Node variable : variables) {
-            DataArray marginal = copy.get_clique_given_variables({variable}).belief;
+            DiscreteFactor marginal = copy.get_clique_given_variables({variable}).belief;
             out.push_back(marginal.marginalize({variable}));
         }
         return out;
     }
     if (method == "joint" || method == "conditional") {
-        DataArray joint;
+        DiscreteFactor joint;
 
         try {
             joint = copy.get_clique_given_variables(variables).belief;
@@ -229,8 +229,8 @@ Clique CliqueTree::get_clique_given_variables(const Nodes &variables) const {
     throw std::runtime_error("No clique found with given variables.");
 }
 
-DataArray CliqueTree::get_joint_query(const Node &prev, const Node &curr, Nodes *variables) const {
-    DataArray message;
+DiscreteFactor CliqueTree::get_joint_query(const Node &prev, const Node &curr, Nodes *variables) const {
+    DiscreteFactor message;
     const Clique *clique = &label2clique.at(curr);
 
     if (clique->is_separator) {

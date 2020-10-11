@@ -30,9 +30,9 @@ LikelihoodWeighting &LikelihoodWeighting::operator=(const LikelihoodWeighting &o
 
 LikelihoodWeighting::~LikelihoodWeighting() {}
 
-std::vector<DataArray> LikelihoodWeighting::query(const Nodes &variables, const Evidence &evidence,
+std::vector<DiscreteFactor> LikelihoodWeighting::query(const Nodes &variables, const Evidence &evidence,
                                                   const std::string &method) {
-    std::vector<DataArray> out;
+    std::vector<DiscreteFactor> out;
     
     if (method == "marginal") {
         for (Node node : variables) {
@@ -50,7 +50,7 @@ std::vector<DataArray> LikelihoodWeighting::query(const Nodes &variables, const 
         double weight = 1;
         for (Node Xi : sorting) {
             // TODO: Refactor xf::select to use std::map as index
-            DataArray table = other->get_cpt(Xi);
+            DiscreteFactor table = other->get_cpt(Xi);
             for (auto it = sample.begin(); it != sample.end(); i++) {
                 auto dims = table.dimension_labels();
                 if (std::find(dims.begin(), dims.end(), it->first) != dims.end()) {

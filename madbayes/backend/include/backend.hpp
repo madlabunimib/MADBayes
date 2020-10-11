@@ -2,7 +2,7 @@
 
 #include "structures/graph.ipp"
 #include "structures/directed_graph.ipp"
-#include "structures/data_array.ipp"
+#include "structures/discrete_factor.ipp"
 #include "structures/bayesian_network.ipp"
 #include "structures/discrete_bayesian_network.ipp"
 

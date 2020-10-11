@@ -51,20 +51,20 @@ PYBIND11_MODULE(backend, m) {
         .def("descendants", &DirectedGraph::descendants, py::arg("node"))
         .def_static("random", &DirectedGraph::random, py::arg("nodes"), py::arg("edge_probability"));
     
-    m.def("DataArray", [](const std::vector<double> &data, const Coordinates &coordinates) {
-        return DataArray(data, coordinates);
+    m.def("DiscreteFactor", [](const std::vector<double> &data, const Coordinates &coordinates) {
+        return DiscreteFactor(data, coordinates);
     }, py::arg("data"), py::arg("coordinates"));
-    m.def("DataArray", [](const py::array_t<double> &data, const Coordinates &coordinates) {
-        return DataArray(data, coordinates);
+    m.def("DiscreteFactor", [](const py::array_t<double> &data, const Coordinates &coordinates) {
+        return DiscreteFactor(data, coordinates);
     }, py::arg("data"), py::arg("coordinates"));
 
     py::class_<BayesianNetwork, DirectedGraph>(m, "BayesianNetwork", py::dynamic_attr());
 
     py::class_<DiscreteBayesianNetwork, BayesianNetwork>(m, "DiscreteBayesianNetwork", py::dynamic_attr())
         .def(py::init<>())
-        .def(py::init<const std::string &, const std::map<std::string, DataArray> &>(), py::arg("formula"), py::arg("cpts"))
-        .def(py::init<const Nodes &, const std::map<std::string, DataArray> &>(), py::arg("nodes"), py::arg("cpts"))
-        .def(py::init<const Edges &, const std::map<std::string, DataArray> &>(), py::arg("edges"), py::arg("cpts"))
+        .def(py::init<const std::string &, const std::map<std::string, DiscreteFactor> &>(), py::arg("formula"), py::arg("cpts"))
+        .def(py::init<const Nodes &, const std::map<std::string, DiscreteFactor> &>(), py::arg("nodes"), py::arg("cpts"))
+        .def(py::init<const Edges &, const std::map<std::string, DiscreteFactor> &>(), py::arg("edges"), py::arg("cpts"))
         .def(py::init<const DiscreteBayesianNetwork &>(), py::arg("other"))
         .def("__call__", &DiscreteBayesianNetwork::operator(), py::arg("node"))
         .def("get_cpt", &DiscreteBayesianNetwork::get_cpt, py::arg("node"))

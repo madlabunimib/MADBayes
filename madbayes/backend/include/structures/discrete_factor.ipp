@@ -1,55 +1,55 @@
 #pragma once
 
-#include "data_array.hpp"
+#include "discrete_factor.hpp"
 
 namespace madbayes {
 
 namespace structures {
 
-DataArray::DataArray() : data(1) {}
+DiscreteFactor::DiscreteFactor() : data(1) {}
 
-DataArray::DataArray(const Coordinates &coordinates) : data(1), coordinates(coordinates) {}
+DiscreteFactor::DiscreteFactor(const Coordinates &coordinates) : data(1), coordinates(coordinates) {}
 
 template <typename T>
-DataArray::DataArray(const T &_data, const Coordinates &_coordinates) : coordinates(_coordinates) {
+DiscreteFactor::DiscreteFactor(const T &_data, const Coordinates &_coordinates) : coordinates(_coordinates) {
     std::vector<size_t> shape;
     for (Axis axis : _coordinates) shape.push_back(axis.second.size());
     data = xt::adapt(_data.data(), shape);
 }
 
-DataArray::DataArray(const DataArray &other) : data(other.data), coordinates(other.coordinates) {}
+DiscreteFactor::DiscreteFactor(const DiscreteFactor &other) : data(other.data), coordinates(other.coordinates) {}
 
-DataArray &DataArray::operator=(const DataArray &other) {
+DiscreteFactor &DiscreteFactor::operator=(const DiscreteFactor &other) {
     if (this != &other) {
-        DataArray tmp(other);
+        DiscreteFactor tmp(other);
         std::swap(tmp.data, data);
         std::swap(tmp.coordinates, coordinates);
     }
     return *this;
 }
 
-DataArray::~DataArray() {}
+DiscreteFactor::~DiscreteFactor() {}
 
-bool DataArray::operator==(const DataArray &other) const {
+bool DiscreteFactor::operator==(const DiscreteFactor &other) const {
     if (coordinates != other.coordinates) return false;
     if (xt::any(xt::not_equal(data, other.data))) return false;
     return true;
 }
 
-Coordinates DataArray::get_coordinates() const { return coordinates; }
+Coordinates DiscreteFactor::get_coordinates() const { return coordinates; }
 
-xt::xarray<double> DataArray::get_data() const { return data; }
+xt::xarray<double> DiscreteFactor::get_data() const { return data; }
 
-void DataArray::set_value(const Locations locations, double value) {
+void DiscreteFactor::set_value(const Evidence evidence, double value) {
     xt::xstrided_slice_vector idx;
     
     for (Axis axis : coordinates) {
         auto found = std::find_if(
-            locations.begin(),
-            locations.end(),
-            [&](Location other) { return other.first == axis.first; }
+            evidence.begin(),
+            evidence.end(),
+            [&](Evidence::value_type other) { return other.first == axis.first; }
         );
-        if (found != locations.end()) {
+        if (found != evidence.end()) {
             auto id = std::find(
                 axis.second.begin(),
                 axis.second.end(),
@@ -67,8 +67,8 @@ void DataArray::set_value(const Locations locations, double value) {
     view = value;
 }
 
-DataArray DataArray::adapt(const DataArray &other) const {
-    DataArray out {coordinates};
+DiscreteFactor DiscreteFactor::adapt(const DiscreteFactor &other) const {
+    DiscreteFactor out {coordinates};
 
     // Add extra dims
     xt::xstrided_slice_vector extra { xt::ellipsis() };
@@ -90,7 +90,7 @@ DataArray DataArray::adapt(const DataArray &other) const {
     return out;
 }
 
-DataArray &DataArray::rearrange(const DataArray &other) {
+DiscreteFactor &DiscreteFactor::rearrange(const DiscreteFactor &other) {
     // Compute dims order
     std::vector<size_t> order;
     for (size_t i = 0; i < other.coordinates.size(); i++) {
@@ -111,8 +111,8 @@ DataArray &DataArray::rearrange(const DataArray &other) {
     return *this;
 }
 
-DataArray DataArray::operator+(const DataArray &other) const {
-    DataArray a, b, out;
+DiscreteFactor DiscreteFactor::operator+(const DiscreteFactor &other) const {
+    DiscreteFactor a, b, out;
     a = adapt(other);
     b = other.adapt(*this).rearrange(a);
     out.coordinates = a.coordinates;
@@ -120,8 +120,8 @@ DataArray DataArray::operator+(const DataArray &other) const {
     return out;
 }
 
-DataArray DataArray::operator-(const DataArray &other) const {
-    DataArray a, b, out;
+DiscreteFactor DiscreteFactor::operator-(const DiscreteFactor &other) const {
+    DiscreteFactor a, b, out;
     a = adapt(other);
     b = other.adapt(*this).rearrange(a);
     out.coordinates = a.coordinates;
@@ -129,8 +129,8 @@ DataArray DataArray::operator-(const DataArray &other) const {
     return out;
 }
 
-DataArray DataArray::operator*(const DataArray &other) const {
-    DataArray a, b, out;
+DiscreteFactor DiscreteFactor::operator*(const DiscreteFactor &other) const {
+    DiscreteFactor a, b, out;
     a = adapt(other);
     b = other.adapt(*this).rearrange(a);
     out.coordinates = a.coordinates;
@@ -138,19 +138,19 @@ DataArray DataArray::operator*(const DataArray &other) const {
     return out;
 }
 
-DataArray DataArray::operator/(const DataArray &other) const {
-    DataArray a, b, out;
+DiscreteFactor DiscreteFactor::operator/(const DiscreteFactor &other) const {
+    DiscreteFactor a, b, out;
     a = adapt(other);
     b = other.adapt(*this).rearrange(a);
     out.coordinates = a.coordinates;
     out.data = a.data / b.data;
-    // As for DataArray, the case 0/0 is defined as 0
+    // As for DiscreteFactor, the case 0/0 is defined as 0
     out.data = xt::nan_to_num(out.data);
     return out;
 }
 
-DataArray &DataArray::operator+=(const DataArray &other) {
-    DataArray a, b, out;
+DiscreteFactor &DiscreteFactor::operator+=(const DiscreteFactor &other) {
+    DiscreteFactor a, b, out;
     a = adapt(other);
     b = other.adapt(*this).rearrange(a);
     coordinates = a.coordinates;
@@ -158,8 +158,8 @@ DataArray &DataArray::operator+=(const DataArray &other) {
     return *this;
 }
 
-DataArray &DataArray::operator-=(const DataArray &other) {
-    DataArray a, b, out;
+DiscreteFactor &DiscreteFactor::operator-=(const DiscreteFactor &other) {
+    DiscreteFactor a, b, out;
     a = adapt(other);
     b = other.adapt(*this).rearrange(a);
     coordinates = a.coordinates;
@@ -167,8 +167,8 @@ DataArray &DataArray::operator-=(const DataArray &other) {
     return *this;
 }
 
-DataArray &DataArray::operator*=(const DataArray &other) {
-    DataArray a, b, out;
+DiscreteFactor &DiscreteFactor::operator*=(const DiscreteFactor &other) {
+    DiscreteFactor a, b, out;
     a = adapt(other);
     b = other.adapt(*this).rearrange(a);
     coordinates = a.coordinates;
@@ -176,19 +176,19 @@ DataArray &DataArray::operator*=(const DataArray &other) {
     return *this;
 }
 
-DataArray &DataArray::operator/=(const DataArray &other) {
-    DataArray a, b, out;
+DiscreteFactor &DiscreteFactor::operator/=(const DiscreteFactor &other) {
+    DiscreteFactor a, b, out;
     a = adapt(other);
     b = other.adapt(*this).rearrange(a);
     coordinates = a.coordinates;
     data = a.data / b.data;
-    // As for DataArray, the case 0/0 is defined as 0
+    // As for DiscreteFactor, the case 0/0 is defined as 0
     data = xt::nan_to_num(data);
     return *this;
 }
 
-DataArray DataArray::sum(const std::vector<std::string> &axes) const {
-    DataArray out {coordinates};
+DiscreteFactor DiscreteFactor::sum(const std::vector<std::string> &axes) const {
+    DiscreteFactor out {coordinates};
 
     std::vector<size_t> idx;
     auto i = out.coordinates.begin();
@@ -210,8 +210,8 @@ DataArray DataArray::sum(const std::vector<std::string> &axes) const {
     return out;
 }
 
-DataArray DataArray::marginalize(const std::vector<std::string> &axes) const {
-    DataArray out {coordinates};
+DiscreteFactor DiscreteFactor::marginalize(const std::vector<std::string> &axes) const {
+    DiscreteFactor out {coordinates};
 
     std::vector<size_t> idx;
     auto i = out.coordinates.begin();
@@ -233,8 +233,8 @@ DataArray DataArray::marginalize(const std::vector<std::string> &axes) const {
     return out;
 }
 
-DataArray DataArray::zeros_like(const DataArray &other) {
-    DataArray out {other.coordinates};
+DiscreteFactor DiscreteFactor::zeros_like(const DiscreteFactor &other) {
+    DiscreteFactor out {other.coordinates};
     out.data = xt::zeros_like(other.data);
     return out;
 }

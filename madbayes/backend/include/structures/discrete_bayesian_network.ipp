@@ -29,15 +29,15 @@ DiscreteBayesianNetwork &DiscreteBayesianNetwork::operator=(const DiscreteBayesi
 
 DiscreteBayesianNetwork::~DiscreteBayesianNetwork() {}
 
-DataArray DiscreteBayesianNetwork::operator()(const Node &label) const {
+DiscreteFactor DiscreteBayesianNetwork::operator()(const Node &label) const {
     return cpts.at(label);
 }
 
-DataArray DiscreteBayesianNetwork::get_cpt(const Node &label) const {
+DiscreteFactor DiscreteBayesianNetwork::get_cpt(const Node &label) const {
     return cpts.at(label);
 }
 
-void DiscreteBayesianNetwork::set_cpt(const Node &label, const DataArray &cpt) {
+void DiscreteBayesianNetwork::set_cpt(const Node &label, const DiscreteFactor &cpt) {
     cpts[label] = cpt;
 }
 
