@@ -7,7 +7,7 @@ namespace madbayes {
 namespace algorithms {
 
 template <typename T>
-Cliques CliqueTree::build_cliques(const T &other) {
+Cliques CliqueTree::build_cliques(const T &other) const {
     Graph moral_graph = moral(other);
     Graph chordal_graph = chordal(moral_graph);
     std::vector<Nodes> cliques = maximal_cliques(chordal_graph);
@@ -40,28 +40,29 @@ Cliques CliqueTree::build_cliques(const T &other) {
 
 void CliqueTree::build_clique_tree(const Cliques &cliques) {
     // Build clique tree
-    for (size_t i = 1; i < cliques.size(); i++) {
+    auto i = cliques.begin() + 1;
+    for (; i != cliques.end(); i++) {
         Nodes sepset;
-        size_t idx = 0;
-        for (size_t j = 0; j < i; j++) {
+        auto j = cliques.begin();
+        auto k = cliques.begin();
+        for (; j < i; j++) {
             Nodes intersect;
             std::set_intersection(
-                cliques[i].nodes.begin(),
-                cliques[i].nodes.end(),
-                cliques[j].nodes.begin(),
-                cliques[j].nodes.end(),
+                i->nodes.begin(),
+                i->nodes.end(),
+                j->nodes.begin(),
+                j->nodes.end(),
                 std::back_inserter(intersect)
             );
             if (intersect.size() > sepset.size()) {
-                sepset = intersect;
-                idx = j;
+                sepset = intersect; k = j;
             }
         }
         // Add Cj
-        std::string Cj = cliques[idx];
+        std::string Cj = *k;
         if (label2clique.find(Cj) == label2clique.end()) {
             add_node(Cj);
-            label2clique.insert({Cj, cliques[idx]});
+            label2clique.insert({Cj, *k});
         }
         // Add separator
         Clique sep {true, sepset, {}};
@@ -72,10 +73,10 @@ void CliqueTree::build_clique_tree(const Cliques &cliques) {
         }
         add_edge(Cj, separator);
         // Add Ci
-        std::string Ci = cliques[i];
+        std::string Ci = *i;
         if (label2clique.find(Ci) == label2clique.end()) {
             add_node(Ci);
-            label2clique.insert({Ci, cliques[i]});
+            label2clique.insert({Ci, *i});
         }
         add_edge(separator, Ci);
     }
@@ -172,8 +173,8 @@ std::vector<DataArray> CliqueTree::query(const Nodes &variables, const Evidence 
 
     if (method == "marginal") {
         for (Node variable : variables) {
-            Clique clique = copy.get_clique_given_variables({variable});
-            out.push_back(clique.belief.marginalize({variable}));
+            DataArray marginal = copy.get_clique_given_variables({variable}).belief;
+            out.push_back(marginal.marginalize({variable}));
         }
         return out;
     }
@@ -230,9 +231,9 @@ Clique CliqueTree::get_clique_given_variables(const Nodes &variables) const {
 
 DataArray CliqueTree::get_joint_query(const Node &prev, const Node &curr, Nodes *variables) const {
     DataArray message;
-    Clique clique = get_clique(curr);
+    const Clique *clique = &label2clique.at(curr);
 
-    if (clique.is_separator) {
+    if (clique->is_separator) {
         for (Node next : neighbors(curr)) {
             if (next != prev) {
                 message *= get_joint_query(curr, next, variables);
@@ -241,13 +242,13 @@ DataArray CliqueTree::get_joint_query(const Node &prev, const Node &curr, Nodes 
         // If the returning value is not empty, this means that there
         // are variables of the query in the subtree under this separator,
         // so we need to divide the returning belief by the sepset belief. 
-        message /= clique.belief;
+        message /= clique->belief;
 
         return message;
     }
 
     // Check if the current clique contains any variable of the query.
-    for (Node node : clique.nodes) {
+    for (Node node : clique->nodes) {
         auto variable = std::find(
             variables->begin(),
             variables->end(),
@@ -268,7 +269,7 @@ DataArray CliqueTree::get_joint_query(const Node &prev, const Node &curr, Nodes 
 
     // If message is not empty or a variable is found,
     // then multiply the message by the clique belief.
-    message *= clique.belief;
+    message *= clique->belief;
     
     return message;
 }

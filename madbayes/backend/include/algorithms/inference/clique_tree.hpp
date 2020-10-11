@@ -37,8 +37,15 @@ class CliqueTree : public Graph {
     std::map<Node, Clique> label2clique;
 
     template <typename T>
-    Cliques build_cliques(const T &other);
+    Cliques build_cliques(const T &other) const;
     void build_clique_tree(const Cliques &cliques);
+
+    DataArray calibrate_upward(const Node &prev, const Node &curr);
+    void calibrate_downward(const Node &prev, const Node &curr, DataArray message);
+    void absorb_evidence(const Evidence &evidence);
+
+    Clique get_clique_given_variables(const Nodes &variables) const;
+    DataArray get_joint_query(const Node &prev, const Node &curr, Nodes *variables) const;
 
    public:
     template <typename T>
@@ -51,13 +58,6 @@ class CliqueTree : public Graph {
     void set_clique(const Clique &clique);
 
     std::vector<DataArray> query(const Nodes &variables, const Evidence &evidence, const std::string &method) const;
-
-    DataArray calibrate_upward(const Node &prev, const Node &curr);
-    void calibrate_downward(const Node &prev, const Node &curr, DataArray message);
-    void absorb_evidence(const Evidence &evidence);
-
-    Clique get_clique_given_variables(const Nodes &variables) const;
-    DataArray get_joint_query(const Node &prev, const Node &curr, Nodes *variables) const;
 };
 
 }  // namespace algorithms
