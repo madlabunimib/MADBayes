@@ -40,7 +40,33 @@ Coordinates DiscreteFactor::get_coordinates() const { return coordinates; }
 
 xt::xarray<double> DiscreteFactor::get_data() const { return data; }
 
-void DiscreteFactor::set_value(const Evidence evidence, double value) {
+xt::xarray<double> DiscreteFactor::get_slice(const Evidence &evidence) const {
+    xt::xstrided_slice_vector idx;
+    
+    for (Axis axis : coordinates) {
+        auto found = std::find_if(
+            evidence.begin(),
+            evidence.end(),
+            [&](Evidence::value_type other) { return other.first == axis.first; }
+        );
+        if (found != evidence.end()) {
+            auto id = std::find(
+                axis.second.begin(),
+                axis.second.end(),
+                found->second
+            );
+            if (id != axis.second.end()) {
+                idx.push_back(std::distance(axis.second.begin(), id));
+            }
+        } else {
+            idx.push_back(xt::all());
+        }
+    }
+
+    return xt::strided_view(data, idx);
+}
+
+void DiscreteFactor::set_value(const Evidence &evidence, double value) {
     xt::xstrided_slice_vector idx;
     
     for (Axis axis : coordinates) {

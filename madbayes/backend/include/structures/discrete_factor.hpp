@@ -39,7 +39,8 @@ class DiscreteFactor {
 
     Coordinates get_coordinates() const;
     xt::xarray<double> get_data() const;
-    void set_value(const Evidence evidence, double value);
+    xt::xarray<double> get_slice(const Evidence &evidence) const;
+    void set_value(const Evidence &evidence, double value);
 
     DiscreteFactor operator+(const DiscreteFactor &other) const;
     DiscreteFactor operator-(const DiscreteFactor &other) const;

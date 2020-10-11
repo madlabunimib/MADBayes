@@ -86,6 +86,9 @@ PYBIND11_MODULE(backend, m) {
         .def("get_clique", &CliqueTree::get_clique, py::arg("label"))
         .def("set_clique", &CliqueTree::set_clique, py::arg("clique"))
         .def("query", &CliqueTree::query, py::arg("variables"), py::arg("evidence"), py::arg("method"));
+    
+    // Algorithms - Sampling
+    m.def("forward_sampling", &forward_sampling, py::arg("other"), py::arg("size"));
 
     // Algorithms - Structure
     m.def("chain_of_cliques", &chain_of_cliques, py::arg("cliques"), py::arg("alpha"));
