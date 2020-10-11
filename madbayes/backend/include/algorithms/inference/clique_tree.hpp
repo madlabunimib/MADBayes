@@ -1,6 +1,12 @@
 #pragma once
 
-#include <structures/data_array.ipp>
+#include <algorithms/structure/chain_cliques.ipp>
+#include <algorithms/structure/chordal.ipp>
+#include <algorithms/structure/maximal_cliques.ipp>
+#include <algorithms/structure/maximum_cardinality_search.ipp>
+#include <algorithms/structure/moral.ipp>
+#include <structures/discrete_bayesian_network.hpp>
+#include <structures/data_array.hpp>
 
 namespace madbayes {
 
@@ -44,11 +50,14 @@ class CliqueTree : public Graph {
     Clique get_clique(const Node &label) const;
     void set_clique(const Clique &clique);
 
-    Clique get_clique_given_variables(const Nodes &variables) const;
-    DataArray get_joint_query(const Node &prev, const Node &curr, Nodes *variables) const;
+    std::vector<DataArray> query(const Nodes &variables, const Evidence &evidence, const std::string &method) const;
 
     DataArray calibrate_upward(const Node &prev, const Node &curr);
     void calibrate_downward(const Node &prev, const Node &curr, DataArray message);
+    void absorb_evidence(const Evidence &evidence);
+
+    Clique get_clique_given_variables(const Nodes &variables) const;
+    DataArray get_joint_query(const Node &prev, const Node &curr, Nodes *variables) const;
 };
 
 }  // namespace algorithms

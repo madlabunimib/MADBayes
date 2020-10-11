@@ -83,9 +83,9 @@ PYBIND11_MODULE(backend, m) {
     py::class_<CliqueTree, Graph>(m, "CliqueTree")
         .def(py::init<const DiscreteBayesianNetwork &>(), py::arg("bn"))
         .def(py::init<const CliqueTree &>(), py::arg("other"))
-        // .def("__call__", &CliqueTree::operator(), py::arg("query", py::arg("evidence")));
         .def("get_clique", &CliqueTree::get_clique, py::arg("label"))
         .def("set_clique", &CliqueTree::set_clique, py::arg("clique"))
+        .def("query", &CliqueTree::query, py::arg("variables"), py::arg("evidence"), py::arg("method"))
         .def("get_clique_given_variables", &CliqueTree::get_clique_given_variables, py::arg("variables"))
         .def("get_joint_query", &CliqueTree::get_joint_query, py::arg("prev"), py::arg("curr"), py::arg("variables"))
         .def("calibrate_upward", &CliqueTree::calibrate_upward)

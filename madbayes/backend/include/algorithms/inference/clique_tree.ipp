@@ -1,11 +1,5 @@
 #pragma once
 
-#include <algorithms/structure/chain_cliques.ipp>
-#include <algorithms/structure/chordal.ipp>
-#include <algorithms/structure/maximal_cliques.ipp>
-#include <algorithms/structure/maximum_cardinality_search.ipp>
-#include <algorithms/structure/moral.ipp>
-
 #include "clique_tree.hpp"
 
 namespace madbayes {
@@ -175,6 +169,58 @@ CliqueTree &CliqueTree::operator=(const CliqueTree &other) {
 
 CliqueTree::~CliqueTree() {}
 
+void CliqueTree::absorb_evidence(const Evidence &evidence) {
+    auto i = evidence.begin();
+    for (; i != evidence.end(); i++) {
+        Clique clique = get_clique_given_variables({i->first});
+        DataArray old_margin = clique.belief.marginalize({i->first});
+        DataArray new_margin = DataArray::zeros_like(old_margin);
+        new_margin.set_value({*i}, 1);
+        clique.belief /= old_margin;
+        clique.belief *= new_margin;
+        set_clique(clique);
+        calibrate_downward(Node(), clique, {});
+    }
+}
+
+std::vector<DataArray> CliqueTree::query(const Nodes &variables, const Evidence &evidence, const std::string &method) const {
+    CliqueTree copy = CliqueTree(*this);
+    copy.absorb_evidence(evidence);
+
+    std::vector<DataArray> out;
+
+    if (method == "marginal") {
+        for (Node variable : variables) {
+            Clique clique = copy.get_clique_given_variables({variable});
+            out.push_back(clique.belief.marginalize({variable}));
+        }
+        return out;
+    }
+    if (method == "joint" || method == "conditional") {
+        DataArray joint;
+
+        try {
+            joint = copy.get_clique_given_variables(variables).belief;
+        } catch(const std::exception& e) {
+            Nodes scope = Nodes(variables.begin(), variables.end());
+            joint = copy.get_joint_query("", get_nodes()[0], &scope);
+        }
+
+        joint = joint.marginalize(variables);
+
+        if (method == "joint") {
+            out.push_back(joint);
+            return out;
+        }
+
+        Nodes scope = Nodes(variables.begin() + 1, variables.end());
+        out.push_back(joint / joint.sum(scope));
+        return out;
+    }
+
+    throw std::runtime_error("Method must be either 'marginal', 'joint' or 'conditional'.");
+}
+
 Clique CliqueTree::get_clique(const Node &label) const {
     return label2clique.at(label);
 }
@@ -186,9 +232,9 @@ void CliqueTree::set_clique(const Clique &clique) {
 Clique CliqueTree::get_clique_given_variables(const Nodes &variables) const {
     Nodes nodes = variables;
     std::sort(nodes.begin(), nodes.end());
-    auto iterator = label2clique.cbegin();
-    while (iterator != label2clique.cend()) {
-        const Clique *clique = &iterator->second;
+    auto i = label2clique.cbegin();
+    for (; i != label2clique.cend(); i++) {
+        const Clique *clique = &i->second;
         if (std::includes(
             clique->nodes.begin(),
             clique->nodes.end(),
@@ -197,7 +243,6 @@ Clique CliqueTree::get_clique_given_variables(const Nodes &variables) const {
         )) {
             return *clique;
         }
-        iterator++;
     }
     throw std::runtime_error("No clique found with given variables.");
 }

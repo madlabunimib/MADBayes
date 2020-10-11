@@ -40,11 +40,38 @@ Coordinates DataArray::get_coordinates() const { return coordinates; }
 
 xt::xarray<double> DataArray::get_values() const { return values; }
 
+void DataArray::set_value(const Locations locations, double value) {
+    xt::xstrided_slice_vector idx;
+    
+    for (Axis axis : coordinates) {
+        auto found = std::find_if(
+            locations.begin(),
+            locations.end(),
+            [&](Location other) { return other.first == axis.first; }
+        );
+        if (found != locations.end()) {
+            auto id = std::find(
+                axis.second.begin(),
+                axis.second.end(),
+                found->second
+            );
+            if (id != axis.second.end()) {
+                idx.push_back(std::distance(axis.second.begin(), id));
+            }
+        } else {
+            idx.push_back(xt::all());
+        }
+    }
+
+    auto view = xt::strided_view(values, idx);
+    view = value;
+}
+
 DataArray DataArray::adapt(const DataArray &other) const {
     DataArray out {coordinates};
 
     // Add extra dims
-    xt::xstrided_slice_vector extra = { xt::ellipsis() };
+    xt::xstrided_slice_vector extra { xt::ellipsis() };
 
     for (Axis axis : other.coordinates) {
         auto found = std::find(
@@ -160,10 +187,9 @@ DataArray &DataArray::operator/=(const DataArray &other) {
     return *this;
 }
 
-DataArray DataArray::sum(const std::vector<std::string> axes) const {
+DataArray DataArray::sum(const std::vector<std::string> &axes) const {
     DataArray out {coordinates};
 
-    // Compute reduce axes idx
     std::vector<size_t> idx;
     auto i = out.coordinates.begin();
     for (; i != out.coordinates.end(); i++) {
@@ -181,6 +207,35 @@ DataArray DataArray::sum(const std::vector<std::string> axes) const {
 
     out.values = xt::sum(values, idx);
 
+    return out;
+}
+
+DataArray DataArray::marginalize(const std::vector<std::string> &axes) const {
+    DataArray out {coordinates};
+
+    std::vector<size_t> idx;
+    auto i = out.coordinates.begin();
+    for (; i != out.coordinates.end(); i++) {
+        auto found = std::find_if(
+            axes.begin(),
+            axes.end(),
+            [&](std::string other) { return other == i->first; }
+        );
+        if (found == axes.end()) {
+            size_t offset = std::distance(out.coordinates.begin(), i);
+            idx.push_back(idx.size() + offset);
+            out.coordinates.erase(i--);
+        }
+    }
+
+    out.values = xt::sum(values, idx);
+
+    return out;
+}
+
+DataArray DataArray::zeros_like(const DataArray &other) {
+    DataArray out {other.coordinates};
+    out.values = xt::zeros_like(other.values);
     return out;
 }
 

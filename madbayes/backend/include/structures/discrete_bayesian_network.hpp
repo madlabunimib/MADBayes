@@ -5,15 +5,15 @@
 
 namespace madbayes {
 
-namespace structures {
-
-using CPT = DataArray;
-using CPTs = std::map<Node, CPT>;
-
 using Level = std::string;
 using Levels = std::vector<Level>;
 
 using Evidence = std::map<Node, std::string>;
+
+namespace structures {
+
+using CPT = DataArray;
+using CPTs = std::map<Node, CPT>;
 
 class DiscreteBayesianNetwork : public BayesianNetwork {
    protected:

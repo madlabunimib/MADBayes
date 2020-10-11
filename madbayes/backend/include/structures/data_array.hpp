@@ -6,12 +6,15 @@
 #include <xtensor/xadapt.hpp>
 #include <xtensor/xarray.hpp>
 #include <xtensor/xmath.hpp>
+#include <xtensor/xio.hpp>
 #include <xtensor/xstrided_view.hpp>
 
 namespace madbayes {
 
 using Axis = std::pair<std::string, std::vector<std::string>>;
 using Coordinates = std::vector<Axis>;
+using Location = std::pair<std::string, std::string>;
+using Locations = std::vector<Location>;
 
 namespace structures {
 
@@ -38,6 +41,7 @@ class DataArray {
 
     Coordinates get_coordinates() const;
     xt::xarray<double> get_values() const;
+    void set_value(const Locations locations, double value);
 
     DataArray operator+(const DataArray &other) const;
     DataArray operator-(const DataArray &other) const;
@@ -49,7 +53,10 @@ class DataArray {
     DataArray &operator*=(const DataArray &other);
     DataArray &operator/=(const DataArray &other);
 
-    DataArray sum(const std::vector<std::string> axes) const;
+    DataArray sum(const std::vector<std::string> &axes) const;
+    DataArray marginalize(const std::vector<std::string> &axes) const;
+
+    static DataArray zeros_like(const DataArray &other);
 };
 
 }  // namespace structures
