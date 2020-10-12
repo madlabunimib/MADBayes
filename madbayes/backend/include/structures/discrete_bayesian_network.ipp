@@ -14,7 +14,7 @@ DiscreteBayesianNetwork::DiscreteBayesianNetwork(const Nodes &labels, const CPTs
 
 DiscreteBayesianNetwork::DiscreteBayesianNetwork(const Edges &edges, const CPTs &cpts) : BayesianNetwork(edges), cpts(cpts) {}
 
-DiscreteBayesianNetwork::DiscreteBayesianNetwork(const DiscreteBayesianNetwork &other) : BayesianNetwork(other) {}
+DiscreteBayesianNetwork::DiscreteBayesianNetwork(const DiscreteBayesianNetwork &other) : BayesianNetwork(other), cpts(other.cpts) {}
 
 DiscreteBayesianNetwork &DiscreteBayesianNetwork::operator=(const DiscreteBayesianNetwork &other) {
     if (this != &other) {
