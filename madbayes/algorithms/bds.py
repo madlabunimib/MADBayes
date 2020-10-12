@@ -8,11 +8,11 @@ if TYPE_CHECKING:
     from ..structures import Dataset
 
 
-def bds_score(network: BayesianNetwork, dataset: Dataset, iss: float = 1, with_nodes: bool = False):
-    nodes = sorted(network.nodes)
+def bds_score(model: BayesianNetwork, dataset: Dataset, iss: float = 1, with_nodes: bool = False):
+    nodes = sorted(model.nodes)
 
     score = {
-        node: _node_bds_score(node, dataset, network, iss)
+        node: _node_bds_score(node, dataset, model, iss)
         for i, node in enumerate(nodes)
     }
 
@@ -22,11 +22,11 @@ def bds_score(network: BayesianNetwork, dataset: Dataset, iss: float = 1, with_n
     return sum(score.values())
 
 
-def _node_bds_score(node: str, dataset: Dataset, network: BayesianNetwork, iss: float) -> float:
+def _node_bds_score(node: str, dataset: Dataset, model: BayesianNetwork, iss: float) -> float:
     size = dataset.shape[0]
     levels = dataset.levels(node)
 
-    parents = network.parents(node)
+    parents = model.parents(node)
     dataset = dataset.absolute_frequency([node] + parents)
     configs = [((), size)]
     r_i = len(levels)

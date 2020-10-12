@@ -43,12 +43,12 @@ class BNLearnNetwork():
 
     def mutilated(self, **kwargs) -> 'BNLearnNetwork':
         from rpy2.robjects.vectors import ListVector
-        network = type(self)()
-        network._network = bnlearn.mutilated(
+        model = type(self)()
+        model._network = bnlearn.mutilated(
             self._network,
             ListVector(kwargs)
         )
-        return network
+        return model
 
     def structure(self):
         return bnlearn.modelstring(self._network)
@@ -62,8 +62,8 @@ class BNLearnNetwork():
 
 class gRainJunctionTree():
 
-    def __init__(self, network: 'BNLearnNetwork' = None) -> None:
-        self._network = network
+    def __init__(self, model: 'BNLearnNetwork' = None) -> None:
+        self._network = model
 
     def query(self, variables: List[str], evidence: Any, method: str) -> Any:
         from rpy2.robjects.vectors import StrVector

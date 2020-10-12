@@ -39,16 +39,16 @@ def hill_climbing(dataset: Dataset, score=bds_score, node_score=_node_bds_score,
     return dag_best
 
 
-def _hc_score(node_score, network: BayesianNetwork, dataset: Dataset, operator: str, edge: Tuple, score, iss: float):
+def _hc_score(node_score, model: BayesianNetwork, dataset: Dataset, operator: str, edge: Tuple, score, iss: float):
     nodes_scores = deepcopy(score[1])
     # If we add or remove an edge we need only to update the child's score value
     nodes_scores[edge[1]] = node_score(
-        edge[1], dataset, network, iss
+        edge[1], dataset, model, iss
     )
     # If we revert an edge we need to update both nodes
     if operator == 'reverse_edge':
         nodes_scores[edge[0]] = node_score(
-            edge[0], dataset, network, iss
+            edge[0], dataset, model, iss
         )
     return (sum(nodes_scores.values()), nodes_scores)
 

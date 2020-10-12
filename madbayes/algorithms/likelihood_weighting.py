@@ -15,8 +15,8 @@ if TYPE_CHECKING:
 
 class LikelihoodWeighting(InferenceSystem):
 
-    def __init__(self, network: BayesianNetwork, *args, **kwargs) -> None:
-        self.bn = network
+    def __init__(self, model: BayesianNetwork, *args, **kwargs) -> None:
+        self.bn = model
         if 'size' not in kwargs:
             raise ValueError('Missing "size" keyword parameter.')
         self.size = kwargs['size']

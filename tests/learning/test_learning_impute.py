@@ -14,7 +14,7 @@ def test_learning_impute():
         if dataset in ['asia', 'cancer', 'earthquake', 'sachs', 'survey']
     ]
     for (dataset, network) in datasets_networks:
-        imputed = mb.impute(network, dataset.random_nan(), mb.JunctionTree)
+        imputed = mb.impute(mb.JunctionTree(network), dataset.random_nan())
         tot = np.prod(dataset.shape)
         err = np.count_nonzero(
             dataset.values == imputed.values
