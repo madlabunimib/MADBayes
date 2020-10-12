@@ -1,7 +1,7 @@
 from __future__ import annotations
-from ..structures import Dataset
-from copy import deepcopy
 import pandas as pd
+
+from ..structures import Dataset
 
 from typing import TYPE_CHECKING
 
@@ -10,32 +10,27 @@ if TYPE_CHECKING:
     from ..backend import BayesianNetwork
 
 
-def impute(network: BayesianNetwork, dataset: Dataset, inference: Any, *args, **kwargs) -> Dataset:
-    engine = inference(network, *args, **kwargs)
-    data = deepcopy(dataset)
-    nans = data[data.isnull().any(axis=1)]
-    cache = {}
-    for index, row in nans.iterrows():
-        query = row.to_dict()
-        evidence = {
-            k: v
-            for k, v in query.items()
-            if not pd.isnull(v)
-        }
-        key = str(evidence)
-        if key not in cache.keys():
-            query = sorted(query.keys() - evidence.keys())
-            query = engine.query(query, evidence, 'joint')[0]
-            query = [
-                query.sum(set(query.dims) - set([variable]))
-                for variable in query.dims
+def impute(engine: Any, dataset: Dataset) -> Dataset:
+    out = dataset.copy()
+    for i, row in out.iterrows():
+        # If there are any NANs, impute them
+        if row.isnull().any():
+            # Set query variables
+            variables = [
+                key
+                for key, value in row.iteritems()
+                if pd.isnull(value)
             ]
-            query = {
-                q.dims[0]: q.coords[q.dims[0]].values[q.argmax()]
-                for q in query
-            }
-            cache[key] = query
-        query = cache[key]
-        for key, value in query.items():
-            data.loc[[index], [key]] = value
-    return data
+            # Set query evidence
+            evidence = row.dropna().to_dict()
+            # Execute joint query
+            query = engine.query(variables, evidence, method="joint")[0]
+            # Select argmax by levels
+            query = query.to_dataframe("joint")
+            query = query.sort_values(ascending=False, by=["joint"])
+            levels, _ = next(query.iterrows())
+            levels = [levels] if isinstance(levels, str) else levels
+            levels = dict(zip(query.index.names, levels))
+            row.update(levels)
+            out.loc[i] = row
+    return out
