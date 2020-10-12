@@ -1,13 +1,12 @@
 from __future__ import annotations
 import pandas as pd
 
-from ..structures import Dataset
-
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from typing import Any, Dict, List
     from ..backend import BayesianNetwork
+    from ..structures import Dataset
 
 
 def impute(engine: Any, dataset: Dataset) -> Dataset:
