@@ -69,7 +69,19 @@ PYBIND11_MODULE(backend, m) {
         .def("__call__", &DiscreteBayesianNetwork::operator(), py::arg("node"))
         .def("get_cpt", &DiscreteBayesianNetwork::get_cpt, py::arg("node"))
         .def("set_cpt", &DiscreteBayesianNetwork::set_cpt, py::arg("node"), py::arg("cpt"))
-        .def("get_levels", &DiscreteBayesianNetwork::get_levels, py::arg("node"));
+        .def("get_levels", &DiscreteBayesianNetwork::get_levels, py::arg("node"))
+        .def("get_cpts", &DiscreteBayesianNetwork::get_cpts)
+        .def(py::pickle(
+            [](const DiscreteBayesianNetwork &other) { // __getstate__
+                /* Return a tuple that fully encodes the state of the object */
+                return py::make_tuple(other.get_edges(), other.get_cpts());
+            },
+            [](py::tuple state) { // __setstate__
+                /* Create a new C++ instance from state */
+                DiscreteBayesianNetwork other {state[0].cast<Edges>(), state[1].cast<CPTs>()};
+                return other;
+            }
+        ));
     
     // Algorithms
 

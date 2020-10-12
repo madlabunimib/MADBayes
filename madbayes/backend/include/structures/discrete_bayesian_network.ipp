@@ -51,6 +51,10 @@ Levels DiscreteBayesianNetwork::get_levels(const Node &label) const {
     return found->second;
 }
 
+CPTs DiscreteBayesianNetwork::get_cpts() const {
+    return cpts;
+}
+
 }  // namespace structures
 
 }  // namespace madbayes
