@@ -71,6 +71,7 @@ PYBIND11_MODULE(backend, m) {
         .def("set_cpt", &DiscreteBayesianNetwork::set_cpt, py::arg("node"), py::arg("cpt"))
         .def("get_levels", &DiscreteBayesianNetwork::get_levels, py::arg("node"))
         .def("get_cpts", &DiscreteBayesianNetwork::get_cpts)
+        .def("size", &DiscreteBayesianNetwork::size)
         .def(py::pickle(
             [](const DiscreteBayesianNetwork &other) { // __getstate__
                 /* Return a tuple that fully encodes the state of the object */

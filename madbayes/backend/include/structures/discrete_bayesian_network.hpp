@@ -32,6 +32,7 @@ class DiscreteBayesianNetwork : public BayesianNetwork {
     [[deprecated]]
     Levels get_levels(const Node &label) const;
     CPTs get_cpts() const;
+    size_t size() const;
 };
 
 }  // namespace structures
