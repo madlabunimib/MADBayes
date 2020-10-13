@@ -19,7 +19,7 @@ namespace structures {
 
 class DiscreteFactor {
    private:
-    xt::xarray<double> data;
+    xt::xarray<float> data;
     Coordinates coordinates;
 
     DiscreteFactor adapt(const DiscreteFactor &other) const;
@@ -38,8 +38,8 @@ class DiscreteFactor {
     bool operator==(const DiscreteFactor &other) const;
 
     Coordinates get_coordinates() const;
-    xt::xarray<double> get_data() const;
-    xt::xarray<double> get_slice(const Evidence &evidence) const;
+    xt::xarray<float> get_data() const;
+    xt::xarray<float> get_slice(const Evidence &evidence) const;
     void set_value(const Evidence &evidence, double value);
 
     DiscreteFactor operator+(const DiscreteFactor &other) const;

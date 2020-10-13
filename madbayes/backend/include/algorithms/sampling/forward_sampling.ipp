@@ -25,7 +25,7 @@ std::vector<Evidence> forward_sampling(const DiscreteBayesianNetwork &other, siz
         Evidence sample;
         for (Node node : order) {
             DiscreteFactor cpt = other.get_cpt(node);
-            xt::xarray<double> weights = cpt.get_slice(sample);
+            xt::xarray<float> weights = cpt.get_slice(sample);
             std::discrete_distribution<size_t> distribution(weights.cbegin(), weights.cend());
             sample[node] = levels[node][distribution(generator)];
         }

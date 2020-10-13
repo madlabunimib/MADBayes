@@ -38,9 +38,9 @@ bool DiscreteFactor::operator==(const DiscreteFactor &other) const {
 
 Coordinates DiscreteFactor::get_coordinates() const { return coordinates; }
 
-xt::xarray<double> DiscreteFactor::get_data() const { return data; }
+xt::xarray<float> DiscreteFactor::get_data() const { return data; }
 
-xt::xarray<double> DiscreteFactor::get_slice(const Evidence &evidence) const {
+xt::xarray<float> DiscreteFactor::get_slice(const Evidence &evidence) const {
     xt::xstrided_slice_vector idx;
     
     for (Axis axis : coordinates) {
