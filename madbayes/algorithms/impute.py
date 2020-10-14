@@ -13,13 +13,10 @@ def impute(engine: Any, dataset: Dataset) -> Dataset:
     out = dataset.copy()
     for i, row in out.iterrows():
         # If there are any NANs, impute them
-        if row.isnull().any():
+        nan = row.isnull()
+        if nan.any():
             # Set query variables
-            variables = [
-                key
-                for key, value in row.iteritems()
-                if pd.isnull(value)
-            ]
+            variables = list(row[nan].index)
             # Set query evidence
             evidence = row.dropna().to_dict()
             # Execute joint query
