@@ -11,7 +11,7 @@ def test_learning_impute():
             getattr(mb.data.network, dataset)
         )
         for dataset, _ in datasets.items()
-        if dataset in ['asia', 'cancer', 'earthquake', 'sachs', 'survey']
+        if dataset in ['asia', 'earthquake', 'survey']
     ]
     for (dataset, network) in datasets_networks:
         imputed = mb.impute(mb.JunctionTree(network), dataset.random_nan())
