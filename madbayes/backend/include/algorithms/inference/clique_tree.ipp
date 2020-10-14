@@ -182,8 +182,9 @@ std::vector<DiscreteFactor> CliqueTree::query(const Nodes &variables, const Evid
         try {
             joint = copy.get_clique_given_variables(variables).belief;
         } catch(const std::exception& e) {
+            Node root = *node2clique.at(variables[0]).begin();
             Nodes scope = Nodes(variables.begin(), variables.end());
-            joint = copy.get_joint_query("", get_nodes()[0], &scope);
+            joint = copy.get_joint_query("", root, &scope);
         }
 
         joint = joint.marginalize(variables);
