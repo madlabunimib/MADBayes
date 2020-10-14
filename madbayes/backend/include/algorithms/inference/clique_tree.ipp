@@ -59,26 +59,23 @@ void CliqueTree::build_clique_tree(const Cliques &cliques) {
             }
         }
         // Add Cj
-        std::string Cj = *k;
-        if (label2clique.find(Cj) == label2clique.end()) {
-            add_node(Cj);
-            label2clique.insert({Cj, *k});
+        if (label2clique.find(*k) == label2clique.end()) {
+            add_node(*k);
+            set_clique(*k);
         }
         // Add separator
-        Clique sep {true, sepset, {}};
-        std::string separator = sep;
+        Clique separator {true, sepset, {}};
         if (label2clique.find(separator) == label2clique.end()) {
             add_node(separator);
-            label2clique.insert({separator, sep});
+            set_clique(separator);
         }
-        add_edge(Cj, separator);
+        add_edge(*k, separator);
         // Add Ci
-        std::string Ci = *i;
-        if (label2clique.find(Ci) == label2clique.end()) {
-            add_node(Ci);
-            label2clique.insert({Ci, *i});
+        if (label2clique.find(*i) == label2clique.end()) {
+            add_node(*i);
+            set_clique(*i);
         }
-        add_edge(separator, Ci);
+        add_edge(separator, *i);
     }
 }
 
@@ -136,7 +133,7 @@ CliqueTree::CliqueTree(const T &other) : Graph() {
     calibrate_downward(Node(), root, {});
 }
 
-CliqueTree::CliqueTree(const CliqueTree &other) : Graph(other), label2clique(other.label2clique) {}
+CliqueTree::CliqueTree(const CliqueTree &other) : Graph(other), label2clique(other.label2clique), node2clique(other.node2clique) {}
 
 CliqueTree &CliqueTree::operator=(const CliqueTree &other) {
     if (this != &other) {
@@ -145,6 +142,7 @@ CliqueTree &CliqueTree::operator=(const CliqueTree &other) {
         std::swap(tmp.vid2label, vid2label);
         std::swap(tmp.label2vid, label2vid);
         std::swap(tmp.label2clique, label2clique);
+        std::swap(tmp.node2clique, node2clique);
     }
     return *this;
 }
@@ -209,24 +207,39 @@ Clique CliqueTree::get_clique(const Node &label) const {
 
 void CliqueTree::set_clique(const Clique &clique) {
     label2clique[clique] = clique;
+    if (!clique.is_separator) {
+        for (Node node : clique.nodes) {
+            node2clique[node].insert(clique);
+        }
+    }
 }
 
 Clique CliqueTree::get_clique_given_variables(const Nodes &variables) const {
-    Nodes nodes = variables;
-    std::sort(nodes.begin(), nodes.end());
-    auto i = label2clique.cbegin();
-    for (; i != label2clique.cend(); i++) {
-        const Clique *clique = &i->second;
-        if (std::includes(
-            clique->nodes.begin(),
-            clique->nodes.end(),
-            nodes.begin(),
-            nodes.end()
-        )) {
-            return *clique;
+    std::set<Node> found, intersection;
+    auto i = variables.begin();
+    found = node2clique.at(*i++);
+    for (; i != variables.end(); i++) {
+        Node pointer = *i;
+        std::set_intersection(
+            found.begin(),
+            found.end(),
+            node2clique.at(pointer).begin(),
+            node2clique.at(pointer).end(),
+            std::inserter(intersection, intersection.end())
+        );
+        found = intersection;
+        intersection.clear();
+        if (found.empty()) {
+            throw std::runtime_error("No clique found with given variables.");
         }
     }
-    throw std::runtime_error("No clique found with given variables.");
+
+    std::map<size_t, Node> order;
+    for (Node node : found) {
+        order.insert({label2clique.at(node).nodes.size(), node});
+    }
+
+    return label2clique.at(order.begin()->second);
 }
 
 DiscreteFactor CliqueTree::get_joint_query(const Node &prev, const Node &curr, Nodes *variables) const {
@@ -242,12 +255,15 @@ DiscreteFactor CliqueTree::get_joint_query(const Node &prev, const Node &curr, N
         // If the returning value is not empty, this means that there
         // are variables of the query in the subtree under this separator,
         // so we need to divide the returning belief by the sepset belief. 
-        message /= clique->belief;
+        if (!message.empty()) {
+            message /= clique->belief;
+        }
 
         return message;
     }
 
     // Check if the current clique contains any variable of the query.
+    bool found = false;
     for (Node node : clique->nodes) {
         auto variable = std::find(
             variables->begin(),
@@ -256,6 +272,7 @@ DiscreteFactor CliqueTree::get_joint_query(const Node &prev, const Node &curr, N
         );
         if (variable != variables->end()) {
             variables->erase(variable);
+            found = true;
         }
     }
 
@@ -269,7 +286,9 @@ DiscreteFactor CliqueTree::get_joint_query(const Node &prev, const Node &curr, N
 
     // If message is not empty or a variable is found,
     // then multiply the message by the clique belief.
-    message *= clique->belief;
+    if (found || !message.empty()) {
+        message *= clique->belief;
+    }
     
     return message;
 }

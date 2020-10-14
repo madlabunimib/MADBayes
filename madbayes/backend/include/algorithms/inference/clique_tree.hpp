@@ -34,6 +34,7 @@ using Cliques = std::vector<Clique>;
 class CliqueTree : public Graph {
    private:
     std::map<Node, Clique> label2clique;
+    std::map<Node, std::set<Node>> node2clique;
 
     template <typename T>
     Cliques build_cliques(const T &other) const;

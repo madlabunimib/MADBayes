@@ -42,6 +42,8 @@ class DiscreteFactor {
     xt::xarray<float> get_slice(const Evidence &evidence) const;
     void set_value(const Evidence &evidence, double value);
 
+    bool empty() const;
+
     DiscreteFactor operator+(const DiscreteFactor &other) const;
     DiscreteFactor operator-(const DiscreteFactor &other) const;
     DiscreteFactor operator*(const DiscreteFactor &other) const;

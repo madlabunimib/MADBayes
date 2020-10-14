@@ -93,6 +93,10 @@ void DiscreteFactor::set_value(const Evidence &evidence, double value) {
     view = value;
 }
 
+bool DiscreteFactor::empty() const {
+    return coordinates.empty();
+}
+
 DiscreteFactor DiscreteFactor::adapt(const DiscreteFactor &other) const {
     DiscreteFactor out {coordinates};
 
@@ -138,6 +142,8 @@ DiscreteFactor &DiscreteFactor::rearrange(const DiscreteFactor &other) {
 }
 
 DiscreteFactor DiscreteFactor::operator+(const DiscreteFactor &other) const {
+    if (other.empty()) return *this;
+
     DiscreteFactor a, b, out;
     a = adapt(other);
     b = other.adapt(*this).rearrange(a);
@@ -147,6 +153,8 @@ DiscreteFactor DiscreteFactor::operator+(const DiscreteFactor &other) const {
 }
 
 DiscreteFactor DiscreteFactor::operator-(const DiscreteFactor &other) const {
+    if (other.empty()) return *this;
+
     DiscreteFactor a, b, out;
     a = adapt(other);
     b = other.adapt(*this).rearrange(a);
@@ -156,6 +164,8 @@ DiscreteFactor DiscreteFactor::operator-(const DiscreteFactor &other) const {
 }
 
 DiscreteFactor DiscreteFactor::operator*(const DiscreteFactor &other) const {
+    if (other.empty()) return *this;
+
     DiscreteFactor a, b, out;
     a = adapt(other);
     b = other.adapt(*this).rearrange(a);
@@ -165,6 +175,8 @@ DiscreteFactor DiscreteFactor::operator*(const DiscreteFactor &other) const {
 }
 
 DiscreteFactor DiscreteFactor::operator/(const DiscreteFactor &other) const {
+    if (other.empty()) return *this;
+
     DiscreteFactor a, b, out;
     a = adapt(other);
     b = other.adapt(*this).rearrange(a);
@@ -176,6 +188,8 @@ DiscreteFactor DiscreteFactor::operator/(const DiscreteFactor &other) const {
 }
 
 DiscreteFactor &DiscreteFactor::operator+=(const DiscreteFactor &other) {
+    if (other.empty()) return *this;
+
     DiscreteFactor a, b, out;
     a = adapt(other);
     b = other.adapt(*this).rearrange(a);
@@ -185,6 +199,8 @@ DiscreteFactor &DiscreteFactor::operator+=(const DiscreteFactor &other) {
 }
 
 DiscreteFactor &DiscreteFactor::operator-=(const DiscreteFactor &other) {
+    if (other.empty()) return *this;
+
     DiscreteFactor a, b, out;
     a = adapt(other);
     b = other.adapt(*this).rearrange(a);
@@ -194,6 +210,8 @@ DiscreteFactor &DiscreteFactor::operator-=(const DiscreteFactor &other) {
 }
 
 DiscreteFactor &DiscreteFactor::operator*=(const DiscreteFactor &other) {
+    if (other.empty()) return *this;
+
     DiscreteFactor a, b, out;
     a = adapt(other);
     b = other.adapt(*this).rearrange(a);
@@ -203,6 +221,8 @@ DiscreteFactor &DiscreteFactor::operator*=(const DiscreteFactor &other) {
 }
 
 DiscreteFactor &DiscreteFactor::operator/=(const DiscreteFactor &other) {
+    if (other.empty()) return *this;
+
     DiscreteFactor a, b, out;
     a = adapt(other);
     b = other.adapt(*this).rearrange(a);
