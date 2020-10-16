@@ -88,7 +88,7 @@ setup(
     ],
     url='https://github.com/madlabunimib/MADBayes',
     packages=find_packages(),
-    ext_modules=[CMakeExtension('madbayes.backend')],
+    ext_modules=[CMakeExtension('madbayes/backend')],
     cmdclass=dict(build_ext=CMakeBuild),
     zip_safe=False,
     install_requires=[
