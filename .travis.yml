@@ -16,7 +16,7 @@ install:
   - ./.travis/linux_r_setup.sh
   - ./.travis/unix_r_install.sh
   - pip3 install -r requirements.txt
-  - python3 setup.py install
+  - python3 setup.py develop
   - pip3 install pytest-cov codecov
 script:
   - pytest --cov-report=html --cov=madbayes --cov-append tests
