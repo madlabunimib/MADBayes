@@ -16,3 +16,6 @@
 [submodule "madbayes/backend/extern/xtensor-python"]
 	path = madbayes/backend/extern/xtensor-python
 	url = https://github.com/xtensor-stack/xtensor-python.git
+[submodule "madbayes/backend/extern/igraph-cpp"]
+	path = madbayes/backend/extern/igraph-cpp
+	url = https://github.com/AlessioZanga/igraph-cpp.git

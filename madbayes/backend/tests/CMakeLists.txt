@@ -42,7 +42,5 @@ macro(package_add_test_with_libraries TESTNAME FILES LIBRARIES)
     set_target_properties(${TESTNAME} PROPERTIES FOLDER tests)
 endmacro()
 
-package_add_test_with_libraries(test_graph structures/graph.cpp igraph)
-package_add_test_with_libraries(test_directed_graph structures/directed_graph.cpp igraph)
 package_add_test_with_libraries(test_probability_table structures/discrete_factor.cpp igraph)
 package_add_test_with_libraries(test_clique_tree algorithms/inference/clique_tree.cpp igraph)

@@ -1,10 +1,6 @@
 #pragma once
 
 #include <algorithms/structure/chain_cliques.ipp>
-#include <algorithms/structure/chordal.ipp>
-#include <algorithms/structure/maximal_cliques.ipp>
-#include <algorithms/structure/maximum_cardinality_search.ipp>
-#include <algorithms/structure/moral.ipp>
 #include <structures/discrete_bayesian_network.hpp>
 
 namespace madbayes {

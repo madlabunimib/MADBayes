@@ -1,6 +1,9 @@
 #pragma once
 
-#include <structures/graph.hpp>
+#include <igraph>
+
+using namespace igraph;
+using namespace igraph::structures;
 
 namespace madbayes {
 

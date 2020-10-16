@@ -1,6 +1,9 @@
 #pragma once
 
-#include "directed_graph.ipp"
+#include <igraph>
+
+using namespace igraph;
+using namespace igraph::structures;
 
 namespace madbayes {
 

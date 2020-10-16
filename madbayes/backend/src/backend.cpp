@@ -5,6 +5,9 @@ using namespace madbayes;
 using namespace madbayes::algorithms;
 using namespace madbayes::structures;
 
+using namespace igraph;
+using namespace igraph::structures;
+
 namespace py = pybind11;
 
 PYBIND11_MODULE(backend, m) {

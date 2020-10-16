@@ -34,6 +34,9 @@ set(pybind11_DIR "${CMAKE_CURRENT_BINARY_DIR}/extern/pybind11" CACHE STRING "" F
 include_directories(extern/xtensor-python/include)
 add_subdirectory(extern/xtensor-python)
 
+include_directories(extern/igraph-cpp/include)
+add_subdirectory(extern/igraph-cpp)
+
 add_library(xtensor::use_xsimd INTERFACE IMPORTED)
 target_link_libraries(xtensor::use_xsimd INTERFACE xsimd)
 target_compile_definitions(xtensor::use_xsimd INTERFACE XTENSOR_USE_XSIMD)

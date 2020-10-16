@@ -1,7 +1,5 @@
 #pragma once
 
-#include "structures/graph.ipp"
-#include "structures/directed_graph.ipp"
 #include "structures/discrete_factor.ipp"
 #include "structures/bayesian_network.ipp"
 #include "structures/discrete_bayesian_network.ipp"
@@ -9,11 +7,6 @@
 #include "algorithms/inference/clique_tree.ipp"
 #include "algorithms/sampling/forward_sampling.ipp"
 #include "algorithms/structure/chain_cliques.ipp"
-#include "algorithms/structure/chordal.ipp"
-#include "algorithms/structure/maximal_cliques.ipp"
-#include "algorithms/structure/maximum_cardinality_search.ipp"
-#include "algorithms/structure/moral.ipp"
-#include "algorithms/structure/topological_sorting.ipp"
 
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #include <pybind11/pybind11.h>
