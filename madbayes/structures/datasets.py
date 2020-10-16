@@ -20,9 +20,10 @@ class Dataset(pd.DataFrame):
     def count_nan(self) -> int:
         return self.size - self.count().sum()
 
-    def random_nan(self, ratio: float = 0.20):
+    def random_nan(self, ratio: float = 0.20, columns=None):
         data = self.copy()
-        data = data.mask(np.random.random(data.shape) < ratio)
+        if columns is None:
+            data = data.mask(np.random.random(data.shape) < ratio)
         return type(self)(data)
 
     def to_dict(self):
