@@ -20,8 +20,8 @@ DiscreteBayesianNetwork &DiscreteBayesianNetwork::operator=(const DiscreteBayesi
     if (this != &other) {
         DiscreteBayesianNetwork tmp(other);
         std::swap(tmp.graph, graph);
-        std::swap(tmp.vid2label, vid2label);
-        std::swap(tmp.label2vid, label2vid);
+        std::swap(tmp.labels, labels);
+        std::swap(tmp.index, index);
         std::swap(tmp.cpts, cpts);
     }
     return *this;

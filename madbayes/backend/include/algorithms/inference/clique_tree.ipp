@@ -139,8 +139,8 @@ CliqueTree &CliqueTree::operator=(const CliqueTree &other) {
     if (this != &other) {
         CliqueTree tmp(other);
         std::swap(tmp.graph, graph);
-        std::swap(tmp.vid2label, vid2label);
-        std::swap(tmp.label2vid, label2vid);
+        std::swap(tmp.labels, labels);
+        std::swap(tmp.index, index);
         std::swap(tmp.label2clique, label2clique);
         std::swap(tmp.node2clique, node2clique);
     }

@@ -20,8 +20,8 @@ BayesianNetwork &BayesianNetwork::operator=(const BayesianNetwork &other) {
     if (this != &other) {
         BayesianNetwork tmp(other);
         std::swap(tmp.graph, graph);
-        std::swap(tmp.vid2label, vid2label);
-        std::swap(tmp.label2vid, label2vid);
+        std::swap(tmp.labels, labels);
+        std::swap(tmp.index, index);
     }
     return *this;
 }
