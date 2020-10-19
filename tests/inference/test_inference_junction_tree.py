@@ -67,17 +67,11 @@ def test_inference_junction_tree_query():
             for method in ["marginal", "joint", "conditional"]
         ]
 
-        queries = choices(queries, k = int(len(queries) * 0.01))
+        queries = choices(queries, k = int(len(queries) * 0.10))
 
         # Execute the query
         for query in queries:
-            from rpy2.rinterface_lib.embedded import RRuntimeError
-            try:
-                out_0 = jt_0.query(**query)
-                out_1 = jt_1.query(**query)
-                for j, _ in enumerate(out_0):
-                    assert_allclose(out_0[j], out_1[j].fillna(0))
-            except RRuntimeError:
-                pass
-            except KeyError:
-                pass
+            out_0 = jt_0.query(**query)
+            out_1 = jt_1.query(**query)
+            for j, _ in enumerate(out_0):
+                assert_allclose(out_0[j], out_1[j])

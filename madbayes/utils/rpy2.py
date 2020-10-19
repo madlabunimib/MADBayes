@@ -10,13 +10,15 @@ if TYPE_CHECKING:
 bnlearn = None
 gRain = None
 utils = None
+base = None
 
 
 def rpy2_init() -> None:
     import rpy2.robjects.packages as rpackages
     from rpy2.robjects.vectors import StrVector
-    global bnlearn, gRain, utils
+    global bnlearn, gRain, utils, base
     # Initialize RPY2
+    base = rpackages.importr('base')
     utils = rpackages.importr('utils')
     utils.chooseCRANmirror(ind=1)
     # Install packages
@@ -73,7 +75,6 @@ class gRainJunctionTree():
             nodes=StrVector(variables),
             evidence=ListVector(evidence),
             type=method,
-            result='data.frame'
         )
         return self._format_query_output(method, variables, out)
 
@@ -86,11 +87,12 @@ class gRainJunctionTree():
         return [self._format_query_to_xarray(variables, out)]
 
     def _format_query_to_xarray(self, variables: List[str], out) -> xa.DataArray:
+        out = base.as_data_frame_table(out)
         from rpy2.robjects import pandas2ri
         out = pandas2ri.rpy2py(out)
         out = out.set_index(variables).to_xarray()
         out = out.to_array().squeeze(['variable'], drop=True)
-        return out
+        return out.astype('float32')
 
     @classmethod
     def from_bif(cls, path: str) -> None:
