@@ -67,9 +67,11 @@ class gRainJunctionTree():
 
     def query(self, variables: List[str], evidence: Any, method: str) -> Any:
         from rpy2.robjects.vectors import StrVector
+        from rpy2.robjects import ListVector
         out = gRain.querygrain(
-            self._network.mutilated(**evidence).as_grain(),
+            self._network.as_grain(),
             nodes=StrVector(variables),
+            evidence=ListVector(evidence),
             type=method,
             result='data.frame'
         )
@@ -84,11 +86,8 @@ class gRainJunctionTree():
         return [self._format_query_to_xarray(variables, out)]
 
     def _format_query_to_xarray(self, variables: List[str], out) -> xa.DataArray:
-        import rpy2.robjects as ro
         from rpy2.robjects import pandas2ri
-        from rpy2.robjects.conversion import localconverter
-        with localconverter(ro.default_converter + pandas2ri.converter):
-            out = ro.conversion.rpy2py(out)
+        out = pandas2ri.rpy2py(out)
         out = out.set_index(variables).to_xarray()
         out = out.to_array().squeeze(['variable'], drop=True)
         return out
