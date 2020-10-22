@@ -101,7 +101,6 @@ setup(
         'scipy',
         'pandas>=1.1',
         'xarray',
-        'rpy2',
         'lark-parser',
     ],
 )
