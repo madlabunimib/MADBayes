@@ -97,11 +97,16 @@ PYBIND11_MODULE(backend, m) {
         .def_readwrite("belief", &Clique::belief);
 
     py::class_<CliqueTree, Graph>(m, "CliqueTree")
-        .def(py::init<const DiscreteBayesianNetwork &>(), py::arg("bn"))
+        .def(py::init<const DiscreteBayesianNetwork &>(), py::arg("model"))
         .def(py::init<const CliqueTree &>(), py::arg("other"))
         .def("get_clique", &CliqueTree::get_clique, py::arg("label"))
         .def("set_clique", &CliqueTree::set_clique, py::arg("clique"))
         .def("query", &CliqueTree::query, py::arg("variables"), py::arg("evidence"), py::arg("method"));
+    
+    py::class_<LikelihoodWeighting>(m, "LikelihoodWeighting")
+        .def(py::init<const DiscreteBayesianNetwork &>(), py::arg("model"))
+        .def(py::init<const LikelihoodWeighting &>(), py::arg("other"))
+        .def("query", &LikelihoodWeighting::query, py::arg("variables"), py::arg("evidence"), py::arg("method"), py::arg("size") = 500);
     
     // Algorithms - Sampling
     m.def("forward_sampling", &forward_sampling, py::arg("other"), py::arg("size"));

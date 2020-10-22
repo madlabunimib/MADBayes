@@ -10,7 +10,7 @@ from .io.parser import from_file
 DiscreteBayesianNetwork.from_file = from_file
 
 from . import data, utils
-from .algorithms import (bds_score, expectation_maximization, hill_climbing, impute, structural_em, LikelihoodWeighting)
+from .algorithms import (bds_score, expectation_maximization, hill_climbing, impute, structural_em)
 from .structures import (Dataset)
 
 # Experimental hybrid return type

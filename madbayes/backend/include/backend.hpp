@@ -5,6 +5,7 @@
 #include "structures/discrete_bayesian_network.ipp"
 
 #include "algorithms/inference/clique_tree.ipp"
+#include "algorithms/inference/likelihood_weighting.ipp"
 #include "algorithms/sampling/forward_sampling.ipp"
 #include "algorithms/structure/chain_cliques.ipp"
 

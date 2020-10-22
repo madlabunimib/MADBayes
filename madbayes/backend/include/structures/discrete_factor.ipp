@@ -8,7 +8,11 @@ namespace structures {
 
 DiscreteFactor::DiscreteFactor() : data(1) {}
 
-DiscreteFactor::DiscreteFactor(const Coordinates &coordinates) : data(1), coordinates(coordinates) {}
+DiscreteFactor::DiscreteFactor(const Coordinates &coordinates) : coordinates(coordinates) {
+    xt::xarray<float>::shape_type shape;
+    for (Axis axis : coordinates) shape.push_back(axis.second.size());
+    data = xt::zeros<float>(shape);
+}
 
 template <typename T>
 DiscreteFactor::DiscreteFactor(const T &_data, const Coordinates &_coordinates) : coordinates(_coordinates) {
@@ -66,7 +70,7 @@ xt::xarray<float> DiscreteFactor::get_slice(const Evidence &evidence) const {
     return xt::strided_view(data, idx);
 }
 
-void DiscreteFactor::set_value(const Evidence &evidence, double value) {
+auto DiscreteFactor::get_view(const Evidence &evidence) {
     xt::xstrided_slice_vector idx;
     
     for (Axis axis : coordinates) {
@@ -89,7 +93,11 @@ void DiscreteFactor::set_value(const Evidence &evidence, double value) {
         }
     }
 
-    auto view = xt::strided_view(data, idx);
+    return xt::strided_view(data, idx);
+}
+
+void DiscreteFactor::set_value(const Evidence &evidence, double value) {
+    auto view = get_view(evidence);
     view = value;
 }
 
@@ -276,6 +284,13 @@ DiscreteFactor DiscreteFactor::marginalize(const std::vector<std::string> &axes)
 
     out.data = xt::sum(data, idx);
 
+    return out;
+}
+
+DiscreteFactor DiscreteFactor::normalize() const {
+    DiscreteFactor out(*this);
+    xt::xarray<float> sum = xt::sum(data);
+    out.data /= sum;
     return out;
 }
 

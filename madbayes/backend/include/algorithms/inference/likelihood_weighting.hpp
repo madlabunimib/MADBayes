@@ -1,5 +1,6 @@
 #pragma once
 
+#include <ctime>
 #include <random>
 #include <structures/discrete_bayesian_network.hpp>
 
@@ -11,21 +12,18 @@ using namespace madbayes::structures;
 
 class LikelihoodWeighting {
    private:
-    // TODO: Remove this pointer
-    const DiscreteBayesianNetwork *other;
+    DiscreteBayesianNetwork model;
 
-    size_t size;
-    Nodes sorting;
-    std::default_random_engine generator;
-    std::uniform_real_distribution<double> uniform;
+    Nodes order;
+    std::map<Node, Levels> levels;
 
    public:
-    LikelihoodWeighting(const DiscreteBayesianNetwork &other, size_t size);
+    LikelihoodWeighting(const DiscreteBayesianNetwork &other);
     LikelihoodWeighting(const LikelihoodWeighting &other);
     LikelihoodWeighting &operator=(const LikelihoodWeighting &other);
     ~LikelihoodWeighting();
 
-    std::vector<DiscreteFactor> query(const Nodes &variables, const Evidence &evidence, const std::string &method);
+    std::vector<DiscreteFactor> query(const Nodes &variables, const Evidence &evidence, const std::string &method, size_t size);
 };
 
 }  // namespace algorithms

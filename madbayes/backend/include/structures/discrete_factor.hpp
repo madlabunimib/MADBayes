@@ -40,6 +40,7 @@ class DiscreteFactor {
     Coordinates get_coordinates() const;
     xt::xarray<float> get_data() const;
     xt::xarray<float> get_slice(const Evidence &evidence) const;
+    auto get_view(const Evidence &evidence);
     void set_value(const Evidence &evidence, double value);
 
     bool empty() const;
@@ -56,6 +57,7 @@ class DiscreteFactor {
 
     DiscreteFactor sum(const std::vector<std::string> &axes) const;
     DiscreteFactor marginalize(const std::vector<std::string> &axes) const;
+    DiscreteFactor normalize() const;
 
     static DiscreteFactor zeros_like(const DiscreteFactor &other);
 };
