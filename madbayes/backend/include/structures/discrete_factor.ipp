@@ -42,35 +42,31 @@ bool DiscreteFactor::operator==(const DiscreteFactor &other) const {
 
 Coordinates DiscreteFactor::get_coordinates() const { return coordinates; }
 
-xt::xarray<float> DiscreteFactor::get_data() const { return data; }
-
-xt::xarray<float> DiscreteFactor::get_slice(const Evidence &evidence) const {
-    xt::xstrided_slice_vector idx;
+Axis DiscreteFactor::get_axis(const std::string &axis) const {
+    auto found = std::find_if(
+        coordinates.begin(),
+        coordinates.end(),
+        [&](const Axis &other) { return other.first == axis; }
+    );
     
-    for (Axis axis : coordinates) {
-        auto found = std::find_if(
-            evidence.begin(),
-            evidence.end(),
-            [&](Evidence::value_type other) { return other.first == axis.first; }
-        );
-        if (found != evidence.end()) {
-            auto id = std::find(
-                axis.second.begin(),
-                axis.second.end(),
-                found->second
-            );
-            if (id != axis.second.end()) {
-                idx.push_back(std::distance(axis.second.begin(), id));
-            }
-        } else {
-            idx.push_back(xt::all());
-        }
+    if (found == coordinates.end()) {
+        throw std::runtime_error("No axis found with given name.");
     }
 
-    return xt::strided_view(data, idx);
+    return *found;
 }
 
-auto DiscreteFactor::get_view(const Evidence &evidence) {
+Level DiscreteFactor::get_level(const std::string &axis, size_t idx) const {
+    return get_axis(axis).second[idx];
+}
+
+Levels DiscreteFactor::get_levels(const std::string &axis) const {
+    return get_axis(axis).second;
+}
+
+xt::xarray<float> DiscreteFactor::get_data() const { return data; }
+
+auto DiscreteFactor::get_slice(const Evidence &evidence) {
     xt::xstrided_slice_vector idx;
     
     for (Axis axis : coordinates) {
@@ -97,7 +93,7 @@ auto DiscreteFactor::get_view(const Evidence &evidence) {
 }
 
 void DiscreteFactor::set_value(const Evidence &evidence, double value) {
-    auto view = get_view(evidence);
+    auto view = get_slice(evidence);
     view = value;
 }
 

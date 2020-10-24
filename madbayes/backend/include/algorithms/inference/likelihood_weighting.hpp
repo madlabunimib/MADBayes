@@ -16,8 +16,6 @@ class LikelihoodWeighting {
     std::map<Node, Levels> levels;
     DiscreteBayesianNetwork model;
 
-    std::minstd_rand generator;
-
     std::pair<float, Evidence> sample(const Evidence &evidence);
 
    public:

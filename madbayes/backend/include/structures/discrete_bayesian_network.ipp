@@ -6,15 +6,24 @@ namespace madbayes {
 
 namespace structures {
 
-DiscreteBayesianNetwork::DiscreteBayesianNetwork() : BayesianNetwork() {}
+DiscreteBayesianNetwork::DiscreteBayesianNetwork() : BayesianNetwork() {
+    generator.seed(time(NULL));
+}
 
-DiscreteBayesianNetwork::DiscreteBayesianNetwork(const std::string &formula, const CPTs &cpts) : BayesianNetwork(formula), cpts(cpts) {}
+DiscreteBayesianNetwork::DiscreteBayesianNetwork(const std::string &formula, const CPTs &cpts) : BayesianNetwork(formula), cpts(cpts) {
+    generator.seed(time(NULL));
+}
 
-DiscreteBayesianNetwork::DiscreteBayesianNetwork(const Nodes &labels, const CPTs &cpts) : BayesianNetwork(labels), cpts(cpts) {}
+DiscreteBayesianNetwork::DiscreteBayesianNetwork(const Nodes &labels, const CPTs &cpts) : BayesianNetwork(labels), cpts(cpts) {
+    generator.seed(time(NULL));
+}
 
-DiscreteBayesianNetwork::DiscreteBayesianNetwork(const Edges &edges, const CPTs &cpts) : BayesianNetwork(edges), cpts(cpts) {}
+DiscreteBayesianNetwork::DiscreteBayesianNetwork(const Edges &edges, const CPTs &cpts) : BayesianNetwork(edges), cpts(cpts) {
+    generator.seed(time(NULL));
+}
 
-DiscreteBayesianNetwork::DiscreteBayesianNetwork(const DiscreteBayesianNetwork &other) : BayesianNetwork(other), cpts(other.cpts) {}
+DiscreteBayesianNetwork::DiscreteBayesianNetwork(const DiscreteBayesianNetwork &other)
+    : BayesianNetwork(other), cpts(other.cpts), generator(other.generator) {}
 
 DiscreteBayesianNetwork &DiscreteBayesianNetwork::operator=(const DiscreteBayesianNetwork &other) {
     if (this != &other) {
@@ -23,6 +32,7 @@ DiscreteBayesianNetwork &DiscreteBayesianNetwork::operator=(const DiscreteBayesi
         std::swap(tmp.labels, labels);
         std::swap(tmp.index, index);
         std::swap(tmp.cpts, cpts);
+        std::swap(tmp.generator, generator);
     }
     return *this;
 }
@@ -42,13 +52,7 @@ void DiscreteBayesianNetwork::set_cpt(const Node &label, const DiscreteFactor &c
 }
 
 Levels DiscreteBayesianNetwork::get_levels(const Node &label) const {
-    Coordinates axes = cpts.at(label).get_coordinates();
-    auto found = std::find_if(
-        axes.begin(),
-        axes.end(),
-        [&](const Axis &other) { return other.first == label; }
-    );
-    return found->second;
+    return cpts.at(label).get_levels(label);
 }
 
 CPTs DiscreteBayesianNetwork::get_cpts() const {
@@ -71,6 +75,14 @@ size_t DiscreteBayesianNetwork::size() const {
     }
 
     return out;
+}
+
+std::pair<float, Level> DiscreteBayesianNetwork::sample(const Node &label, const Evidence &evidence) {
+    DiscreteFactor *cpt = &cpts.at(label);
+    xt::xarray<float> weights = cpt->get_slice(evidence);
+    std::discrete_distribution<size_t> distribution(weights.begin(), weights.end());
+    size_t idx = distribution(generator);
+    return {weights(idx), cpt->get_level(label, idx)};
 }
 
 }  // namespace structures

@@ -9,11 +9,10 @@ namespace algorithms {
 LikelihoodWeighting::LikelihoodWeighting(const DiscreteBayesianNetwork &model) : model(model) {
     order = topological_sorting(model);
     for (Node node : order) levels[node] = model.get_levels(node);
-    generator.seed(time(NULL));
 }
 
 LikelihoodWeighting::LikelihoodWeighting(const LikelihoodWeighting &other)
-    : order(other.order), levels(other.levels), model(other.model), generator(other.generator) {}
+    : order(other.order), levels(other.levels), model(other.model) {}
 
 LikelihoodWeighting &LikelihoodWeighting::operator=(const LikelihoodWeighting &other) {
     if (this != &other) {
@@ -21,7 +20,6 @@ LikelihoodWeighting &LikelihoodWeighting::operator=(const LikelihoodWeighting &o
         std::swap(tmp.model, model);
         std::swap(tmp.order, order);
         std::swap(tmp.levels, levels);
-        std::swap(tmp.generator, generator);
     }
     return *this;
 }
@@ -32,19 +30,14 @@ std::pair<float, Evidence> LikelihoodWeighting::sample(const Evidence &evidence)
     float weight = 1;
     Evidence sample;
     for (Node node : order) {
-        DiscreteFactor cpt = model.get_cpt(node);
-        xt::xarray<float> weights = cpt.get_slice(sample);
-        if (evidence.find(node) != evidence.end()) {
-            sample[node] = evidence.at(node);
+        auto found = evidence.find(node);
+        if (found != evidence.end()) {
+            sample[node] = found->second;
         } else {
-            std::discrete_distribution<size_t> distribution(weights.cbegin(), weights.cend());
-            sample[node] = levels[node][distribution(generator)];
+            std::pair<float, Level> s = model.sample(node, sample);
+            sample[node] = s.second;
+            weight *= s.first;
         }
-        size_t idx = std::distance(
-            levels[node].begin(),
-            std::find(levels[node].begin(), levels[node].end(), sample[node])
-        );
-        weight *= weights(idx);
     }
     return {weight, sample};
 }
@@ -67,7 +60,7 @@ std::vector<DiscreteFactor> LikelihoodWeighting::query(const Nodes &variables, c
     for (size_t i = 0; i < size; i++) {
         std::pair<float, Evidence> s = sample(evidence);
         for (auto j = out.begin(); j != out.end(); j++) {
-            auto view = j->get_view(s.second);
+            auto view = j->get_slice(s.second);
             view += s.first;
         }
     }

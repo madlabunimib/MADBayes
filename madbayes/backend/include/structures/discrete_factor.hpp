@@ -5,14 +5,16 @@
 #include <vector>
 #include <xtensor/xadapt.hpp>
 #include <xtensor/xarray.hpp>
-#include <xtensor/xmath.hpp>
 #include <xtensor/xio.hpp>
+#include <xtensor/xmath.hpp>
 #include <xtensor/xstrided_view.hpp>
 
 namespace madbayes {
 
-using Evidence = std::map<std::string, std::string>;
-using Axis = std::pair<std::string, std::vector<std::string>>;
+using Level = std::string;
+using Levels = std::vector<Level>;
+using Evidence = std::map<std::string, Level>;
+using Axis = std::pair<std::string, Levels>;
 using Coordinates = std::vector<Axis>;
 
 namespace structures {
@@ -38,9 +40,12 @@ class DiscreteFactor {
     bool operator==(const DiscreteFactor &other) const;
 
     Coordinates get_coordinates() const;
+    Axis get_axis(const std::string &axis) const;
+    Level get_level(const std::string &axis, size_t idx) const;
+    Levels get_levels(const std::string &axis) const;
+
     xt::xarray<float> get_data() const;
-    xt::xarray<float> get_slice(const Evidence &evidence) const;
-    auto get_view(const Evidence &evidence);
+    auto get_slice(const Evidence &evidence);
     void set_value(const Evidence &evidence, double value);
 
     bool empty() const;
