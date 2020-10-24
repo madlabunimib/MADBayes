@@ -81,7 +81,7 @@ void CliqueTree::build_clique_tree(const Cliques &cliques) {
 
 DiscreteFactor CliqueTree::calibrate_upward(const Node &prev, const Node &curr) {
     DiscreteFactor message;
-    for (Node next : neighbors(curr)) {
+    for (const Node &next : neighbors(curr)) {
         if (next != prev) {
             message *= calibrate_upward(curr, next);
         }
@@ -116,7 +116,7 @@ void CliqueTree::calibrate_downward(const Node &prev, const Node &curr, Discrete
 
     if (!clique->is_separator) message = clique->belief;
 
-    for (Node next : neighbors(curr)) {
+    for (const Node &next : neighbors(curr)) {
         if (next != prev) {
             calibrate_downward(curr, next, message);
         }
@@ -170,7 +170,7 @@ std::vector<DiscreteFactor> CliqueTree::query(const Nodes &variables, const Evid
     std::vector<DiscreteFactor> out;
 
     if (method == "marginal") {
-        for (Node variable : variables) {
+        for (const Node &variable : variables) {
             DiscreteFactor marginal = copy.get_clique_given_variables({variable}).belief;
             out.push_back(marginal.marginalize({variable}));
         }
@@ -209,7 +209,7 @@ Clique CliqueTree::get_clique(const Node &label) const {
 void CliqueTree::set_clique(const Clique &clique) {
     label2clique[clique] = clique;
     if (!clique.is_separator) {
-        for (Node node : clique.nodes) {
+        for (const Node &node : clique.nodes) {
             node2clique[node].insert(clique);
         }
     }
@@ -236,7 +236,7 @@ Clique CliqueTree::get_clique_given_variables(const Nodes &variables) const {
     }
 
     std::map<size_t, Node> order;
-    for (Node node : found) {
+    for (const Node &node : found) {
         order.insert({label2clique.at(node).nodes.size(), node});
     }
 
@@ -248,7 +248,7 @@ DiscreteFactor CliqueTree::get_joint_query(const Node &prev, const Node &curr, N
     const Clique *clique = &label2clique.at(curr);
 
     if (clique->is_separator) {
-        for (Node next : neighbors(curr)) {
+        for (const Node &next : neighbors(curr)) {
             if (next != prev) {
                 message *= get_joint_query(curr, next, variables);
             }
@@ -265,7 +265,7 @@ DiscreteFactor CliqueTree::get_joint_query(const Node &prev, const Node &curr, N
 
     // Check if the current clique contains any variable of the query.
     bool found = false;
-    for (Node node : clique->nodes) {
+    for (const Node &node : clique->nodes) {
         auto variable = std::find(
             variables->begin(),
             variables->end(),
@@ -279,7 +279,7 @@ DiscreteFactor CliqueTree::get_joint_query(const Node &prev, const Node &curr, N
 
     // If there are variables left to be found,
     // make a recursive call over children.
-    for (Node next : neighbors(curr)) {
+    for (const Node &next : neighbors(curr)) {
         if (next != prev && variables->size() > 0) {
             message *= get_joint_query(curr, next, variables);
         }

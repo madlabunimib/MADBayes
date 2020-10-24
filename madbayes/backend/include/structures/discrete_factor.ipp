@@ -10,14 +10,14 @@ DiscreteFactor::DiscreteFactor() : data(1) {}
 
 DiscreteFactor::DiscreteFactor(const Coordinates &coordinates) : coordinates(coordinates) {
     xt::xarray<float>::shape_type shape;
-    for (Axis axis : coordinates) shape.push_back(axis.second.size());
+    for (const Axis &axis : coordinates) shape.push_back(axis.second.size());
     data = xt::zeros<float>(shape);
 }
 
 template <typename T>
 DiscreteFactor::DiscreteFactor(const T &_data, const Coordinates &_coordinates) : coordinates(_coordinates) {
     std::vector<size_t> shape;
-    for (Axis axis : _coordinates) shape.push_back(axis.second.size());
+    for (const Axis &axis : _coordinates) shape.push_back(axis.second.size());
     data = xt::adapt(_data.data(), shape);
 }
 
@@ -69,11 +69,11 @@ xt::xarray<float> DiscreteFactor::get_data() const { return data; }
 auto DiscreteFactor::get_slice(const Evidence &evidence) {
     xt::xstrided_slice_vector idx;
     
-    for (Axis axis : coordinates) {
+    for (const Axis &axis : coordinates) {
         auto found = std::find_if(
             evidence.begin(),
             evidence.end(),
-            [&](Evidence::value_type other) { return other.first == axis.first; }
+            [&](const Evidence::value_type &other) { return other.first == axis.first; }
         );
         if (found != evidence.end()) {
             auto id = std::find(
@@ -107,7 +107,7 @@ DiscreteFactor DiscreteFactor::adapt(const DiscreteFactor &other) const {
     // Add extra dims
     xt::xstrided_slice_vector extra { xt::ellipsis() };
 
-    for (Axis axis : other.coordinates) {
+    for (const Axis &axis : other.coordinates) {
         auto found = std::find(
             out.coordinates.begin(),
             out.coordinates.end(),

@@ -12,9 +12,9 @@ namespace algorithms {
 std::vector<Nodes> chain_of_cliques(const std::vector<Nodes> &cliques, const Nodes &alpha) {
     std::vector<Nodes> out;
     std::vector<std::pair<size_t, Nodes>> chain;
-    for (Nodes clique : cliques) {
+    for (const Nodes &clique : cliques) {
         size_t max = 0;
-        for (Node node : clique) {
+        for (const Node &node : clique) {
             size_t value = std::distance(
                 alpha.begin(),
                 std::find(alpha.begin(), alpha.end(), node)
@@ -24,7 +24,7 @@ std::vector<Nodes> chain_of_cliques(const std::vector<Nodes> &cliques, const Nod
         chain.push_back({max, clique});
     }
     std::sort(chain.begin(), chain.end());
-    for (auto pair : chain) out.push_back(pair.second);
+    for (auto &pair : chain) out.push_back(pair.second);
     std::reverse(out.begin(), out.end());
     return out;
 }

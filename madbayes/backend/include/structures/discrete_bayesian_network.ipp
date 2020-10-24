@@ -64,13 +64,15 @@ size_t DiscreteBayesianNetwork::size() const {
     Nodes nodes = get_nodes();
     std::map<Node, size_t> levels_count;
 
-    for (Node node : nodes) {
+    for (const Node &node : nodes) {
         levels_count[node] = get_levels(node).size();
     }
 
-    for (Node node : nodes) {
+    for (const Node &node : nodes) {
         size_t counter = levels_count[node] - 1;
-        for (Node parent : parents(node)) counter *= levels_count[parent];
+        for (const Node &parent : parents(node)) {
+            counter *= levels_count[parent];
+        }
         out += counter;
     }
 

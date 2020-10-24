@@ -8,7 +8,7 @@ namespace algorithms {
 
 LikelihoodWeighting::LikelihoodWeighting(const DiscreteBayesianNetwork &model) : model(model) {
     order = topological_sorting(model);
-    for (Node node : order) levels[node] = model.get_levels(node);
+    for (const Node &node : order) levels[node] = model.get_levels(node);
 }
 
 LikelihoodWeighting::LikelihoodWeighting(const LikelihoodWeighting &other)
@@ -29,7 +29,7 @@ LikelihoodWeighting::~LikelihoodWeighting() {}
 std::pair<float, Evidence> LikelihoodWeighting::sample(const Evidence &evidence) {
     float weight = 1;
     Evidence sample;
-    for (Node node : order) {
+    for (const Node &node : order) {
         auto found = evidence.find(node);
         if (found != evidence.end()) {
             sample[node] = found->second;
@@ -46,12 +46,12 @@ std::vector<DiscreteFactor> LikelihoodWeighting::query(const Nodes &variables, c
     std::vector<DiscreteFactor> out;
 
     if (method == "marginal") {
-        for (Node node : variables) {
+        for (const Node &node : variables) {
             out.push_back(DiscreteFactor({{node, levels[node]}}));
         }
     } else if (method == "joint" || method == "conditional") {
         Coordinates coordinates;
-        for (Node node : variables) coordinates.push_back({node, levels[node]});
+        for (const Node &node : variables) coordinates.push_back({node, levels[node]});
         out.push_back(DiscreteFactor(coordinates));
     } else {
         throw std::runtime_error("Method must be either 'marginal', 'joint' or 'conditional'.");
