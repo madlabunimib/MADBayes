@@ -12,10 +12,13 @@ using namespace madbayes::structures;
 
 class LikelihoodWeighting {
    private:
-    DiscreteBayesianNetwork model;
-
     Nodes order;
     std::map<Node, Levels> levels;
+    DiscreteBayesianNetwork model;
+
+    std::minstd_rand generator;
+
+    std::pair<float, Evidence> sample(const Evidence &evidence);
 
    public:
     LikelihoodWeighting(const DiscreteBayesianNetwork &other);
