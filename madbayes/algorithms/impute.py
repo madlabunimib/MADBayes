@@ -20,13 +20,14 @@ def impute(engine: Any, dataset: Dataset) -> Dataset:
             # Set query evidence
             evidence = row.dropna().to_dict()
             # Execute joint query
-            query = engine.query(variables, evidence, method="joint")[0]
+            query = engine.query(variables, evidence, method="marginal")
             # Select argmax by levels
-            query = query.to_dataframe("joint")
-            query = query.sort_values(ascending=False, by=["joint"])
-            levels, _ = next(query.iterrows())
-            levels = [levels] if isinstance(levels, str) else levels
-            levels = dict(zip(query.index.names, levels))
-            row.update(levels)
+            for q in query:
+                q = q.to_dataframe("marginal")
+                q = q.sort_values(ascending=False, by=["marginal"])
+                levels, _ = next(q.iterrows())
+                levels = [levels] if isinstance(levels, str) else levels
+                levels = dict(zip(q.index.names, levels))
+                row.update(levels)
             out.loc[i] = row
     return out
