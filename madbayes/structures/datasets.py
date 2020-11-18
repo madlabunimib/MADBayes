@@ -24,6 +24,9 @@ class Dataset(pd.DataFrame):
         data = self.copy()
         if columns is None:
             data = data.mask(np.random.random(data.shape) < ratio)
+        else:
+            shape = data[columns].shape
+            data[columns] = data[columns].mask(np.random.random(shape) < ratio)
         return type(self)(data)
 
     def to_dict(self):
