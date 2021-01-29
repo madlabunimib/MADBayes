@@ -190,7 +190,7 @@ BIF_GRAMMAR = r"""
 
   variablecontent: "{" ( property | variablediscrete )* "}"
 
-  variablediscrete: VARIABLETYPE DISCRETE "[" DECIMAL_LITERAL "]" "{" variablevalueslist "}" ";"
+  variablediscrete: VARIABLETYPE DISCRETE "[" DECIMAL_LITERAL+ "]" "{" variablevalueslist "}" ";"
 
   variablevalueslist: probabilityvariablevalue ( probabilityvariablevalue )*
 
